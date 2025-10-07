@@ -42,20 +42,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Ensure database is created
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
-        context.Database.EnsureCreated();
-    }
-}
-catch (Exception ex)
-{
-    // Log the error but don't fail startup
-    Console.WriteLine($"Database initialization failed: {ex.Message}");
-}
+// Database will be initialized on first request
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
