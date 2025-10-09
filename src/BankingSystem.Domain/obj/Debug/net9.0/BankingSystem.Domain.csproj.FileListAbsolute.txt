@@ -5,6 +5,7 @@ C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.D
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.AssemblyInfoInputs.cache
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.AssemblyInfo.cs
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.sourcelink.json
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.dll
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\refint\BankingSystem.Domain.dll
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Domain\obj\Debug\net9.0\BankingSystem.Domain.pdb

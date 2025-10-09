@@ -171,6 +171,8 @@ const UserManagement: React.FC = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, dateOfBirth: e.target.value })
                   }
+                  min="1900-01-01"
+                  max={new Date().toISOString().split("T")[0]}
                   required
                 />
               </div>
@@ -298,5 +300,3 @@ const UserManagement: React.FC = () => {
 };
 
 export default UserManagement;
-
-

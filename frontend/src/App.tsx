@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard";
 import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
 import TransactionManagement from "./components/TransactionManagement";
+import MobileMenu from "./components/MobileMenu";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -25,6 +26,7 @@ function App() {
     <div className="App">
       <header className="app-header">
         <h1>Banking System</h1>
+        <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
         <nav className="nav-tabs">
           <button
             className={activeTab === "dashboard" ? "active" : ""}

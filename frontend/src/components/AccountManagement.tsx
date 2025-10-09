@@ -155,6 +155,9 @@ const AccountManagement: React.FC = () => {
                   <option value="EUR">EUR</option>
                   <option value="GBP">GBP</option>
                   <option value="CAD">CAD</option>
+                  <option value="NZD">NZD</option>
+                  <option value="AUD">AUD</option>
+                  <option value="BRL">BRL</option>
                 </select>
               </div>
 
@@ -239,5 +242,3 @@ const AccountManagement: React.FC = () => {
 };
 
 export default AccountManagement;
-
-

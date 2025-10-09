@@ -1,4 +1,8 @@
-const API_BASE_URL = "http://localhost:5023/api";
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api"
+    : "http://localhost:5023/api");
 
 export interface User {
   id: number;
