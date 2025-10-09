@@ -60,7 +60,7 @@ public class HealthController : ControllerBase
         }
     }
 
-    [HttpPost("migrate")]
+    [HttpGet("migrate")]
     public async Task<IActionResult> RunMigrations()
     {
         try
