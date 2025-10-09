@@ -34,7 +34,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://banking-system-34ib.vercel.app", "https://banking-system-3z8y7bdbx-rodrigos-projects-2e367d33.vercel.app")
+        policy.WithOrigins("http://localhost:3000", "https://banking-system-34ib.vercel.app", "https://banking-system-3z8y7bdbx-rodrigos-projects-2e367d33.vercel.app", "https://banking-system-app-gilt.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
