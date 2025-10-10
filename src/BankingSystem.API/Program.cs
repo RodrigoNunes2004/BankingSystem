@@ -74,6 +74,23 @@ app.MapGet("/api/test-db", async (BankingDbContext context) => {
     }
 });
 
+// Add an endpoint to initialize the database
+app.MapPost("/api/init-db", async (BankingDbContext context) => {
+    try {
+        await context.Database.EnsureCreatedAsync();
+        return new { 
+            message = "Database initialized successfully", 
+            timestamp = DateTime.UtcNow 
+        };
+    } catch (Exception ex) {
+        return new { 
+            message = "Database initialization failed", 
+            error = ex.Message,
+            timestamp = DateTime.UtcNow 
+        };
+    }
+});
+
 app.MapControllers();
 
 app.Run();
