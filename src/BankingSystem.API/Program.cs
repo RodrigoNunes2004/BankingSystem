@@ -57,8 +57,10 @@ app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNo
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
 
 // Add an endpoint to test database connection
-app.MapGet("/api/test-db", async (BankingDbContext context) => {
+app.MapGet("/api/test-db", async (IServiceProvider serviceProvider) => {
     try {
+        using var scope = serviceProvider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
         var canConnect = await context.Database.CanConnectAsync();
         return new { 
             message = "Database connection test", 
@@ -75,8 +77,10 @@ app.MapGet("/api/test-db", async (BankingDbContext context) => {
 });
 
 // Add an endpoint to initialize the database
-app.MapPost("/api/init-db", async (BankingDbContext context) => {
+app.MapPost("/api/init-db", async (IServiceProvider serviceProvider) => {
     try {
+        using var scope = serviceProvider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<BankingDbContext>();
         await context.Database.EnsureCreatedAsync();
         return new { 
             message = "Database initialized successfully", 
