@@ -61,17 +61,17 @@ app.MapGet("/api/test-db", async (HttpContext httpContext) => {
     try {
         var context = httpContext.RequestServices.GetRequiredService<BankingDbContext>();
         var canConnect = await context.Database.CanConnectAsync();
-        return new { 
+        return Results.Ok(new { 
             message = "Database connection test", 
             canConnect = canConnect,
             timestamp = DateTime.UtcNow 
-        };
+        });
     } catch (Exception ex) {
-        return new { 
+        return Results.Ok(new { 
             message = "Database connection failed", 
             error = ex.Message,
             timestamp = DateTime.UtcNow 
-        };
+        });
     }
 });
 
@@ -80,16 +80,16 @@ app.MapPost("/api/init-db", async (HttpContext httpContext) => {
     try {
         var context = httpContext.RequestServices.GetRequiredService<BankingDbContext>();
         await context.Database.EnsureCreatedAsync();
-        return new { 
+        return Results.Ok(new { 
             message = "Database initialized successfully", 
             timestamp = DateTime.UtcNow 
-        };
+        });
     } catch (Exception ex) {
-        return new { 
+        return Results.Ok(new { 
             message = "Database initialization failed", 
             error = ex.Message,
             timestamp = DateTime.UtcNow 
-        };
+        });
     }
 });
 
