@@ -53,6 +53,9 @@ app.UseAuthorization();
 // Add a simple health check endpoint
 app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
 
+// Add a simple test endpoint that doesn't require database
+app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
+
 app.MapControllers();
 
 app.Run();
