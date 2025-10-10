@@ -49,6 +49,10 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseAuthorization();
+
+// Add a simple health check endpoint
+app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+
 app.MapControllers();
 
 app.Run();
