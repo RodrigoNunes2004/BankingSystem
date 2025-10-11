@@ -60,6 +60,13 @@ app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNo
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
 
+// Add a debug endpoint to show connection string
+app.MapGet("/api/debug-connection", (IConfiguration config) => new { 
+    connectionString = config.GetConnectionString("DefaultConnection"),
+    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+    timestamp = DateTime.UtcNow 
+});
+
 // Add an endpoint to test database connection
 app.MapGet("/api/test-db", async (HttpContext httpContext) => {
     try {
