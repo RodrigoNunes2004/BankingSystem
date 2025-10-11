@@ -14,7 +14,11 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework
 builder.Services.AddDbContext<BankingDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), 
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
