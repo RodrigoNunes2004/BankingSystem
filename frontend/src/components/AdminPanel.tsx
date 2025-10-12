@@ -63,7 +63,10 @@ const AdminPanel: React.FC = () => {
       const [usersData, accountsData, transactionsData] = await Promise.all([
         apiService.getUsers(),
         apiService.getAccounts(),
-        apiService.getTransactionsByDateRange(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date())
+        apiService.getTransactionsByDateRange(
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          new Date().toISOString()
+        )
       ]);
 
       // Calculate system stats
