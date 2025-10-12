@@ -27,30 +27,30 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Theme Colors - Fully Dark */
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  --bg-card: #161b22;
-  --bg-input: #21262d;
-  --text-primary: #f0f6fc;
-  --text-secondary: #c9d1d9;
-  --text-muted: #8b949e;
-  --border-color: #30363d;
-  --shadow-light: rgba(0, 0, 0, 0.4);
-  --shadow-medium: rgba(0, 0, 0, 0.5);
-  --shadow-heavy: rgba(0, 0, 0, 0.6);
-  --accent-primary: #7c3aed;
-  --accent-secondary: #a855f7;
-  --success-color: #22c55e;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
-  --info-color: #3b82f6;
+  /* ASB Bank Style - Professional Dark Theme */
+  --bg-primary: #000000;        /* Pure black */
+  --bg-secondary: #1a1a1a;      /* Dark gray */
+  --bg-tertiary: #2a2a2a;       /* Medium gray */
+  --bg-card: #1a1a1a;           /* Card background */
+  --bg-input: #2a2a2a;          /* Input background */
+  --text-primary: #ffffff;      /* Pure white */
+  --text-secondary: #cccccc;    /* Light gray */
+  --text-muted: #999999;        /* Medium gray */
+  --border-color: #333333;      /* Dark border */
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-heavy: rgba(0, 0, 0, 0.5);
+  --accent-primary: #ffd700;    /* ASB Yellow */
+  --accent-secondary: #ffed4e;  /* Light yellow */
+  --success-color: #ffd700;     /* Yellow for success */
+  --warning-color: #ffd700;     /* Yellow for warnings */
+  --error-color: #ffd700;       /* Yellow for errors (not red!) */
+  --info-color: #ffd700;        /* Yellow for info */
 
   /* Toggle specific colors */
-  --toggle-track-bg: #4a4a4a;
-  --toggle-thumb-bg: #2a2a2a;
-  --toggle-icon-color: #e0e0e0;
+  --toggle-track-bg: #333333;
+  --toggle-thumb-bg: #ffd700;
+  --toggle-icon-color: #000000;
 }
 
 /* Reset and base styles */
@@ -79,15 +79,12 @@ body {
 
 /* Header styles */
 .app-header {
-  background: linear-gradient(
-    135deg,
-    var(--accent-primary) 0%,
-    var(--accent-secondary) 100%
-  );
+  background: #000000; /* Pure black like ASB Bank */
   color: white;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px var(--shadow-light);
   transition: all 0.3s ease;
+  border-bottom: 2px solid var(--accent-primary); /* Yellow accent line */
 }
 
 .header-content {
@@ -323,13 +320,14 @@ body {
 }
 
 .btn-danger {
-  background: var(--error-color);
-  color: white;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-danger:hover {
-  background: var(--error-color);
-  opacity: 0.9;
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
 }
 
 .btn-sm {
@@ -459,8 +457,8 @@ body {
 }
 
 .status.active {
-  background: #d4edda;
-  color: #155724;
+  background: var(--accent-primary);
+  color: #000000;
 }
 
 .status.locked {
@@ -469,13 +467,14 @@ body {
 }
 
 .status.completed {
-  background: #d4edda;
-  color: #155724;
+  background: var(--accent-primary);
+  color: #000000;
 }
 
 .status.pending {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-primary);
 }
 
 .status.failed {
@@ -1232,15 +1231,15 @@ body {
 }
 
 .status-badge.active {
-  background: rgba(40, 167, 69, 0.2);
-  color: #28a745;
-  border: 1px solid #28a745;
+  background: var(--accent-primary);
+  color: #000000;
+  border: 1px solid var(--accent-primary);
 }
 
 .status-badge.inactive {
-  background: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
-  border: 1px solid #dc3545;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
 }
 
 .card-number {
@@ -1322,21 +1321,25 @@ body {
 }
 
 .btn-warning {
-  background: #ffc107;
-  color: #212529;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-warning:hover {
-  background: #e0a800;
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
 }
 
 .btn-success {
-  background: #28a745;
-  color: white;
+  background: var(--accent-primary);
+  color: #000000;
+  border: 1px solid var(--accent-primary);
 }
 
 .btn-success:hover {
-  background: #218838;
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
 }
 
 .btn-secondary {
@@ -1465,16 +1468,16 @@ body {
 }
 
 .product-card.popular {
-  border-color: #28a745;
-  background: linear-gradient(135deg, #f8fff9 0%, #ffffff 100%);
+  border-color: var(--accent-primary);
+  background: var(--bg-card);
 }
 
 .popular-badge {
   position: absolute;
-  top: -10px;
-  right: 20px;
-  background: #28a745;
-  color: white;
+  top: 10px;
+  right: 10px;
+  background: var(--accent-primary);
+  color: #000000;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -2074,13 +2077,14 @@ body {
 }
 
 .transfer-status.completed {
-  background: #d4edda;
-  color: #155724;
+  background: var(--accent-primary);
+  color: #000000;
 }
 
 .transfer-status.pending {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-primary);
 }
 
 .transfer-status.failed {
@@ -2139,13 +2143,18 @@ body {
     border-radius: 8px;
   }
 
-  /* Make transaction management buttons stack on mobile */
+  /* Better mobile layout for transaction buttons */
   .transaction-management .tab-buttons {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
   }
 
   .transaction-management .tab-buttons button {
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    padding: 1rem 0.5rem;
+    font-size: 0.9rem;
   }
 }
