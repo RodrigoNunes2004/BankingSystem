@@ -58,7 +58,7 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
-        <h1>Banking System</h1>
+        <h1>Banking System v2.1 - DEPLOYMENT TEST</h1>
         <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
         <nav className="nav-tabs">
           <button
