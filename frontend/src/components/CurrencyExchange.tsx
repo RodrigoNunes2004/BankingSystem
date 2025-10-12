@@ -43,10 +43,34 @@ const CurrencyExchange: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [accountsData] = await Promise.all([
-        apiService.getAccounts()
-      ]);
-      setAccounts(accountsData);
+      // Use mock accounts data instead of API call
+      const mockAccounts = [
+        {
+          id: 1,
+          accountNumber: "7559546839",
+          accountType: "Checking",
+          balance: 8200.00,
+          availableBalance: 8200.00,
+          userId: 1,
+          currency: "USD",
+          isLocked: false,
+          userName: "John Doe",
+          createdAt: "2024-01-01T00:00:00Z"
+        },
+        {
+          id: 2,
+          accountNumber: "6275708843",
+          accountType: "Savings",
+          balance: 1600.00,
+          availableBalance: 1600.00,
+          userId: 1,
+          currency: "USD",
+          isLocked: false,
+          userName: "John Doe",
+          createdAt: "2024-01-01T00:00:00Z"
+        }
+      ];
+      setAccounts(mockAccounts);
       
       // Mock exchange rates for now (we'll implement real API later)
       setExchangeRates([

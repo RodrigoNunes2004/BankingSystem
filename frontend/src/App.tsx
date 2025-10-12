@@ -24,7 +24,18 @@ function App() {
       case "currency":
         return <CurrencyExchange />;
       case "test":
-        return <div style={{padding: '2rem', backgroundColor: 'yellow', color: 'black'}}><h2>🧪 TEST TAB WORKING!</h2><p>If you can see this, the navigation is working!</p></div>;
+        return (
+          <div
+            style={{
+              padding: "2rem",
+              backgroundColor: "yellow",
+              color: "black",
+            }}
+          >
+            <h2>🧪 TEST TAB WORKING!</h2>
+            <p>If you can see this, the navigation is working!</p>
+          </div>
+        );
       case "cards":
         return (
           <div>
@@ -77,26 +88,32 @@ function App() {
           <button
             className={activeTab === "currency" ? "active" : ""}
             onClick={() => setActiveTab("currency")}
-            style={{backgroundColor: 'orange', color: 'white', fontWeight: 'bold'}}
+            style={{
+              backgroundColor: "orange",
+              color: "white",
+              fontWeight: "bold",
+            }}
           >
             💱 Currency Exchange (MODIFIED)
           </button>
           <button
             className={activeTab === "test" ? "active" : ""}
             onClick={() => setActiveTab("test")}
-            style={{backgroundColor: 'red', color: 'white'}}
+            style={{ backgroundColor: "red", color: "white" }}
           >
             🧪 TEST TAB
           </button>
           <button
             className={activeTab === "cards" ? "active" : ""}
             onClick={() => setActiveTab("cards")}
+            style={{ backgroundColor: "green", color: "white", fontWeight: "bold" }}
           >
             💳 Cards
           </button>
           <button
             className={activeTab === "insurance" ? "active" : ""}
             onClick={() => setActiveTab("insurance")}
+            style={{ backgroundColor: "purple", color: "white", fontWeight: "bold" }}
           >
             🛡️ Insurance
           </button>
