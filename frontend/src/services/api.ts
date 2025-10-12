@@ -161,7 +161,8 @@ class ApiService {
         referenceNumber: "TXN001",
         transactionDate: "2024-12-10T10:00:00Z",
         category: "Withdrawal",
-        createdAt: "2024-12-10T10:00:00Z"
+        createdAt: "2024-12-10T10:00:00Z",
+        accountNumber: "7559546839"
       },
       {
         id: 2,
@@ -174,7 +175,8 @@ class ApiService {
         referenceNumber: "TXN002",
         transactionDate: "2024-12-10T09:00:00Z",
         category: "Transfer",
-        createdAt: "2024-12-10T09:00:00Z"
+        createdAt: "2024-12-10T09:00:00Z",
+        accountNumber: "7559546839"
       }
     ];
 
