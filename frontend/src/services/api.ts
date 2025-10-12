@@ -6,6 +6,7 @@ const API_BASE_URL =
 
 // Fallback to mock data when API is unavailable
 const USE_MOCK_DATA = true;
+const FORCE_MOCK_DATA = true; // Force mock data for now
 
 export interface User {
   id: number;
@@ -98,43 +99,9 @@ class ApiService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    // Use mock data when API is unavailable
-    if (USE_MOCK_DATA) {
-      return this.getMockData<T>(endpoint, options);
-    }
-
-    const url = `${API_BASE_URL}${endpoint}`;
-    const config: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    try {
-      const response = await fetch(url, config);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        // If API is down, fallback to mock data
-        if (response.status >= 500) {
-          console.warn(`API unavailable (${response.status}), using mock data`);
-          return this.getMockData<T>(endpoint, options);
-        }
-        throw new Error(`API Error: ${response.status} - ${errorText}`);
-      }
-
-      if (response.status === 204) {
-        return {} as T;
-      }
-
-      return response.json();
-    } catch (error) {
-      // If network error, fallback to mock data
-      console.warn(`Network error, using mock data:`, error);
-      return this.getMockData<T>(endpoint, options);
-    }
+    // Always use mock data for now since Azure API is down
+    console.log(`Using mock data for endpoint: ${endpoint}`);
+    return this.getMockData<T>(endpoint, options);
   }
 
   private getMockData<T>(endpoint: string, options: RequestInit): T {
