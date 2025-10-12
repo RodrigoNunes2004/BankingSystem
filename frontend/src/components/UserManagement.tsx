@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiService, User, CreateUserRequest } from "../services/api";
 import MobileDatePicker from "./MobileDatePicker";
+import ResponsiveTable from "./ResponsiveTable";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -255,45 +256,32 @@ const UserManagement: React.FC = () => {
         </div>
       )}
 
-      <div className="table-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>City</th>
-              <th>Country</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>{user.phoneNumber}</td>
-                <td>{user.city}</td>
-                <td>{user.country}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => handleEdit(user)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ResponsiveTable
+        data={users}
+        columns={[
+          { key: 'fullName', label: 'Name' },
+          { key: 'email', label: 'Email' },
+          { key: 'phoneNumber', label: 'Phone' },
+          { key: 'city', label: 'City' },
+          { key: 'country', label: 'Country' }
+        ]}
+        actions={(user) => (
+          <>
+            <button
+              className="btn btn-sm btn-secondary"
+              onClick={() => handleEdit(user)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => handleDelete(user.id)}
+            >
+              Delete
+            </button>
+          </>
+        )}
+      />
     </div>
   );
 };

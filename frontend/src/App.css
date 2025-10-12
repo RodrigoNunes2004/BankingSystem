@@ -725,6 +725,83 @@ body {
   font-weight: 500;
 }
 
+/* Responsive Table Styles */
+.responsive-table-container {
+  width: 100%;
+}
+
+.desktop-table {
+  display: block;
+}
+
+.mobile-cards {
+  display: none;
+}
+
+.mobile-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.mobile-card .card-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-card .card-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.mobile-card .card-content {
+  margin-bottom: 1rem;
+}
+
+.mobile-card .card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-card .card-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-card .card-label {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.mobile-card .card-value {
+  color: #333;
+  font-size: 0.9rem;
+  text-align: right;
+  word-break: break-word;
+}
+
+.mobile-card .card-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.mobile-card .card-actions button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+
 @media (max-width: 768px) {
   .mobile-menu {
     display: block;
@@ -732,5 +809,33 @@ body {
 
   .nav-tabs {
     display: none;
+  }
+
+  /* Hide desktop table, show mobile cards */
+  .desktop-table {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+
+  /* Improve mobile layout spacing */
+  .main-content {
+    padding: 1rem;
+  }
+
+  .main-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Better mobile form layout */
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row .form-group {
+    width: 100%;
   }
 }
