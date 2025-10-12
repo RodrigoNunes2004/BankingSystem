@@ -2466,7 +2466,9 @@ body {
   background: var(--bg-tertiary);
 }
 
-.user-info, .account-info, .transaction-info {
+.user-info,
+.account-info,
+.transaction-info {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -2601,7 +2603,9 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .user-info, .account-info, .transaction-info {
+  .user-info,
+  .account-info,
+  .transaction-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;

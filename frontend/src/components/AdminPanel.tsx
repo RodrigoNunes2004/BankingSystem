@@ -63,14 +63,14 @@ const AdminPanel: React.FC = () => {
       const [usersData, accountsData, transactionsData] = await Promise.all([
         apiService.getUsers(),
         apiService.getAccounts(),
-        apiService.getTransactions()
+        apiService.getTransactionsByDateRange(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date())
       ]);
 
       // Calculate system stats
       const totalBalance = accountsData.reduce((sum, acc) => sum + acc.balance, 0);
-      const activeUsers = usersData.filter(u => u.isActive).length;
+      const activeUsers = usersData.length; // All users are considered active for now
       const lockedAccounts = accountsData.filter(a => a.isLocked).length;
-      const pendingTransactions = transactionsData.filter(t => t.status === "Pending").length;
+      const pendingTransactions = transactionsData.filter((t: any) => t.status === "Pending").length;
 
       setSystemStats({
         totalUsers: usersData.length,
@@ -94,7 +94,7 @@ const AdminPanel: React.FC = () => {
 
       const adminAccounts: AdminAccount[] = accountsData.map(account => {
         const user = usersData.find(u => u.id === account.userId);
-        const userTransactions = transactionsData.filter(t => t.accountId === account.id);
+        const userTransactions = transactionsData.filter((t: any) => t.accountId === account.id);
         return {
           ...account,
           userEmail: user?.email || "",
@@ -106,7 +106,7 @@ const AdminPanel: React.FC = () => {
         };
       });
 
-      const adminTransactions: AdminTransaction[] = transactionsData.map(transaction => {
+      const adminTransactions: AdminTransaction[] = transactionsData.map((transaction: any) => {
         const account = accountsData.find(a => a.id === transaction.accountId);
         const user = usersData.find(u => u.id === account?.userId);
         const toAccount = transaction.toAccountId 
@@ -508,8 +508,10 @@ const AdminPanel: React.FC = () => {
                     <td>
                       <strong>{formatCurrency(transaction.amount)}</strong>
                       {transaction.toAccountNumber && (
-                        <br />
-                        <small>→ {transaction.toAccountNumber}</small>
+                        <>
+                          <br />
+                          <small>→ {transaction.toAccountNumber}</small>
+                        </>
                       )}
                     </td>
                     <td>{transaction.transactionType}</td>

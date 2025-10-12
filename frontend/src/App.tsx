@@ -94,19 +94,19 @@ function App() {
             >
               🛡️ Insurance
             </button>
-                   <button
-                     className={activeTab === "transfer" ? "active" : ""}
-                     onClick={() => setActiveTab("transfer")}
-                   >
-                     💸 Transfer
-                   </button>
-                   <button
-                     className={activeTab === "admin" ? "active" : ""}
-                     onClick={() => setActiveTab("admin")}
-                   >
-                     🔧 Admin
-                   </button>
-                 </nav>
+            <button
+              className={activeTab === "transfer" ? "active" : ""}
+              onClick={() => setActiveTab("transfer")}
+            >
+              💸 Transfer
+            </button>
+            <button
+              className={activeTab === "admin" ? "active" : ""}
+              onClick={() => setActiveTab("admin")}
+            >
+              🔧 Admin
+            </button>
+          </nav>
         </header>
         <main className="app-main">{renderContent()}</main>
       </div>
