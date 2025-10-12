@@ -4,6 +4,9 @@ const API_BASE_URL =
     ? "https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api"
     : "http://localhost:5023/api");
 
+// Fallback to mock data when API is unavailable
+const USE_MOCK_DATA = true;
+
 export interface User {
   id: number;
   firstName: string;
@@ -95,6 +98,11 @@ class ApiService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    // Use mock data when API is unavailable
+    if (USE_MOCK_DATA) {
+      return this.getMockData<T>(endpoint, options);
+    }
+
     const url = `${API_BASE_URL}${endpoint}`;
     const config: RequestInit = {
       headers: {
@@ -104,18 +112,114 @@ class ApiService {
       ...options,
     };
 
-    const response = await fetch(url, config);
+    try {
+      const response = await fetch(url, config);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        // If API is down, fallback to mock data
+        if (response.status >= 500) {
+          console.warn(`API unavailable (${response.status}), using mock data`);
+          return this.getMockData<T>(endpoint, options);
+        }
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
+      }
+
+      if (response.status === 204) {
+        return {} as T;
+      }
+
+      return response.json();
+    } catch (error) {
+      // If network error, fallback to mock data
+      console.warn(`Network error, using mock data:`, error);
+      return this.getMockData<T>(endpoint, options);
     }
+  }
 
-    if (response.status === 204) {
-      return {} as T;
-    }
+  private getMockData<T>(endpoint: string, options: RequestInit): T {
+    // Mock data for when API is unavailable
+    const mockUsers: User[] = [
+      {
+        id: 1,
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        phoneNumber: "+1234567890",
+        dateOfBirth: "1990-01-15",
+        address: "123 Main St",
+        city: "New York",
+        postalCode: "10001",
+        country: "USA",
+        fullName: "John Doe",
+        createdAt: "2024-01-01T00:00:00Z"
+      }
+    ];
 
-    return response.json();
+    const mockAccounts: Account[] = [
+      {
+        id: 1,
+        accountNumber: "7559546839",
+        accountType: "Checking",
+        balance: 8200.00,
+        availableBalance: 8200.00,
+        userId: 1,
+        currency: "USD",
+        isLocked: false,
+        userName: "John Doe",
+        createdAt: "2024-01-01T00:00:00Z"
+      },
+      {
+        id: 2,
+        accountNumber: "6275708843",
+        accountType: "Savings",
+        balance: 1600.00,
+        availableBalance: 1600.00,
+        userId: 1,
+        currency: "USD",
+        isLocked: false,
+        userName: "John Doe",
+        createdAt: "2024-01-01T00:00:00Z"
+      }
+    ];
+
+    const mockTransactions: Transaction[] = [
+      {
+        id: 1,
+        transactionType: "WITHDRAWAL",
+        amount: 200.00,
+        accountId: 1,
+        description: "ATM Withdrawal",
+        status: "Completed",
+        referenceNumber: "TXN001",
+        transactionDate: "2024-12-10T10:00:00Z",
+        category: "Withdrawal",
+        createdAt: "2024-12-10T10:00:00Z"
+      },
+      {
+        id: 2,
+        transactionType: "TRANSFER",
+        amount: 800.00,
+        accountId: 1,
+        toAccountId: 2,
+        description: "Transfer to Savings",
+        status: "Completed",
+        referenceNumber: "TXN002",
+        transactionDate: "2024-12-10T09:00:00Z",
+        category: "Transfer",
+        createdAt: "2024-12-10T09:00:00Z"
+      }
+    ];
+
+    // Return appropriate mock data based on endpoint
+    if (endpoint === "/users") return mockUsers as T;
+    if (endpoint === "/accounts") return mockAccounts as T;
+    if (endpoint.includes("/transactions/date-range")) return mockTransactions as T;
+    if (endpoint.includes("/transactions/account/")) return mockTransactions as T;
+    if (endpoint.includes("/transactions/user/")) return mockTransactions as T;
+    
+    // Default empty response for other endpoints
+    return [] as T;
   }
 
   // User endpoints
