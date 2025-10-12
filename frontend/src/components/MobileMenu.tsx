@@ -13,6 +13,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ activeTab, onTabChange }) => {
     { id: "users", label: "Users", icon: "👥" },
     { id: "accounts", label: "Accounts", icon: "🏦" },
     { id: "transactions", label: "Transactions", icon: "💳" },
+    { id: "currency", label: "Currency Exchange", icon: "💱" },
   ];
 
   return (

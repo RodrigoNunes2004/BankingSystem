@@ -839,3 +839,125 @@ body {
     width: 100%;
   }
 }
+
+/* Currency Exchange Styles */
+.exchange-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.conversion-result {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.conversion-result h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.conversion-details {
+  margin-bottom: 1.5rem;
+}
+
+.conversion-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.conversion-row:last-child {
+  border-bottom: none;
+}
+
+.conversion-row.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #28a745;
+  border-top: 2px solid #28a745;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.exchange-rates {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.currency-rates {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.currency-rates h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.1rem;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #667eea;
+}
+
+.rate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.rate-item:last-child {
+  border-bottom: none;
+}
+
+.currency-pair {
+  font-weight: 600;
+  color: #495057;
+}
+
+.rate-value {
+  font-family: 'Courier New', monospace;
+  color: #28a745;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .exchange-form,
+  .exchange-rates {
+    padding: 1rem;
+  }
+
+  .rates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .conversion-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .conversion-row span:last-child {
+    align-self: flex-end;
+  }
+}
