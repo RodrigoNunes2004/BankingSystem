@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { apiService } from "../services/api";
 
 interface Account {
   id: number;
@@ -34,7 +34,7 @@ interface TransferRequest {
   toAccountId: number;
   amount: number;
   description: string;
-  transferType: 'internal' | 'external';
+  transferType: "internal" | "external";
   recipientEmail?: string;
   recipientName?: string;
 }
@@ -49,10 +49,10 @@ const AccountTransfer: React.FC = () => {
     fromAccountId: 0,
     toAccountId: 0,
     amount: 0,
-    description: '',
-    transferType: 'internal',
-    recipientEmail: '',
-    recipientName: ''
+    description: "",
+    transferType: "internal",
+    recipientEmail: "",
+    recipientName: "",
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -69,50 +69,50 @@ const AccountTransfer: React.FC = () => {
           id: 1,
           accountNumber: "7559546839",
           accountType: "Checking",
-          balance: 8200.00,
-          availableBalance: 8200.00,
+          balance: 8200.0,
+          availableBalance: 8200.0,
           userId: 1,
           currency: "USD",
           isLocked: false,
           userName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z"
+          createdAt: "2024-01-01T00:00:00Z",
         },
         {
           id: 2,
           accountNumber: "6275708843",
           accountType: "Savings",
-          balance: 1600.00,
-          availableBalance: 1600.00,
+          balance: 1600.0,
+          availableBalance: 1600.0,
           userId: 1,
           currency: "USD",
           isLocked: false,
           userName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z"
+          createdAt: "2024-01-01T00:00:00Z",
         },
         {
           id: 3,
           accountNumber: "1234567890",
           accountType: "Checking",
-          balance: 5000.00,
-          availableBalance: 5000.00,
+          balance: 5000.0,
+          availableBalance: 5000.0,
           userId: 2,
           currency: "USD",
           isLocked: false,
           userName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z"
+          createdAt: "2024-01-01T00:00:00Z",
         },
         {
           id: 4,
           accountNumber: "0987654321",
           accountType: "Savings",
-          balance: 12000.00,
-          availableBalance: 12000.00,
+          balance: 12000.0,
+          availableBalance: 12000.0,
           userId: 2,
           currency: "USD",
           isLocked: false,
           userName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z"
-        }
+          createdAt: "2024-01-01T00:00:00Z",
+        },
       ];
 
       const mockUsers: User[] = [
@@ -128,7 +128,7 @@ const AccountTransfer: React.FC = () => {
           postalCode: "10001",
           country: "USA",
           fullName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z"
+          createdAt: "2024-01-01T00:00:00Z",
         },
         {
           id: 2,
@@ -142,8 +142,8 @@ const AccountTransfer: React.FC = () => {
           postalCode: "90210",
           country: "USA",
           fullName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z"
-        }
+          createdAt: "2024-01-01T00:00:00Z",
+        },
       ];
 
       setAccounts(mockAccounts);
@@ -155,36 +155,48 @@ const AccountTransfer: React.FC = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setTransferRequest(prev => ({
+    setTransferRequest((prev) => ({
       ...prev,
-      [name]: name === 'amount' ? parseFloat(value) || 0 : value
+      [name]: name === "amount" ? parseFloat(value) || 0 : value,
     }));
   };
 
-  const handleTransferTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const transferType = e.target.value as 'internal' | 'external';
-    setTransferRequest(prev => ({
+  const handleTransferTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const transferType = e.target.value as "internal" | "external";
+    setTransferRequest((prev) => ({
       ...prev,
       transferType,
-      toAccountId: transferType === 'external' ? 0 : prev.toAccountId
+      toAccountId: transferType === "external" ? 0 : prev.toAccountId,
     }));
   };
 
   const getAvailableAccounts = () => {
-    if (transferRequest.transferType === 'internal') {
-      return accounts.filter(account => account.id !== transferRequest.fromAccountId);
+    if (transferRequest.transferType === "internal") {
+      return accounts.filter(
+        (account) => account.id !== transferRequest.fromAccountId
+      );
     }
     return [];
   };
 
   const getFromAccount = () => {
-    return accounts.find(account => account.id === transferRequest.fromAccountId);
+    return accounts.find(
+      (account) => account.id === transferRequest.fromAccountId
+    );
   };
 
   const getToAccount = () => {
-    return accounts.find(account => account.id === transferRequest.toAccountId);
+    return accounts.find(
+      (account) => account.id === transferRequest.toAccountId
+    );
   };
 
   const validateTransfer = () => {
@@ -193,12 +205,18 @@ const AccountTransfer: React.FC = () => {
       return false;
     }
 
-    if (transferRequest.transferType === 'internal' && !transferRequest.toAccountId) {
+    if (
+      transferRequest.transferType === "internal" &&
+      !transferRequest.toAccountId
+    ) {
       setError("Please select a destination account");
       return false;
     }
 
-    if (transferRequest.transferType === 'external' && (!transferRequest.recipientEmail || !transferRequest.recipientName)) {
+    if (
+      transferRequest.transferType === "external" &&
+      (!transferRequest.recipientEmail || !transferRequest.recipientName)
+    ) {
       setError("Please provide recipient email and name for external transfer");
       return false;
     }
@@ -231,7 +249,7 @@ const AccountTransfer: React.FC = () => {
       setSuccess(null);
 
       // Simulate transfer processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Update account balances (mock)
       const fromAccount = getFromAccount();
@@ -247,19 +265,22 @@ const AccountTransfer: React.FC = () => {
         toAccount.availableBalance += transferRequest.amount;
       }
 
-      setSuccess(`Transfer of $${transferRequest.amount.toFixed(2)} completed successfully!`);
-      
+      setSuccess(
+        `Transfer of $${transferRequest.amount.toFixed(
+          2
+        )} completed successfully!`
+      );
+
       // Reset form
       setTransferRequest({
         fromAccountId: 0,
         toAccountId: 0,
         amount: 0,
-        description: '',
-        transferType: 'internal',
-        recipientEmail: '',
-        recipientName: ''
+        description: "",
+        transferType: "internal",
+        recipientEmail: "",
+        recipientName: "",
       });
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "Transfer failed");
     } finally {
@@ -274,14 +295,14 @@ const AccountTransfer: React.FC = () => {
   return (
     <div className="main-content">
       <h2>💸 Account Transfer</h2>
-      
+
       {error && <div className="error">Error: {error}</div>}
       {success && <div className="success">{success}</div>}
 
       <div className="transfer-container">
         <div className="transfer-form">
           <h3>Transfer Money</h3>
-          
+
           <div className="form-group">
             <label>Transfer Type</label>
             <select
@@ -290,8 +311,12 @@ const AccountTransfer: React.FC = () => {
               onChange={handleTransferTypeChange}
               className="form-control"
             >
-              <option value="internal">Internal Transfer (Between Your Accounts)</option>
-              <option value="external">External Transfer (To Another User)</option>
+              <option value="internal">
+                Internal Transfer (Between Your Accounts)
+              </option>
+              <option value="external">
+                External Transfer (To Another User)
+              </option>
             </select>
           </div>
 
@@ -304,15 +329,16 @@ const AccountTransfer: React.FC = () => {
               className="form-control"
             >
               <option value={0}>Select source account</option>
-              {accounts.map(account => (
+              {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
-                  {account.accountNumber} - {account.accountType} (${account.availableBalance.toFixed(2)})
+                  {account.accountNumber} - {account.accountType} ($
+                  {account.availableBalance.toFixed(2)})
                 </option>
               ))}
             </select>
           </div>
 
-          {transferRequest.transferType === 'internal' && (
+          {transferRequest.transferType === "internal" && (
             <div className="form-group">
               <label>To Account</label>
               <select
@@ -322,16 +348,17 @@ const AccountTransfer: React.FC = () => {
                 className="form-control"
               >
                 <option value={0}>Select destination account</option>
-                {getAvailableAccounts().map(account => (
+                {getAvailableAccounts().map((account) => (
                   <option key={account.id} value={account.id}>
-                    {account.accountNumber} - {account.accountType} (${account.availableBalance.toFixed(2)})
+                    {account.accountNumber} - {account.accountType} ($
+                    {account.availableBalance.toFixed(2)})
                   </option>
                 ))}
               </select>
             </div>
           )}
 
-          {transferRequest.transferType === 'external' && (
+          {transferRequest.transferType === "external" && (
             <>
               <div className="form-group">
                 <label>Recipient Name</label>
@@ -390,56 +417,78 @@ const AccountTransfer: React.FC = () => {
             disabled={isProcessing}
             className="btn btn-primary transfer-btn"
           >
-            {isProcessing ? 'Processing Transfer...' : 'Transfer Money'}
+            {isProcessing ? "Processing Transfer..." : "Transfer Money"}
           </button>
         </div>
 
         <div className="transfer-summary">
           <h3>Transfer Summary</h3>
-          
+
           {transferRequest.fromAccountId && (
             <div className="summary-item">
               <strong>From:</strong>
               <div className="account-info">
-                <span className="account-number">{getFromAccount()?.accountNumber}</span>
-                <span className="account-type">{getFromAccount()?.accountType}</span>
-                <span className="account-balance">${getFromAccount()?.availableBalance.toFixed(2)}</span>
+                <span className="account-number">
+                  {getFromAccount()?.accountNumber}
+                </span>
+                <span className="account-type">
+                  {getFromAccount()?.accountType}
+                </span>
+                <span className="account-balance">
+                  ${getFromAccount()?.availableBalance.toFixed(2)}
+                </span>
               </div>
             </div>
           )}
 
-          {transferRequest.transferType === 'internal' && transferRequest.toAccountId && (
-            <div className="summary-item">
-              <strong>To:</strong>
-              <div className="account-info">
-                <span className="account-number">{getToAccount()?.accountNumber}</span>
-                <span className="account-type">{getToAccount()?.accountType}</span>
-                <span className="account-balance">${getToAccount()?.availableBalance.toFixed(2)}</span>
+          {transferRequest.transferType === "internal" &&
+            transferRequest.toAccountId && (
+              <div className="summary-item">
+                <strong>To:</strong>
+                <div className="account-info">
+                  <span className="account-number">
+                    {getToAccount()?.accountNumber}
+                  </span>
+                  <span className="account-type">
+                    {getToAccount()?.accountType}
+                  </span>
+                  <span className="account-balance">
+                    ${getToAccount()?.availableBalance.toFixed(2)}
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {transferRequest.transferType === 'external' && transferRequest.recipientName && (
-            <div className="summary-item">
-              <strong>To:</strong>
-              <div className="recipient-info">
-                <span className="recipient-name">{transferRequest.recipientName}</span>
-                <span className="recipient-email">{transferRequest.recipientEmail}</span>
+          {transferRequest.transferType === "external" &&
+            transferRequest.recipientName && (
+              <div className="summary-item">
+                <strong>To:</strong>
+                <div className="recipient-info">
+                  <span className="recipient-name">
+                    {transferRequest.recipientName}
+                  </span>
+                  <span className="recipient-email">
+                    {transferRequest.recipientEmail}
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {transferRequest.amount > 0 && (
             <div className="summary-item amount">
               <strong>Amount:</strong>
-              <span className="transfer-amount">${transferRequest.amount.toFixed(2)}</span>
+              <span className="transfer-amount">
+                ${transferRequest.amount.toFixed(2)}
+              </span>
             </div>
           )}
 
           {transferRequest.description && (
             <div className="summary-item">
               <strong>Description:</strong>
-              <span className="transfer-description">{transferRequest.description}</span>
+              <span className="transfer-description">
+                {transferRequest.description}
+              </span>
             </div>
           )}
         </div>
@@ -457,7 +506,7 @@ const AccountTransfer: React.FC = () => {
             </div>
             <div className="transfer-status completed">Completed</div>
           </div>
-          
+
           <div className="transfer-item">
             <div className="transfer-icon">💸</div>
             <div className="transfer-details">

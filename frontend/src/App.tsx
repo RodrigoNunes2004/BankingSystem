@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-// Banking System with Cards and Insurance Management - Version 2.1 - 2024-01-15-16:00
+// Banking System with Dark Mode Theme Toggle - Version 2.2 - 2024-01-15-17:00
 import Dashboard from "./components/Dashboard";
 import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
@@ -10,6 +10,8 @@ import CardManagement from "./components/CardManagement";
 import InsuranceManagement from "./components/InsuranceManagement";
 import AccountTransfer from "./components/AccountTransfer";
 import MobileMenu from "./components/MobileMenu";
+import ThemeToggle from "./components/ThemeToggle";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -44,25 +46,31 @@ function App() {
             <p>Cards feature is working!</p>
           </div>
         );
-        case "insurance":
-          return (
-            <div>
-              <h2>🛡️ Insurance Management</h2>
-              <p>Insurance feature is working!</p>
-            </div>
-          );
-        case "transfer":
-          return <AccountTransfer />;
-        default:
-          return <Dashboard />;
+      case "insurance":
+        return (
+          <div>
+            <h2>🛡️ Insurance Management</h2>
+            <p>Insurance feature is working!</p>
+          </div>
+        );
+      case "transfer":
+        return <AccountTransfer />;
+      default:
+        return <Dashboard />;
     }
   };
 
   return (
-    <div className="App">
-      <header className="app-header">
-        <h1>🎯 BANKING SYSTEM v2.1 - TARGET DEPLOYMENT 🎯</h1>
-        <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
+    <ThemeProvider>
+      <div className="App">
+        <header className="app-header">
+          <div className="header-content">
+            <h1>🌙 BANKING SYSTEM v2.2 - DARK MODE DEPLOYMENT 🌙</h1>
+            <div className="header-actions">
+              <ThemeToggle />
+              <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
+            </div>
+          </div>
         <nav className="nav-tabs">
           <button
             className={activeTab === "dashboard" ? "active" : ""}
@@ -141,9 +149,10 @@ function App() {
           </button>
           {/* Debug: Total tabs should be 7 */}
         </nav>
-      </header>
-      <main className="app-main">{renderContent()}</main>
-    </div>
+        </header>
+        <main className="app-main">{renderContent()}</main>
+      </div>
+    </ThemeProvider>
   );
 }
 

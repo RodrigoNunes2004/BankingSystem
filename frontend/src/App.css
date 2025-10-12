@@ -1,3 +1,54 @@
+/* CSS Variables for Theme System */
+:root {
+  /* Light Theme Colors */
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f8f9fa;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border-color: #e0e0e0;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-heavy: rgba(0, 0, 0, 0.2);
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --info-color: #17a2b8;
+  
+  /* Toggle specific colors */
+  --toggle-track-bg: #e0e0e0;
+  --toggle-thumb-bg: #ffffff;
+  --toggle-icon-color: #666666;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-heavy: rgba(0, 0, 0, 0.5);
+  --accent-primary: #7c8df0;
+  --accent-secondary: #8b5fbf;
+  --success-color: #34d058;
+  --warning-color: #ffd33d;
+  --error-color: #f85149;
+  --info-color: #58a6ff;
+  
+  /* Toggle specific colors */
+  --toggle-track-bg: #4a4a4a;
+  --toggle-thumb-bg: #2a2a2a;
+  --toggle-icon-color: #e0e0e0;
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -11,8 +62,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .App {
@@ -23,14 +75,28 @@ body {
 
 /* Header styles */
 .app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   color: white;
   padding: 1rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
+  transition: all 0.3s ease;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .app-header h1 {
-  margin-bottom: 1rem;
+  margin: 0;
   font-size: 2rem;
   font-weight: 600;
 }
@@ -71,13 +137,27 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+.main-content {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.main-content h2 {
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 /* Dashboard styles */
 .dashboard h2 {
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-primary);
   font-size: 1.8rem;
+  transition: color 0.3s ease;
 }
 
 .stats-grid {
@@ -88,12 +168,13 @@ body {
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-secondary);
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .stat-card:hover {
@@ -211,31 +292,32 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px var(--shadow-medium);
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: var(--text-secondary);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #5a6268;
+  background: var(--text-primary);
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: var(--error-color);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #c82333;
+  background: var(--error-color);
+  opacity: 0.9;
 }
 
 .btn-sm {
@@ -288,24 +370,29 @@ body {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--shadow-light);
 }
 
 .form-actions {
@@ -316,10 +403,12 @@ body {
 
 /* Table styles */
 .table-container {
-  background: white;
+  background: var(--bg-secondary);
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
   overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 .data-table {
@@ -328,21 +417,24 @@ body {
 }
 
 .data-table th {
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
   padding: 1rem;
   text-align: left;
   font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #dee2e6;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 .data-table td {
   padding: 1rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
 .data-table tr:hover {
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
 }
 
 /* Status indicators */
@@ -445,22 +537,32 @@ body {
 
 /* Loading and error states */
 .loading,
-.error {
+.error,
+.success {
   text-align: center;
   padding: 2rem;
   font-size: 1.1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
 }
 
 .loading {
-  color: #666;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
 }
 
 .error {
-  color: #dc3545;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 6px;
-  margin: 1rem 0;
+  color: var(--error-color);
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+}
+
+.success {
+  color: var(--success-color);
+  background: rgba(52, 208, 88, 0.1);
+  border: 1px solid rgba(52, 208, 88, 0.2);
 }
 
 /* Mobile-first responsive design */
@@ -477,6 +579,16 @@ body {
 @media (max-width: 768px) {
   .app-header {
     padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
   }
 
   .app-header h1 {
@@ -742,25 +854,28 @@ body {
 }
 
 .mobile-card {
-  background: white;
+  background: var(--bg-secondary);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-light);
   margin-bottom: 1rem;
   padding: 1rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 .mobile-card .card-header {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5rem;
   margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
 }
 
 .mobile-card .card-header h3 {
   margin: 0;
-  color: #333;
+  color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .mobile-card .card-content {
@@ -772,7 +887,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
 }
 
 .mobile-card .card-row:last-child {
@@ -781,15 +897,17 @@ body {
 
 .mobile-card .card-label {
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .mobile-card .card-value {
-  color: #333;
+  color: var(--text-primary);
   font-size: 0.9rem;
   text-align: right;
   word-break: break-word;
+  transition: color 0.3s ease;
 }
 
 .mobile-card .card-actions {
@@ -797,7 +915,8 @@ body {
   gap: 0.5rem;
   justify-content: flex-end;
   padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
 }
 
 .mobile-card .card-actions button {
