@@ -15,6 +15,8 @@ public class BankingDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<CurrencyExchange> CurrencyExchanges { get; set; }
+    public DbSet<ExchangeRate> ExchangeRates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,6 +76,44 @@ public class BankingDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.ToAccountId)
                   .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // CurrencyExchange configuration
+        modelBuilder.Entity<CurrencyExchange>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FromCurrency).IsRequired().HasMaxLength(3);
+            entity.Property(e => e.ToCurrency).IsRequired().HasMaxLength(3);
+            entity.Property(e => e.ExchangeRate).HasColumnType("decimal(18,6)");
+            entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.ConvertedAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Fee).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Status).HasMaxLength(50).HasDefaultValue("Completed");
+
+            // Foreign key relationships
+            entity.HasOne(e => e.FromAccount)
+                  .WithMany()
+                  .HasForeignKey(e => e.FromAccountId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.ToAccount)
+                  .WithMany()
+                  .HasForeignKey(e => e.ToAccountId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ExchangeRate configuration
+        modelBuilder.Entity<ExchangeRate>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FromCurrency).IsRequired().HasMaxLength(3);
+            entity.Property(e => e.ToCurrency).IsRequired().HasMaxLength(3);
+            entity.Property(e => e.Rate).HasColumnType("decimal(18,6)");
+            entity.Property(e => e.Source).HasMaxLength(100);
+
+            // Unique constraint for currency pair
+            entity.HasIndex(e => new { e.FromCurrency, e.ToCurrency }).IsUnique();
         });
     }
 }
