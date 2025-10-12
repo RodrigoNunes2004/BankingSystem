@@ -65,90 +65,97 @@ function App() {
       <div className="App">
         <header className="app-header">
           <div className="header-content">
-            <h1>🌙 BANKING SYSTEM v2.2 - DARK MODE DEPLOYMENT 🌙</h1>
+            <h1>🌙 BANKING SYSTEM v2.3 - THEME TOGGLE FIX 🌙</h1>
             <div className="header-actions">
-              <ThemeToggle />
+              <div style={{ 
+                background: 'rgba(255,255,255,0.2)', 
+                padding: '0.5rem', 
+                borderRadius: '8px',
+                border: '2px solid rgba(255,255,255,0.3)'
+              }}>
+                <ThemeToggle />
+              </div>
               <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
-        <nav className="nav-tabs">
-          <button
-            className={activeTab === "dashboard" ? "active" : ""}
-            onClick={() => setActiveTab("dashboard")}
-          >
-            Dashboard (v2.1)
-          </button>
-          <button
-            className={activeTab === "users" ? "active" : ""}
-            onClick={() => setActiveTab("users")}
-          >
-            Users
-          </button>
-          <button
-            className={activeTab === "accounts" ? "active" : ""}
-            onClick={() => setActiveTab("accounts")}
-          >
-            Accounts
-          </button>
-          <button
-            className={activeTab === "transactions" ? "active" : ""}
-            onClick={() => setActiveTab("transactions")}
-          >
-            Transactions
-          </button>
-          <button
-            className={activeTab === "currency" ? "active" : ""}
-            onClick={() => setActiveTab("currency")}
-            style={{
-              backgroundColor: "orange",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            💱 Currency Exchange (MODIFIED)
-          </button>
-          <button
-            className={activeTab === "test" ? "active" : ""}
-            onClick={() => setActiveTab("test")}
-            style={{ backgroundColor: "red", color: "white" }}
-          >
-            🧪 TEST TAB
-          </button>
-          <button
-            className={activeTab === "cards" ? "active" : ""}
-            onClick={() => setActiveTab("cards")}
-            style={{
-              backgroundColor: "green",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            💳 Cards
-          </button>
-          <button
-            className={activeTab === "insurance" ? "active" : ""}
-            onClick={() => setActiveTab("insurance")}
-            style={{
-              backgroundColor: "purple",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            🛡️ Insurance
-          </button>
-          <button
-            className={activeTab === "transfer" ? "active" : ""}
-            onClick={() => setActiveTab("transfer")}
-            style={{
-              backgroundColor: "teal",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            💸 Transfer
-          </button>
-          {/* Debug: Total tabs should be 7 */}
-        </nav>
+          <nav className="nav-tabs">
+            <button
+              className={activeTab === "dashboard" ? "active" : ""}
+              onClick={() => setActiveTab("dashboard")}
+            >
+              Dashboard (v2.1)
+            </button>
+            <button
+              className={activeTab === "users" ? "active" : ""}
+              onClick={() => setActiveTab("users")}
+            >
+              Users
+            </button>
+            <button
+              className={activeTab === "accounts" ? "active" : ""}
+              onClick={() => setActiveTab("accounts")}
+            >
+              Accounts
+            </button>
+            <button
+              className={activeTab === "transactions" ? "active" : ""}
+              onClick={() => setActiveTab("transactions")}
+            >
+              Transactions
+            </button>
+            <button
+              className={activeTab === "currency" ? "active" : ""}
+              onClick={() => setActiveTab("currency")}
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              💱 Currency Exchange (MODIFIED)
+            </button>
+            <button
+              className={activeTab === "test" ? "active" : ""}
+              onClick={() => setActiveTab("test")}
+              style={{ backgroundColor: "red", color: "white" }}
+            >
+              🧪 TEST TAB
+            </button>
+            <button
+              className={activeTab === "cards" ? "active" : ""}
+              onClick={() => setActiveTab("cards")}
+              style={{
+                backgroundColor: "green",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              💳 Cards
+            </button>
+            <button
+              className={activeTab === "insurance" ? "active" : ""}
+              onClick={() => setActiveTab("insurance")}
+              style={{
+                backgroundColor: "purple",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              🛡️ Insurance
+            </button>
+            <button
+              className={activeTab === "transfer" ? "active" : ""}
+              onClick={() => setActiveTab("transfer")}
+              style={{
+                backgroundColor: "teal",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              💸 Transfer
+            </button>
+            {/* Debug: Total tabs should be 7 */}
+          </nav>
         </header>
         <main className="app-main">{renderContent()}</main>
       </div>

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
-import './ThemeToggle.css';
+import React from "react";
+import { useTheme } from "../contexts/ThemeContext";
+import "./ThemeToggle.css";
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -10,13 +10,13 @@ const ThemeToggle: React.FC = () => {
       <button
         className={`theme-toggle ${theme}`}
         onClick={toggleTheme}
-        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
         <div className="theme-toggle-track">
           <div className="theme-toggle-thumb">
             <div className="theme-icon">
-              {theme === 'light' ? (
+              {theme === "light" ? (
                 <svg
                   width="16"
                   height="16"
@@ -53,10 +53,14 @@ const ThemeToggle: React.FC = () => {
           </div>
         </div>
         <div className="theme-labels">
-          <span className={`theme-label light ${theme === 'light' ? 'active' : ''}`}>
+          <span
+            className={`theme-label light ${theme === "light" ? "active" : ""}`}
+          >
             ☀️
           </span>
-          <span className={`theme-label dark ${theme === 'dark' ? 'active' : ''}`}>
+          <span
+            className={`theme-label dark ${theme === "dark" ? "active" : ""}`}
+          >
             🌙
           </span>
         </div>

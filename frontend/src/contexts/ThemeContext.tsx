@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
-export type Theme = 'light' | 'dark';
+export type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -17,46 +23,49 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     // Check localStorage first, then system preference
-    const savedTheme = localStorage.getItem('banking-theme') as Theme;
+    const savedTheme = localStorage.getItem("banking-theme") as Theme;
     if (savedTheme) {
       return savedTheme;
     }
-    
+
     // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      return "dark";
     }
-    
-    return 'light';
+
+    return "light";
   });
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('banking-theme', newTheme);
-    
+    localStorage.setItem("banking-theme", newTheme);
+
     // Update document class for CSS variables
-    document.documentElement.setAttribute('data-theme', newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   useEffect(() => {
     // Set initial theme
-    document.documentElement.setAttribute('data-theme', theme);
-    
+    document.documentElement.setAttribute("data-theme", theme);
+
     // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e: MediaQueryListEvent) => {
       // Only auto-switch if user hasn't manually set a preference
-      if (!localStorage.getItem('banking-theme')) {
-        setTheme(e.matches ? 'dark' : 'light');
+      if (!localStorage.getItem("banking-theme")) {
+        setTheme(e.matches ? "dark" : "light");
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
   return (
@@ -69,7 +78,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
