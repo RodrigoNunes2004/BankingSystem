@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-// Banking System with Cards and Insurance Management - Version 2.0
+// Banking System with Cards and Insurance Management - Version 2.1 - 2024-01-15-16:00
 import Dashboard from "./components/Dashboard";
 import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
@@ -54,7 +54,7 @@ function App() {
             className={activeTab === "dashboard" ? "active" : ""}
             onClick={() => setActiveTab("dashboard")}
           >
-            Dashboard
+            Dashboard (v2.1)
           </button>
           <button
             className={activeTab === "users" ? "active" : ""}
