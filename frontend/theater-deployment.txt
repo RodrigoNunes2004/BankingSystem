@@ -1,0 +1,6 @@
+THEATER DEPLOYMENT - Version 2.1
+This file forces Vercel to rebuild the frontend
+Timestamp: 2024-01-15-19:15
+Purpose: Force deployment to show Cards and Insurance tabs
+Status: THEATER - DEPLOYMENT NOT WORKING
+Action: Try builds configuration again
