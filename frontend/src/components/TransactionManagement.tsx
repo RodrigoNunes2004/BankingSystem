@@ -7,6 +7,7 @@ import {
   WithdrawalRequest,
   TransferRequest,
 } from "../services/api";
+import ResponsiveTable from "./ResponsiveTable";
 
 const TransactionManagement: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -139,50 +140,47 @@ const TransactionManagement: React.FC = () => {
       {error && <div className="error">Error: {error}</div>}
 
       {activeTab === "list" && (
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>From Account</th>
-                <th>To Account</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Reference</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td>
-                    {new Date(transaction.transactionDate).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <span
-                      className={`transaction-type ${transaction.transactionType.toLowerCase()}`}
-                    >
-                      {transaction.transactionType}
-                    </span>
-                  </td>
-                  <td>${transaction.amount.toFixed(2)}</td>
-                  <td>{transaction.accountNumber}</td>
-                  <td>{transaction.toAccountNumber || "-"}</td>
-                  <td>{transaction.description}</td>
-                  <td>
-                    <span
-                      className={`status ${transaction.status.toLowerCase()}`}
-                    >
-                      {transaction.status}
-                    </span>
-                  </td>
-                  <td>{transaction.referenceNumber}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          data={transactions}
+          columns={[
+            { 
+              key: 'transactionDate', 
+              label: 'Date',
+              render: (value) => new Date(value).toLocaleDateString()
+            },
+            { 
+              key: 'transactionType', 
+              label: 'Type',
+              render: (value) => (
+                <span className={`transaction-type ${value.toLowerCase()}`}>
+                  {value}
+                </span>
+              )
+            },
+            { 
+              key: 'amount', 
+              label: 'Amount',
+              render: (value) => `$${value.toFixed(2)}`
+            },
+            { key: 'accountNumber', label: 'From Account' },
+            { 
+              key: 'toAccountNumber', 
+              label: 'To Account',
+              render: (value) => value || "-"
+            },
+            { key: 'description', label: 'Description' },
+            { 
+              key: 'status', 
+              label: 'Status',
+              render: (value) => (
+                <span className={`status ${value.toLowerCase()}`}>
+                  {value}
+                </span>
+              )
+            },
+            { key: 'referenceNumber', label: 'Reference' }
+          ]}
+        />
       )}
 
       {activeTab === "deposit" && (

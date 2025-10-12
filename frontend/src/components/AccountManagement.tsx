@@ -5,6 +5,7 @@ import {
   User,
   CreateAccountRequest,
 } from "../services/api";
+import ResponsiveTable from "./ResponsiveTable";
 
 const AccountManagement: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -186,57 +187,50 @@ const AccountManagement: React.FC = () => {
         </div>
       )}
 
-      <div className="table-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Account Number</th>
-              <th>Account Type</th>
-              <th>User</th>
-              <th>Balance</th>
-              <th>Available Balance</th>
-              <th>Currency</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accounts.map((account) => (
-              <tr key={account.id}>
-                <td>{account.accountNumber}</td>
-                <td>{account.accountType}</td>
-                <td>{account.userName}</td>
-                <td>${account.balance.toFixed(2)}</td>
-                <td>${account.availableBalance.toFixed(2)}</td>
-                <td>{account.currency}</td>
-                <td>
-                  <span
-                    className={`status ${
-                      account.isLocked ? "locked" : "active"
-                    }`}
-                  >
-                    {account.isLocked ? "Locked" : "Active"}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => handleEdit(account)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(account.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ResponsiveTable
+        data={accounts}
+        columns={[
+          { key: 'accountNumber', label: 'Account Number' },
+          { key: 'accountType', label: 'Account Type' },
+          { key: 'userName', label: 'User' },
+          { 
+            key: 'balance', 
+            label: 'Balance',
+            render: (value) => `$${value.toFixed(2)}`
+          },
+          { 
+            key: 'availableBalance', 
+            label: 'Available Balance',
+            render: (value) => `$${value.toFixed(2)}`
+          },
+          { key: 'currency', label: 'Currency' },
+          { 
+            key: 'isLocked', 
+            label: 'Status',
+            render: (value) => (
+              <span className={`status ${value ? "locked" : "active"}`}>
+                {value ? "Locked" : "Active"}
+              </span>
+            )
+          }
+        ]}
+        actions={(account) => (
+          <>
+            <button
+              className="btn btn-sm btn-secondary"
+              onClick={() => handleEdit(account)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => handleDelete(account.id)}
+            >
+              Delete
+            </button>
+          </>
+        )}
+      />
     </div>
   );
 };
