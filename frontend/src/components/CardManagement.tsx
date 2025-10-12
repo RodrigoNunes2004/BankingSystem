@@ -183,21 +183,30 @@ const CardManagement: React.FC = () => {
     );
   };
 
-  const handleSpendingLimitUpdate = async (cardId: number, newLimit: number) => {
+  const handleSpendingLimitUpdate = async (
+    cardId: number,
+    newLimit: number
+  ) => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setCards(
         cards.map((card) =>
-          card.id === cardId 
-            ? { ...card, creditLimit: newLimit, availableCredit: newLimit - (card.currentBalance || 0) } 
+          card.id === cardId
+            ? {
+                ...card,
+                creditLimit: newLimit,
+                availableCredit: newLimit - (card.currentBalance || 0),
+              }
             : card
         )
       );
       alert("Spending limit updated successfully!");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update spending limit");
+      setError(
+        err instanceof Error ? err.message : "Failed to update spending limit"
+      );
     }
   };
 
@@ -206,32 +215,31 @@ const CardManagement: React.FC = () => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      const card = cards.find(c => c.id === cardId);
+      const card = cards.find((c) => c.id === cardId);
       if (card) {
         const newCardNumber = generateCardNumber(card.cardBrand);
         setCards(
           cards.map((c) =>
-            c.id === cardId 
-              ? { ...c, cardNumber: newCardNumber, lastUsed: new Date().toISOString() } 
+            c.id === cardId
+              ? {
+                  ...c,
+                  cardNumber: newCardNumber,
+                  lastUsed: new Date().toISOString(),
+                }
               : c
           )
         );
-        alert("Card replacement requested! New card will arrive in 5-7 business days.");
+        alert(
+          "Card replacement requested! New card will arrive in 5-7 business days."
+        );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to request card replacement");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to request card replacement"
+      );
     }
-  };
-
-  const generateCardNumber = (brand: string): string => {
-    const prefixes = {
-      visa: "4532",
-      mastercard: "5555", 
-      amex: "3782"
-    };
-    const prefix = prefixes[brand as keyof typeof prefixes] || "4532";
-    const randomDigits = Math.floor(Math.random() * 1000000000000).toString().padStart(12, '0');
-    return `${prefix}-****-****-${randomDigits.slice(-4)}`;
   };
 
   const handleCardBlock = async (cardId: number) => {
@@ -264,9 +272,9 @@ const CardManagement: React.FC = () => {
   const getCardTypeColor = (type: string) => {
     switch (type) {
       case "credit":
-        return "#28a745";
+        return "#ffd700";
       case "debit":
-        return "#007bff";
+        return "#ffd700";
       default:
         return "#6c757d";
     }
@@ -395,25 +403,31 @@ const CardManagement: React.FC = () => {
                     >
                       {card.isActive ? "Deactivate" : "Activate"}
                     </button>
-                    <button 
+                    <button
                       className="btn btn-danger"
                       onClick={() => handleCardBlock(card.id)}
                     >
                       🚫 Block
                     </button>
-                    <button 
+                    <button
                       className="btn btn-secondary"
                       onClick={() => handleCardReplacement(card.id)}
                     >
                       🔄 Replace
                     </button>
                     {card.cardType === "credit" && (
-                      <button 
+                      <button
                         className="btn btn-info"
                         onClick={() => {
-                          const newLimit = prompt("Enter new spending limit:", card.creditLimit?.toString() || "0");
+                          const newLimit = prompt(
+                            "Enter new spending limit:",
+                            card.creditLimit?.toString() || "0"
+                          );
                           if (newLimit && !isNaN(Number(newLimit))) {
-                            handleSpendingLimitUpdate(card.id, Number(newLimit));
+                            handleSpendingLimitUpdate(
+                              card.id,
+                              Number(newLimit)
+                            );
                           }
                         }}
                       >

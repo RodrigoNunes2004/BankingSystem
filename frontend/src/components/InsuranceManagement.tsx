@@ -86,7 +86,7 @@ const InsuranceManagement: React.FC = () => {
         "Convertible to permanent",
       ],
       icon: "🛡️",
-      color: "#28a745",
+      color: "#ffd700",
       isPopular: true,
     },
     {
@@ -106,7 +106,7 @@ const InsuranceManagement: React.FC = () => {
         "Preventive care",
       ],
       icon: "🏥",
-      color: "#007bff",
+      color: "#ffd700",
       isPopular: true,
     },
     {
@@ -126,7 +126,7 @@ const InsuranceManagement: React.FC = () => {
         "Accident forgiveness",
       ],
       icon: "🚗",
-      color: "#ffc107",
+      color: "#ffd700",
     },
     {
       id: 4,
@@ -146,7 +146,7 @@ const InsuranceManagement: React.FC = () => {
         "Natural disaster coverage",
       ],
       icon: "🏠",
-      color: "#6f42c1",
+      color: "#ffd700",
     },
     {
       id: 5,
@@ -166,7 +166,7 @@ const InsuranceManagement: React.FC = () => {
         "24/7 assistance",
       ],
       icon: "✈️",
-      color: "#17a2b8",
+      color: "#ffd700",
     },
   ];
 
@@ -352,7 +352,7 @@ const InsuranceManagement: React.FC = () => {
   const cancelPolicy = async (policyId: number) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setPolicies(
         policies.map((policy) =>
           policy.id === policyId ? { ...policy, status: "cancelled" } : policy
@@ -367,16 +367,20 @@ const InsuranceManagement: React.FC = () => {
   const renewPolicy = async (policyId: number) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setPolicies(
         policies.map((policy) =>
-          policy.id === policyId 
-            ? { 
-                ...policy, 
+          policy.id === policyId
+            ? {
+                ...policy,
                 status: "active",
-                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-                nextPaymentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-              } 
+                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split("T")[0],
+                nextPaymentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split("T")[0],
+              }
             : policy
         )
       );
@@ -388,15 +392,17 @@ const InsuranceManagement: React.FC = () => {
 
   const fileClaim = async (policyId: number) => {
     try {
-      const policy = policies.find(p => p.id === policyId);
+      const policy = policies.find((p) => p.id === policyId);
       if (!policy) return;
 
       const claimAmount = prompt("Enter claim amount:", "0");
       const claimDescription = prompt("Describe the incident:", "");
-      
+
       if (claimAmount && claimDescription) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        alert(`Claim filed successfully! Claim ID: CLM-${Date.now()}\nAmount: $${claimAmount}\nStatus: Under Review`);
+        alert(
+          `Claim filed successfully! Claim ID: CLM-${Date.now()}\nAmount: $${claimAmount}\nStatus: Under Review`
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to file claim");
@@ -405,25 +411,36 @@ const InsuranceManagement: React.FC = () => {
 
   const updateBeneficiaries = async (policyId: number) => {
     try {
-      const policy = policies.find(p => p.id === policyId);
+      const policy = policies.find((p) => p.id === policyId);
       if (!policy) return;
 
-      const beneficiaries = prompt("Enter beneficiaries (comma-separated):", policy.beneficiaries?.join(", ") || "");
-      
+      const beneficiaries = prompt(
+        "Enter beneficiaries (comma-separated):",
+        policy.beneficiaries?.join(", ") || ""
+      );
+
       if (beneficiaries !== null) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        
+
         setPolicies(
           policies.map((p) =>
-            p.id === policyId 
-              ? { ...p, beneficiaries: beneficiaries.split(",").map(b => b.trim()).filter(b => b) } 
+            p.id === policyId
+              ? {
+                  ...p,
+                  beneficiaries: beneficiaries
+                    .split(",")
+                    .map((b) => b.trim())
+                    .filter((b) => b),
+                }
               : p
           )
         );
         alert("Beneficiaries updated successfully!");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update beneficiaries");
+      setError(
+        err instanceof Error ? err.message : "Failed to update beneficiaries"
+      );
     }
   };
 
@@ -642,19 +659,19 @@ const InsuranceManagement: React.FC = () => {
                     <button className="btn btn-primary">Make Payment</button>
                     {policy.status === "active" && (
                       <>
-                        <button 
+                        <button
                           className="btn btn-info"
                           onClick={() => fileClaim(policy.id)}
                         >
                           📋 File Claim
                         </button>
-                        <button 
+                        <button
                           className="btn btn-warning"
                           onClick={() => updateBeneficiaries(policy.id)}
                         >
                           👥 Beneficiaries
                         </button>
-                        <button 
+                        <button
                           className="btn btn-danger"
                           onClick={() => cancelPolicy(policy.id)}
                         >
@@ -663,7 +680,7 @@ const InsuranceManagement: React.FC = () => {
                       </>
                     )}
                     {policy.status === "expired" && (
-                      <button 
+                      <button
                         className="btn btn-success"
                         onClick={() => renewPolicy(policy.id)}
                       >

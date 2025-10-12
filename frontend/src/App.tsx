@@ -26,10 +26,10 @@ function App() {
         return <TransactionManagement />;
       case "currency":
         return <CurrencyExchange />;
-        case "cards":
-          return <CardManagement />;
-        case "insurance":
-          return <InsuranceManagement />;
+      case "cards":
+        return <CardManagement />;
+      case "insurance":
+        return <InsuranceManagement />;
       case "transfer":
         return <AccountTransfer />;
       default:
