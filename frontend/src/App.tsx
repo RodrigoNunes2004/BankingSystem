@@ -6,6 +6,7 @@ import AccountManagement from "./components/AccountManagement";
 import TransactionManagement from "./components/TransactionManagement";
 import CurrencyExchange from "./components/CurrencyExchange";
 import CardManagement from "./components/CardManagement";
+import InsuranceManagement from "./components/InsuranceManagement";
 import MobileMenu from "./components/MobileMenu";
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
         return <CurrencyExchange />;
       case "cards":
         return <CardManagement />;
+      case "insurance":
+        return <InsuranceManagement />;
       default:
         return <Dashboard />;
     }
@@ -69,6 +72,12 @@ function App() {
             onClick={() => setActiveTab("cards")}
           >
             💳 Cards
+          </button>
+          <button
+            className={activeTab === "insurance" ? "active" : ""}
+            onClick={() => setActiveTab("insurance")}
+          >
+            🛡️ Insurance
           </button>
         </nav>
       </header>
