@@ -1,12 +1,19 @@
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api"
-    : "http://localhost:5023/api");
+// API configuration
+const getApiBaseUrl = () => {
+  return process.env.REACT_APP_API_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api"
+      : "http://localhost:5023/api");
+};
 
 // Fallback to mock data when API is unavailable
-const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCK_DATA === "true" || false;
-const FORCE_MOCK_DATA = process.env.REACT_APP_FORCE_MOCK_DATA === "true" || false;
+const shouldUseMockData = () => {
+  return process.env.REACT_APP_USE_MOCK_DATA === "true" || false;
+};
+
+const shouldForceMockData = () => {
+  return process.env.REACT_APP_FORCE_MOCK_DATA === "true" || false;
+};
 
 export interface User {
   id: number;
@@ -124,8 +131,8 @@ class ApiService {
         postalCode: "10001",
         country: "USA",
         fullName: "John Doe",
-        createdAt: "2024-01-01T00:00:00Z"
-      }
+        createdAt: "2024-01-01T00:00:00Z",
+      },
     ];
 
     const mockAccounts: Account[] = [
@@ -133,33 +140,33 @@ class ApiService {
         id: 1,
         accountNumber: "7559546839",
         accountType: "Checking",
-        balance: 8200.00,
-        availableBalance: 8200.00,
+        balance: 8200.0,
+        availableBalance: 8200.0,
         userId: 1,
         currency: "USD",
         isLocked: false,
         userName: "John Doe",
-        createdAt: "2024-01-01T00:00:00Z"
+        createdAt: "2024-01-01T00:00:00Z",
       },
       {
         id: 2,
         accountNumber: "6275708843",
         accountType: "Savings",
-        balance: 1600.00,
-        availableBalance: 1600.00,
+        balance: 1600.0,
+        availableBalance: 1600.0,
         userId: 1,
         currency: "USD",
         isLocked: false,
         userName: "John Doe",
-        createdAt: "2024-01-01T00:00:00Z"
-      }
+        createdAt: "2024-01-01T00:00:00Z",
+      },
     ];
 
     const mockTransactions: Transaction[] = [
       {
         id: 1,
         transactionType: "WITHDRAWAL",
-        amount: 200.00,
+        amount: 200.0,
         accountId: 1,
         description: "ATM Withdrawal",
         status: "Completed",
@@ -167,12 +174,12 @@ class ApiService {
         transactionDate: "2024-12-10T10:00:00Z",
         category: "Withdrawal",
         createdAt: "2024-12-10T10:00:00Z",
-        accountNumber: "7559546839"
+        accountNumber: "7559546839",
       },
       {
         id: 2,
         transactionType: "TRANSFER",
-        amount: 800.00,
+        amount: 800.0,
         accountId: 1,
         toAccountId: 2,
         description: "Transfer to Savings",
@@ -181,17 +188,19 @@ class ApiService {
         transactionDate: "2024-12-10T09:00:00Z",
         category: "Transfer",
         createdAt: "2024-12-10T09:00:00Z",
-        accountNumber: "7559546839"
-      }
+        accountNumber: "7559546839",
+      },
     ];
 
     // Return appropriate mock data based on endpoint
     if (endpoint === "/users") return mockUsers as T;
     if (endpoint === "/accounts") return mockAccounts as T;
-    if (endpoint.includes("/transactions/date-range")) return mockTransactions as T;
-    if (endpoint.includes("/transactions/account/")) return mockTransactions as T;
+    if (endpoint.includes("/transactions/date-range"))
+      return mockTransactions as T;
+    if (endpoint.includes("/transactions/account/"))
+      return mockTransactions as T;
     if (endpoint.includes("/transactions/user/")) return mockTransactions as T;
-    
+
     // Default empty response for other endpoints
     return [] as T;
   }

@@ -49,9 +49,9 @@ interface LoanProduct {
 const LoanManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [applications, setApplications] = useState<LoanApplication[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<LoanProduct | null>(
+  const [, setSelectedProduct] = useState<LoanProduct | null>(
     null
   );
   const [showApplicationForm, setShowApplicationForm] = useState(false);

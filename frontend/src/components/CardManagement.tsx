@@ -75,7 +75,7 @@ const CardManagement: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const fetchData = async () => {
     try {

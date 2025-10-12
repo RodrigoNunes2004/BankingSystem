@@ -204,7 +204,7 @@ const InsuranceManagement: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const fetchData = async () => {
     try {

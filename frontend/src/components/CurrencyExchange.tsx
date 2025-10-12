@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiService, Account } from "../services/api";
+import { Account } from "../services/api";
 
 interface ExchangeRate {
   fromCurrency: string;

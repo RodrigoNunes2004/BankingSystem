@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { apiService } from "../services/api";
 
 interface Account {
   id: number;
@@ -44,7 +43,7 @@ const AccountTransfer: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [, setUsers] = useState<User[]>([]);
   const [transferRequest, setTransferRequest] = useState<TransferRequest>({
     fromAccountId: 0,
     toAccountId: 0,
