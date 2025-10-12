@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiService, User, CreateUserRequest } from "../services/api";
+import MobileDatePicker from "./MobileDatePicker";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -164,16 +165,14 @@ const UserManagement: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label>Date of Birth</label>
-                <input
-                  type="date"
+                <MobileDatePicker
                   value={formData.dateOfBirth}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dateOfBirth: e.target.value })
+                  onChange={(date) =>
+                    setFormData({ ...formData, dateOfBirth: date })
                   }
                   min="1900-01-01"
                   max={new Date().toISOString().split("T")[0]}
-                  required
+                  label="Date of Birth"
                 />
               </div>
 
