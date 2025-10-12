@@ -200,28 +200,28 @@ const InsuranceManagement: React.FC = () => {
       switch (quoteRequest.productType) {
         case "life":
           basePremium = 30;
-          coverageMultiplier = quoteRequest.coverageAmount / 100000;
-          if (quoteRequest.age > 50) coverageMultiplier *= 1.5;
+          coverageMultiplier = (quoteRequest.coverageAmount || 0) / 100000;
+          if ((quoteRequest.age || 0) > 50) coverageMultiplier *= 1.5;
           if (quoteRequest.healthStatus === "poor") coverageMultiplier *= 2;
           break;
         case "health":
           basePremium = 150;
-          coverageMultiplier = quoteRequest.coverageAmount / 1000000;
+          coverageMultiplier = (quoteRequest.coverageAmount || 0) / 1000000;
           if (quoteRequest.healthStatus === "poor") coverageMultiplier *= 1.8;
           break;
         case "auto":
           basePremium = 80;
-          coverageMultiplier = quoteRequest.coverageAmount / 100000;
+          coverageMultiplier = (quoteRequest.coverageAmount || 0) / 100000;
           if (quoteRequest.drivingRecord === "major") coverageMultiplier *= 2.5;
           else if (quoteRequest.drivingRecord === "minor") coverageMultiplier *= 1.3;
           break;
         case "home":
           basePremium = 60;
-          coverageMultiplier = quoteRequest.propertyValue / 300000;
+          coverageMultiplier = (quoteRequest.propertyValue || 0) / 300000;
           break;
         case "travel":
           basePremium = 20;
-          coverageMultiplier = quoteRequest.coverageAmount / 50000;
+          coverageMultiplier = (quoteRequest.coverageAmount || 0) / 50000;
           break;
       }
       
