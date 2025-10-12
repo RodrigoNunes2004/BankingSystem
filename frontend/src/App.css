@@ -210,10 +210,10 @@ body {
 }
 
 .section {
-  background: white;
+  background: var(--bg-card);
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
 }
 
 .section h3 {
@@ -353,7 +353,7 @@ body {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-card);
   padding: 2rem;
   border-radius: 10px;
   max-width: 500px;
@@ -514,9 +514,9 @@ body {
 }
 
 .tab-buttons button {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  color: #495057;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -524,7 +524,7 @@ body {
 }
 
 .tab-buttons button:hover {
-  background: #e9ecef;
+  background: var(--bg-secondary);
 }
 
 .tab-buttons button.active {
@@ -777,11 +777,11 @@ body {
 }
 
 .mobile-menu-content {
-  background: white;
+  background: var(--bg-card);
   width: 280px;
   height: 100%;
   padding: 1rem;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 0 10px var(--shadow-light);
   overflow-y: auto;
 }
 
@@ -791,11 +791,11 @@ body {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .mobile-menu-header h2 {
-  color: #333;
+  color: var(--text-primary);
   font-size: 1.2rem;
   margin: 0;
 }
@@ -805,7 +805,7 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   padding: 0;
   width: 2rem;
   height: 2rem;
@@ -832,10 +832,11 @@ body {
   transition: all 0.3s ease;
   text-align: left;
   width: 100%;
+  color: var(--text-primary);
 }
 
 .mobile-menu-item:hover {
-  background: #f8f9fa;
+  background: var(--bg-tertiary);
 }
 
 .mobile-menu-item.active {
@@ -1031,10 +1032,10 @@ body {
 }
 
 .exchange-rates {
-  background: white;
+  background: var(--bg-card);
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
 }
 
 .rates-grid {
@@ -1093,9 +1094,9 @@ body {
 }
 
 .tab-button {
-  background: white;
-  border: 1px solid #e0e0e0;
-  color: #666;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   padding: 0.75rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -1106,8 +1107,8 @@ body {
 }
 
 .tab-button:hover {
-  background: #f8f9fa;
-  border-color: #667eea;
+  background: var(--bg-tertiary);
+  border-color: var(--accent-primary);
 }
 
 .tab-button.active {
@@ -1165,10 +1166,10 @@ body {
 
 /* Card Management Styles */
 .cards-container {
-  background: white;
+  background: var(--bg-card);
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
 }
 
 .no-cards {
@@ -1441,10 +1442,10 @@ body {
 .policies-container,
 .quotes-container,
 .claims-container {
-  background: white;
+  background: var(--bg-card);
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-light);
 }
 
 .products-grid {
@@ -1455,8 +1456,8 @@ body {
 }
 
 .product-card {
-  background: white;
-  border: 2px solid #e9ecef;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
   position: relative;
@@ -1613,8 +1614,8 @@ body {
 }
 
 .policy-card {
-  background: white;
-  border: 1px solid #e9ecef;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
