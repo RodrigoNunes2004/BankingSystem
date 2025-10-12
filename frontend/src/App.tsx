@@ -58,7 +58,7 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
-        <h1>🎯 BANKING SYSTEM v2.1 - TARGET DEPLOYMENT 🎯</h1>
+        <h1>🚀 BANKING SYSTEM v2.1 - ROCKET DEPLOYMENT 🚀</h1>
         <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
         <nav className="nav-tabs">
           <button
@@ -106,14 +106,22 @@ function App() {
           <button
             className={activeTab === "cards" ? "active" : ""}
             onClick={() => setActiveTab("cards")}
-            style={{ backgroundColor: "green", color: "white", fontWeight: "bold" }}
+            style={{
+              backgroundColor: "green",
+              color: "white",
+              fontWeight: "bold",
+            }}
           >
             💳 Cards
           </button>
           <button
             className={activeTab === "insurance" ? "active" : ""}
             onClick={() => setActiveTab("insurance")}
-            style={{ backgroundColor: "purple", color: "white", fontWeight: "bold" }}
+            style={{
+              backgroundColor: "purple",
+              color: "white",
+              fontWeight: "bold",
+            }}
           >
             🛡️ Insurance
           </button>

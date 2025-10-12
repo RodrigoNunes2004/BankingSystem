@@ -1,0 +1,6 @@
+ROCKET DEPLOYMENT - Version 2.1
+This file forces Vercel to rebuild the frontend
+Timestamp: 2024-01-15-18:00
+Purpose: Force deployment to show Cards and Insurance tabs
+Status: ROCKET - DEPLOYMENT NOT WORKING
+Action: Try buildCommand configuration again
