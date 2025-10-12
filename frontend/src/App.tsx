@@ -10,6 +10,7 @@ import CardManagement from "./components/CardManagement";
 import InsuranceManagement from "./components/InsuranceManagement";
 import AccountTransfer from "./components/AccountTransfer";
 import AdminPanel from "./components/AdminPanel";
+import LoanManagement from "./components/LoanManagement";
 import MobileMenu from "./components/MobileMenu";
 import ThemeToggle from "./components/ThemeToggle";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -35,6 +36,8 @@ function App() {
         return <AccountTransfer />;
       case "admin":
         return <AdminPanel />;
+      case "loans":
+        return <LoanManagement />;
       default:
         return <Dashboard />;
     }
@@ -100,13 +103,19 @@ function App() {
             >
               💸 Transfer
             </button>
-            <button
-              className={activeTab === "admin" ? "active" : ""}
-              onClick={() => setActiveTab("admin")}
-            >
-              🔧 Admin
-            </button>
-          </nav>
+                   <button
+                     className={activeTab === "admin" ? "active" : ""}
+                     onClick={() => setActiveTab("admin")}
+                   >
+                     🔧 Admin
+                   </button>
+                   <button
+                     className={activeTab === "loans" ? "active" : ""}
+                     onClick={() => setActiveTab("loans")}
+                   >
+                     💰 Loans
+                   </button>
+                 </nav>
         </header>
         <main className="app-main">{renderContent()}</main>
       </div>
