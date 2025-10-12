@@ -5,6 +5,7 @@ import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
 import TransactionManagement from "./components/TransactionManagement";
 import CurrencyExchange from "./components/CurrencyExchange";
+import CardManagement from "./components/CardManagement";
 import MobileMenu from "./components/MobileMenu";
 
 function App() {
@@ -20,6 +21,8 @@ function App() {
         return <TransactionManagement />;
       case "currency":
         return <CurrencyExchange />;
+      case "cards":
+        return <CardManagement />;
       default:
         return <Dashboard />;
     }
@@ -60,6 +63,12 @@ function App() {
             onClick={() => setActiveTab("currency")}
           >
             💱 Currency Exchange
+          </button>
+          <button
+            className={activeTab === "cards" ? "active" : ""}
+            onClick={() => setActiveTab("cards")}
+          >
+            💳 Cards
           </button>
         </nav>
       </header>
