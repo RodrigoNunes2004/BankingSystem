@@ -65,8 +65,22 @@ function App() {
       <div className="App">
         <header className="app-header">
           <div className="header-content">
-            <h1>🌙 BANKING SYSTEM v2.3 - THEME TOGGLE FIX 🌙</h1>
+            <h1>🚨 BANKING SYSTEM v2.4 - EMERGENCY TEST 🚨</h1>
             <div className="header-actions">
+              <button 
+                style={{
+                  background: 'red',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold'
+                }}
+                onClick={() => alert('TEST BUTTON WORKS!')}
+              >
+                🧪 TEST
+              </button>
               <div style={{ 
                 background: 'rgba(255,255,255,0.2)', 
                 padding: '0.5rem', 
