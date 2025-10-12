@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+// Banking System with Cards and Insurance Management
 import Dashboard from "./components/Dashboard";
 import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
