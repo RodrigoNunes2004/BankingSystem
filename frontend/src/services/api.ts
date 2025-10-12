@@ -99,9 +99,14 @@ class ApiService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    // Always use mock data for now since Azure API is down
-    console.log(`Using mock data for endpoint: ${endpoint}`);
-    return this.getMockData<T>(endpoint, options);
+    try {
+      // Always use mock data for now since Azure API is down
+      console.log(`Using mock data for endpoint: ${endpoint}`);
+      return this.getMockData<T>(endpoint, options);
+    } catch (error) {
+      console.error(`Error in mock data for ${endpoint}:`, error);
+      throw new Error(`Mock data error: ${error}`);
+    }
   }
 
   private getMockData<T>(endpoint: string, options: RequestInit): T {
