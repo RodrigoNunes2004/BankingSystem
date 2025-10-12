@@ -8,6 +8,7 @@ import TransactionManagement from "./components/TransactionManagement";
 import CurrencyExchange from "./components/CurrencyExchange";
 import CardManagement from "./components/CardManagement";
 import InsuranceManagement from "./components/InsuranceManagement";
+import AccountTransfer from "./components/AccountTransfer";
 import MobileMenu from "./components/MobileMenu";
 
 function App() {
@@ -43,15 +44,17 @@ function App() {
             <p>Cards feature is working!</p>
           </div>
         );
-      case "insurance":
-        return (
-          <div>
-            <h2>🛡️ Insurance Management</h2>
-            <p>Insurance feature is working!</p>
-          </div>
-        );
-      default:
-        return <Dashboard />;
+        case "insurance":
+          return (
+            <div>
+              <h2>🛡️ Insurance Management</h2>
+              <p>Insurance feature is working!</p>
+            </div>
+          );
+        case "transfer":
+          return <AccountTransfer />;
+        default:
+          return <Dashboard />;
     }
   };
 
@@ -124,6 +127,17 @@ function App() {
             }}
           >
             🛡️ Insurance
+          </button>
+          <button
+            className={activeTab === "transfer" ? "active" : ""}
+            onClick={() => setActiveTab("transfer")}
+            style={{
+              backgroundColor: "teal",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          >
+            💸 Transfer
           </button>
           {/* Debug: Total tabs should be 7 */}
         </nav>
