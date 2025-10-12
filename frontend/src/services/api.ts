@@ -5,8 +5,8 @@ const API_BASE_URL =
     : "http://localhost:5023/api");
 
 // Fallback to mock data when API is unavailable
-const USE_MOCK_DATA = true;
-const FORCE_MOCK_DATA = true; // Force mock data for now
+const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCK_DATA === "true" || false;
+const FORCE_MOCK_DATA = process.env.REACT_APP_FORCE_MOCK_DATA === "true" || false;
 
 export interface User {
   id: number;
