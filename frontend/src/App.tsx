@@ -77,8 +77,9 @@ function App() {
           <button
             className={activeTab === "currency" ? "active" : ""}
             onClick={() => setActiveTab("currency")}
+            style={{backgroundColor: 'orange', color: 'white', fontWeight: 'bold'}}
           >
-            💱 Currency Exchange
+            💱 Currency Exchange (MODIFIED)
           </button>
           <button
             className={activeTab === "test" ? "active" : ""}
