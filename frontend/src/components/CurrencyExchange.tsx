@@ -138,20 +138,23 @@ const CurrencyExchange: React.FC = () => {
         <button
           className={`tab-button ${activeTab === 'buy' ? 'active' : ''}`}
           onClick={() => setActiveTab('buy')}
+          data-icon="💱"
         >
-          💱 Buy Currency
+          <span>Buy Currency</span>
         </button>
         <button
           className={`tab-button ${activeTab === 'sell' ? 'active' : ''}`}
           onClick={() => setActiveTab('sell')}
+          data-icon="💸"
         >
-          💸 Sell Currency
+          <span>Sell Currency</span>
         </button>
         <button
           className={`tab-button ${activeTab === 'rates' ? 'active' : ''}`}
           onClick={() => setActiveTab('rates')}
+          data-icon="📊"
         >
-          📊 Exchange Rates
+          <span>Exchange Rates</span>
         </button>
       </div>
 
