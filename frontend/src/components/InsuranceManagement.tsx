@@ -349,6 +349,84 @@ const InsuranceManagement: React.FC = () => {
     }
   };
 
+  const cancelPolicy = async (policyId: number) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      setPolicies(
+        policies.map((policy) =>
+          policy.id === policyId ? { ...policy, status: "cancelled" } : policy
+        )
+      );
+      alert("Policy cancelled successfully!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to cancel policy");
+    }
+  };
+
+  const renewPolicy = async (policyId: number) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      setPolicies(
+        policies.map((policy) =>
+          policy.id === policyId 
+            ? { 
+                ...policy, 
+                status: "active",
+                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+                nextPaymentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+              } 
+            : policy
+        )
+      );
+      alert("Policy renewed successfully!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to renew policy");
+    }
+  };
+
+  const fileClaim = async (policyId: number) => {
+    try {
+      const policy = policies.find(p => p.id === policyId);
+      if (!policy) return;
+
+      const claimAmount = prompt("Enter claim amount:", "0");
+      const claimDescription = prompt("Describe the incident:", "");
+      
+      if (claimAmount && claimDescription) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        alert(`Claim filed successfully! Claim ID: CLM-${Date.now()}\nAmount: $${claimAmount}\nStatus: Under Review`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to file claim");
+    }
+  };
+
+  const updateBeneficiaries = async (policyId: number) => {
+    try {
+      const policy = policies.find(p => p.id === policyId);
+      if (!policy) return;
+
+      const beneficiaries = prompt("Enter beneficiaries (comma-separated):", policy.beneficiaries?.join(", ") || "");
+      
+      if (beneficiaries !== null) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        
+        setPolicies(
+          policies.map((p) =>
+            p.id === policyId 
+              ? { ...p, beneficiaries: beneficiaries.split(",").map(b => b.trim()).filter(b => b) } 
+              : p
+          )
+        );
+        alert("Beneficiaries updated successfully!");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update beneficiaries");
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -562,6 +640,36 @@ const InsuranceManagement: React.FC = () => {
                   <div className="policy-actions">
                     <button className="btn btn-secondary">View Details</button>
                     <button className="btn btn-primary">Make Payment</button>
+                    {policy.status === "active" && (
+                      <>
+                        <button 
+                          className="btn btn-info"
+                          onClick={() => fileClaim(policy.id)}
+                        >
+                          📋 File Claim
+                        </button>
+                        <button 
+                          className="btn btn-warning"
+                          onClick={() => updateBeneficiaries(policy.id)}
+                        >
+                          👥 Beneficiaries
+                        </button>
+                        <button 
+                          className="btn btn-danger"
+                          onClick={() => cancelPolicy(policy.id)}
+                        >
+                          ❌ Cancel
+                        </button>
+                      </>
+                    )}
+                    {policy.status === "expired" && (
+                      <button 
+                        className="btn btn-success"
+                        onClick={() => renewPolicy(policy.id)}
+                      >
+                        🔄 Renew
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
