@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-// Banking System with Cards and Insurance Management
+// Banking System with Cards and Insurance Management - Version 2.0
 import Dashboard from "./components/Dashboard";
 import UserManagement from "./components/UserManagement";
 import AccountManagement from "./components/AccountManagement";
@@ -23,10 +23,22 @@ function App() {
         return <TransactionManagement />;
       case "currency":
         return <CurrencyExchange />;
+      case "test":
+        return <div style={{padding: '2rem', backgroundColor: 'yellow', color: 'black'}}><h2>🧪 TEST TAB WORKING!</h2><p>If you can see this, the navigation is working!</p></div>;
       case "cards":
-        return <div><h2>💳 Cards Management</h2><p>Cards feature is working!</p></div>;
+        return (
+          <div>
+            <h2>💳 Cards Management</h2>
+            <p>Cards feature is working!</p>
+          </div>
+        );
       case "insurance":
-        return <div><h2>🛡️ Insurance Management</h2><p>Insurance feature is working!</p></div>;
+        return (
+          <div>
+            <h2>🛡️ Insurance Management</h2>
+            <p>Insurance feature is working!</p>
+          </div>
+        );
       default:
         return <Dashboard />;
     }
@@ -67,6 +79,13 @@ function App() {
             onClick={() => setActiveTab("currency")}
           >
             💱 Currency Exchange
+          </button>
+          <button
+            className={activeTab === "test" ? "active" : ""}
+            onClick={() => setActiveTab("test")}
+            style={{backgroundColor: 'red', color: 'white'}}
+          >
+            🧪 TEST TAB
           </button>
           <button
             className={activeTab === "cards" ? "active" : ""}
