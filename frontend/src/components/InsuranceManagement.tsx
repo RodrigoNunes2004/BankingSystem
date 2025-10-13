@@ -148,7 +148,6 @@ const mockProducts: InsuranceProduct[] = [
 ];
 
 // NO DEFAULT POLICIES - each user starts with empty policy list
-const mockPolicies: InsurancePolicy[] = [];
 
 const InsuranceManagement: React.FC = () => {
   const [products, setProducts] = useState<InsuranceProduct[]>([]);

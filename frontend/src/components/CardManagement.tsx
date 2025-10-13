@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { apiService, Account } from "../services/api";
+import { Account } from "../services/api";
 
 interface Card {
   id: number;
@@ -24,9 +24,7 @@ interface CreateCardRequest {
   creditLimit?: number;
 }
 
-// Mock data moved outside component to prevent recreation on every render
 // NO DEFAULT VALUES - each user starts with empty card list
-const mockCards: Card[] = [];
 
 const CardManagement: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
@@ -146,7 +144,7 @@ const CardManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [securitySettings, mobilePaySettings, notificationSettings, spendingLimits]);
 
   useEffect(() => {
     fetchData();
