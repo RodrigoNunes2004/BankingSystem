@@ -24,26 +24,8 @@ interface CreateCardRequest {
   creditLimit?: number;
 }
 
-const CardManagement: React.FC = () => {
-  const [cards, setCards] = useState<Card[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"view" | "add" | "settings">(
-    "view"
-  );
-
-  // Add card form state
-  const [newCard, setNewCard] = useState<CreateCardRequest>({
-    cardType: "debit",
-    cardBrand: "visa",
-    accountId: 0,
-    creditLimit: 0,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Mock data for demonstration
-  const mockCards: Card[] = [
+// Mock data moved outside component to prevent recreation on every render
+const mockCards: Card[] = [
     {
       id: 1,
       cardNumber: "4532-****-****-1234",
@@ -73,6 +55,24 @@ const CardManagement: React.FC = () => {
     },
   ];
 
+const CardManagement: React.FC = () => {
+  const [cards, setCards] = useState<Card[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"view" | "add" | "settings">(
+    "view"
+  );
+
+  // Add card form state
+  const [newCard, setNewCard] = useState<CreateCardRequest>({
+    cardType: "debit",
+    cardBrand: "visa",
+    accountId: 0,
+    creditLimit: 0,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -86,7 +86,7 @@ const CardManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [mockCards]);
+  }, []);
 
   useEffect(() => {
     fetchData();

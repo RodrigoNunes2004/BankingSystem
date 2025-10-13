@@ -43,32 +43,8 @@ interface QuoteRequest {
   travelDestination?: string;
 }
 
-const InsuranceManagement: React.FC = () => {
-  const [products, setProducts] = useState<InsuranceProduct[]>([]);
-  const [policies, setPolicies] = useState<InsurancePolicy[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<
-    "products" | "policies" | "quotes" | "claims"
-  >("products");
-
-  // Quote form state
-  const [quoteRequest, setQuoteRequest] = useState<QuoteRequest>({
-    productType: "life",
-    age: 30,
-    coverageAmount: 100000,
-    term: 20,
-    healthStatus: "good",
-    drivingRecord: "clean",
-    propertyValue: 300000,
-    travelDestination: "",
-  });
-  const [quoteResult, setQuoteResult] = useState<any>(null);
-  const [isCalculating, setIsCalculating] = useState(false);
-
-  // Mock data for demonstration
-  const mockProducts: InsuranceProduct[] = [
+// Mock data moved outside component to prevent recreation on every render
+const mockProducts: InsuranceProduct[] = [
     {
       id: 1,
       name: "Life Insurance Plus",
@@ -170,7 +146,7 @@ const InsuranceManagement: React.FC = () => {
     },
   ];
 
-  const mockPolicies: InsurancePolicy[] = [
+const mockPolicies: InsurancePolicy[] = [
     {
       id: 1,
       productId: 1,
@@ -202,6 +178,30 @@ const InsuranceManagement: React.FC = () => {
     },
   ];
 
+const InsuranceManagement: React.FC = () => {
+  const [products, setProducts] = useState<InsuranceProduct[]>([]);
+  const [policies, setPolicies] = useState<InsurancePolicy[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "products" | "policies" | "quotes" | "claims"
+  >("products");
+
+  // Quote form state
+  const [quoteRequest, setQuoteRequest] = useState<QuoteRequest>({
+    productType: "life",
+    age: 30,
+    coverageAmount: 100000,
+    term: 20,
+    healthStatus: "good",
+    drivingRecord: "clean",
+    propertyValue: 300000,
+    travelDestination: "",
+  });
+  const [quoteResult, setQuoteResult] = useState<any>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -216,7 +216,7 @@ const InsuranceManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [mockProducts, mockPolicies]);
+  }, []);
 
   useEffect(() => {
     fetchData();
