@@ -302,7 +302,8 @@ body {
     var(--accent-primary) 0%,
     var(--accent-secondary) 100%
   );
-  color: white;
+  color: #000000 !important;
+  font-weight: 600;
 }
 
 .btn-primary:hover {
@@ -311,12 +312,15 @@ body {
 }
 
 .btn-secondary {
-  background: var(--text-secondary);
-  color: white;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: var(--text-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-primary);
 }
 
 .btn-danger {
@@ -3128,6 +3132,48 @@ body {
 .loan-actions {
   display: flex;
   gap: 1rem;
+}
+
+.loan-actions .btn-primary {
+  background: #ffd700 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  border: 2px solid #000000 !important;
+}
+
+.loan-actions .btn-secondary {
+  background: #2a2a2a !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border: 2px solid #ffd700 !important;
+}
+
+/* Payment Modal Styles */
+.payment-form {
+  padding: 1rem;
+}
+
+.payment-impact {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.payment-impact h4 {
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.impact-details p {
+  margin: 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.impact-details strong {
+  color: var(--accent-primary);
 }
 
 /* Application Form Modal */

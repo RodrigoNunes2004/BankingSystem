@@ -183,6 +183,12 @@ const InsuranceManagement: React.FC = () => {
     contactPhone: "",
   });
 
+  // Policy management states
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPolicyForPayment, setSelectedPolicyForPayment] =
+    useState<InsurancePolicy | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -361,10 +367,27 @@ const InsuranceManagement: React.FC = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      setPolicies(
-        policies.map((policy) =>
-          policy.id === policyId ? { ...policy, status: "cancelled" } : policy
-        )
+      const updatedPolicies = policies.map((policy) =>
+        policy.id === policyId
+          ? { ...policy, status: "cancelled" as const }
+          : policy
+      );
+      setPolicies(updatedPolicies);
+
+      // Save to localStorage
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (currentUser?.id) {
+        localStorage.setItem(
+          `banking_policies_${currentUser.id}`,
+          JSON.stringify(updatedPolicies)
+        );
+      }
+
+      console.log(
+        "✅ POLICY CANCELLED:",
+        updatedPolicies.find((p) => p.id === policyId)
       );
       alert("Policy cancelled successfully!");
     } catch (err) {
@@ -452,18 +475,125 @@ const InsuranceManagement: React.FC = () => {
     }
   };
 
+  // Make payment function
+  const makePayment = (policy: InsurancePolicy) => {
+    setSelectedPolicyForPayment(policy);
+    setPaymentAmount(policy.premium);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!selectedPolicyForPayment) return;
+
+    try {
+      // Get current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        alert("Please login first!");
+        return;
+      }
+
+      // Create payment transaction
+      const transaction = {
+        id: Date.now(),
+        transactionType: "INSURANCE_PAYMENT",
+        amount: paymentAmount,
+        accountId: selectedPolicyForPayment.accountId,
+        description: `Insurance payment for ${selectedPolicyForPayment.productName} - ${selectedPolicyForPayment.policyNumber}`,
+        status: "Completed",
+        transactionDate: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        referenceNumber: `INS${Math.floor(1000 + Math.random() * 9000)}`,
+        accountNumber: selectedPolicyForPayment.accountNumber,
+        category: "Insurance Payment",
+      };
+
+      // Save transaction to localStorage
+      const userTransactions = JSON.parse(
+        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+      );
+      userTransactions.push(transaction);
+      localStorage.setItem(
+        `banking_transactions_${currentUser.id}`,
+        JSON.stringify(userTransactions)
+      );
+
+      // Update policy status from pending to active and next payment date
+      const updatedPolicies = policies.map((p) =>
+        p.id === selectedPolicyForPayment.id
+          ? {
+              ...p,
+              status: "active" as const,
+              nextPaymentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split("T")[0],
+            }
+          : p
+      );
+      setPolicies(updatedPolicies);
+
+      // Save updated policies to localStorage
+      localStorage.setItem(
+        `banking_policies_${currentUser.id}`,
+        JSON.stringify(updatedPolicies)
+      );
+
+      console.log("✅ INSURANCE PAYMENT SUCCESS:", transaction);
+      console.log("✅ POLICY STATUS UPDATED:", updatedPolicies);
+
+      alert(
+        `Payment of $${paymentAmount} processed successfully! Policy is now active.`
+      );
+      setShowPaymentModal(false);
+      setSelectedPolicyForPayment(null);
+      setPaymentAmount(0);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Payment failed");
+    }
+  };
+
+  // Auto-activate pending policies after 5 seconds (simulating processing time)
+  useEffect(() => {
+    const pendingPolicies = policies.filter((p) => p.status === "pending");
+    if (pendingPolicies.length > 0) {
+      const timer = setTimeout(() => {
+        const updatedPolicies = policies.map((p) =>
+          p.status === "pending" ? { ...p, status: "active" as const } : p
+        );
+        setPolicies(updatedPolicies);
+
+        // Save to localStorage
+        const currentUser = JSON.parse(
+          localStorage.getItem("banking_user") || "null"
+        );
+        if (currentUser?.id) {
+          localStorage.setItem(
+            `banking_policies_${currentUser.id}`,
+            JSON.stringify(updatedPolicies)
+          );
+        }
+
+        console.log("✅ AUTO-ACTIVATED PENDING POLICIES:", updatedPolicies);
+      }, 5000); // 5 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [policies]);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "#28a745";
+        return "#ffd700"; // Yellow for active
       case "pending":
-        return "#ffc107";
+        return "#ffd700"; // Yellow for pending
       case "expired":
-        return "#dc3545";
+        return "#666666"; // Dark grey for expired
       case "cancelled":
-        return "#6c757d";
+        return "#666666"; // Dark grey for cancelled
       default:
-        return "#6c757d";
+        return "#666666"; // Dark grey default
     }
   };
 
@@ -619,6 +749,11 @@ const InsuranceManagement: React.FC = () => {
                         className="status-badge"
                         style={{
                           backgroundColor: getStatusColor(policy.status),
+                          color:
+                            policy.status === "active" ||
+                            policy.status === "pending"
+                              ? "#000000"
+                              : "#ffffff",
                         }}
                       >
                         {policy.status.toUpperCase()}
@@ -664,11 +799,34 @@ const InsuranceManagement: React.FC = () => {
 
                   <div className="policy-actions">
                     <button className="btn btn-secondary">View Details</button>
-                    <button className="btn btn-primary">Make Payment</button>
+                    {policy.status === "pending" && (
+                      <>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => makePayment(policy)}
+                        >
+                          Make Payment
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => cancelPolicy(policy.id)}
+                        >
+                          Cancel Policy
+                        </button>
+                      </>
+                    )}
+                    {policy.status === "active" && (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => makePayment(policy)}
+                      >
+                        Make Payment
+                      </button>
+                    )}
                     {policy.status === "active" && (
                       <>
                         <button
-                          className="btn btn-info"
+                          className="btn btn-secondary"
                           onClick={() => fileClaim(policy.id)}
                         >
                           📋 File Claim
@@ -683,7 +841,7 @@ const InsuranceManagement: React.FC = () => {
                           className="btn btn-danger"
                           onClick={() => cancelPolicy(policy.id)}
                         >
-                          ❌ Cancel
+                          Cancel
                         </button>
                       </>
                     )}
@@ -1068,6 +1226,70 @@ const InsuranceManagement: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedPolicyForPayment && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>💳 Make Insurance Payment</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Policy</label>
+                <input
+                  type="text"
+                  value={`${selectedPolicyForPayment.policyNumber} - ${selectedPolicyForPayment.productName}`}
+                  readOnly
+                />
+              </div>
+              <div className="form-group">
+                <label>Premium Amount</label>
+                <input
+                  type="number"
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(Number(e.target.value))}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <div className="form-group">
+                <label>Payment Method</label>
+                <select>
+                  <option value="account">
+                    From Account ({selectedPolicyForPayment.accountNumber})
+                  </option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Next Payment Date</label>
+                <input
+                  type="text"
+                  value={selectedPolicyForPayment.nextPaymentDate}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={handlePaymentSubmit}>
+                Process Payment
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -53,6 +53,14 @@ const LoanManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [, setSelectedProduct] = useState<LoanProduct | null>(null);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<LoanApplication | null>(
+    null
+  );
+  const [paymentForm, setPaymentForm] = useState({
+    paymentType: "monthly" as "monthly" | "lump",
+    lumpSumAmount: "",
+  });
   const [applicationForm, setApplicationForm] = useState({
     loanType: "personal" as "personal" | "car" | "business",
     amount: "",
@@ -159,78 +167,69 @@ const LoanManagement: React.FC = () => {
     loadData();
   }, []);
 
+  // Auto-approve pending loans after 5 seconds
+  useEffect(() => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "{}"
+    );
+    if (!currentUser || !currentUser.id) return;
+
+    const autoApproveLoans = () => {
+      const userLoans = JSON.parse(
+        localStorage.getItem(`banking_loans_${currentUser.id}`) || "[]"
+      );
+
+      let hasUpdates = false;
+      const updatedLoans = userLoans.map((loan: LoanApplication) => {
+        if (loan.status === "pending") {
+          hasUpdates = true;
+          return {
+            ...loan,
+            status: "active" as const,
+            approvalDate: new Date().toISOString(),
+            startDate: new Date().toISOString(),
+            endDate: new Date(
+              Date.now() + loan.term * 30 * 24 * 60 * 60 * 1000
+            ).toISOString(), // Add term months
+          };
+        }
+        return loan;
+      });
+
+      if (hasUpdates) {
+        localStorage.setItem(
+          `banking_loans_${currentUser.id}`,
+          JSON.stringify(updatedLoans)
+        );
+        setApplications(updatedLoans);
+      }
+    };
+
+    // Auto-approve after 5 seconds
+    const timer = setTimeout(autoApproveLoans, 5000);
+
+    return () => clearTimeout(timer);
+  }, [applications]);
+
   const loadData = async () => {
     setLoading(true);
     try {
       const accountsData = await apiService.getAccounts();
       setAccounts(accountsData);
 
-      // Mock loan applications data
-      const mockApplications: LoanApplication[] = [
-        {
-          id: 1,
-          loanType: "personal",
-          amount: 15000,
-          term: 36,
-          interestRate: 8.5,
-          monthlyPayment: 475.5,
-          totalAmount: 17118,
-          status: "active",
-          applicationDate: "2024-01-15",
-          approvalDate: "2024-01-16",
-          startDate: "2024-01-20",
-          endDate: "2027-01-20",
-          purpose: "Debt consolidation",
-          applicantName: "John Smith",
-          applicantEmail: "john.smith@email.com",
-          applicantPhone: "+1-555-0123",
-          annualIncome: 75000,
-          employmentStatus: "employed",
-          creditScore: 720,
-        },
-        {
-          id: 2,
-          loanType: "car",
-          amount: 25000,
-          term: 60,
-          interestRate: 6.9,
-          monthlyPayment: 495.2,
-          totalAmount: 29712,
-          status: "pending",
-          applicationDate: "2024-01-20",
-          purpose: "Vehicle purchase",
-          applicantName: "Sarah Johnson",
-          applicantEmail: "sarah.j@email.com",
-          applicantPhone: "+1-555-0456",
-          annualIncome: 65000,
-          employmentStatus: "employed",
-          vehicleMake: "Toyota",
-          vehicleModel: "Camry",
-          vehicleYear: 2024,
-          vehicleValue: 28000,
-        },
-        {
-          id: 3,
-          loanType: "business",
-          amount: 100000,
-          term: 84,
-          interestRate: 7.5,
-          monthlyPayment: 1450.8,
-          totalAmount: 121867,
-          status: "approved",
-          applicationDate: "2024-01-10",
-          approvalDate: "2024-01-18",
-          purpose: "Equipment purchase",
-          applicantName: "Mike Wilson",
-          applicantEmail: "mike.w@business.com",
-          applicantPhone: "+1-555-0789",
-          annualIncome: 150000,
-          employmentStatus: "self-employed",
-          businessType: "Manufacturing",
-        },
-      ];
-
-      setApplications(mockApplications);
+      // Load user-specific loan applications from localStorage
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "{}"
+      );
+      if (currentUser && currentUser.id) {
+        const userLoans = JSON.parse(
+          localStorage.getItem(`banking_loans_${currentUser.id}`) || "[]"
+        );
+        setApplications(userLoans);
+      } else {
+        // No user logged in, show empty state
+        setApplications([]);
+      }
     } catch (error) {
       console.error("Error loading loan data:", error);
     } finally {
@@ -274,6 +273,15 @@ const LoanManagement: React.FC = () => {
     );
     if (!product) return;
 
+    // Get current user information
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "{}"
+    );
+    if (!currentUser || !currentUser.id) {
+      alert("Please log in to apply for a loan");
+      return;
+    }
+
     const { monthlyPayment, totalAmount } = calculateLoan(
       parseFloat(applicationForm.amount) || 0,
       applicationForm.term,
@@ -281,7 +289,7 @@ const LoanManagement: React.FC = () => {
     );
 
     const newApplication: LoanApplication = {
-      id: applications.length + 1,
+      id: Date.now(), // Use timestamp for unique ID
       loanType: applicationForm.loanType,
       amount: parseFloat(applicationForm.amount) || 0,
       term: applicationForm.term,
@@ -291,9 +299,9 @@ const LoanManagement: React.FC = () => {
       status: "pending",
       applicationDate: new Date().toISOString(),
       purpose: applicationForm.purpose,
-      applicantName: "Current User", // In real app, get from user context
-      applicantEmail: "user@email.com",
-      applicantPhone: "+1-555-0000",
+      applicantName: `${currentUser.firstName} ${currentUser.lastName}`,
+      applicantEmail: currentUser.email,
+      applicantPhone: currentUser.phone || "+1-555-0000",
       annualIncome: parseFloat(applicationForm.annualIncome) || 0,
       employmentStatus: applicationForm.employmentStatus,
       creditScore: parseFloat(applicationForm.creditScore) || 0,
@@ -305,9 +313,25 @@ const LoanManagement: React.FC = () => {
       vehicleValue: parseFloat(applicationForm.vehicleValue) || 0,
     };
 
+    // Save to localStorage
+    const userLoans = JSON.parse(
+      localStorage.getItem(`banking_loans_${currentUser.id}`) || "[]"
+    );
+    userLoans.unshift(newApplication); // Add to beginning of array
+    localStorage.setItem(
+      `banking_loans_${currentUser.id}`,
+      JSON.stringify(userLoans)
+    );
+
+    // Update local state
     setApplications((prev) => [newApplication, ...prev]);
     setShowApplicationForm(false);
     setSelectedProduct(null);
+
+    // Show success message
+    alert(
+      `Loan application submitted successfully! Application ID: ${newApplication.id}`
+    );
 
     // Reset form
     setApplicationForm({
@@ -332,6 +356,161 @@ const LoanManagement: React.FC = () => {
       style: "currency",
       currency: "USD",
     }).format(amount);
+  };
+
+  const handleMakePayment = (loan: LoanApplication) => {
+    setSelectedLoan(loan);
+    setPaymentForm({
+      paymentType: "monthly",
+      lumpSumAmount: "",
+    });
+    setShowPaymentModal(true);
+  };
+
+  const handleViewDetails = (loan: LoanApplication) => {
+    const details = `
+Loan Details:
+- Type: ${loan.loanType.toUpperCase()}
+- Original Amount: ${formatCurrency(loan.amount)}
+- Monthly Payment: ${formatCurrency(loan.monthlyPayment)}
+- Interest Rate: ${loan.interestRate}% APR
+- Term: ${loan.term} months
+- Status: ${loan.status.toUpperCase()}
+- Application Date: ${formatDate(loan.applicationDate)}
+- Approval Date: ${loan.approvalDate ? formatDate(loan.approvalDate) : "N/A"}
+- Start Date: ${loan.startDate ? formatDate(loan.startDate) : "N/A"}
+- End Date: ${loan.endDate ? formatDate(loan.endDate) : "N/A"}
+- Purpose: ${loan.purpose}
+- Annual Income: ${formatCurrency(loan.annualIncome)}
+- Employment Status: ${loan.employmentStatus}
+- Credit Score: ${loan.creditScore || "N/A"}
+${loan.businessType ? `- Business Type: ${loan.businessType}` : ""}
+${
+  loan.vehicleMake
+    ? `- Vehicle: ${loan.vehicleYear} ${loan.vehicleMake} ${loan.vehicleModel}`
+    : ""
+}
+${
+  loan.vehicleValue
+    ? `- Vehicle Value: ${formatCurrency(loan.vehicleValue)}`
+    : ""
+}
+    `;
+
+    alert(details);
+  };
+
+  const calculateLumpSumImpact = (
+    loan: LoanApplication,
+    lumpSumAmount: number
+  ) => {
+    if (lumpSumAmount < 100) {
+      return null; // Minimum lump sum is $100
+    }
+
+    const remainingBalance = loan.amount - lumpSumAmount;
+    if (remainingBalance <= 0) {
+      return {
+        newMonthlyPayment: 0,
+        newTerm: 0,
+        interestSavings: loan.totalAmount - loan.amount,
+        newTotalAmount: loan.amount,
+      };
+    }
+
+    const monthlyRate = loan.interestRate / 100 / 12;
+    const newMonthlyPayment =
+      (remainingBalance * monthlyRate * Math.pow(1 + monthlyRate, loan.term)) /
+      (Math.pow(1 + monthlyRate, loan.term) - 1);
+
+    const newTotalAmount = newMonthlyPayment * loan.term;
+    const interestSavings = loan.monthlyPayment * loan.term - newTotalAmount;
+
+    return {
+      newMonthlyPayment,
+      newTerm: loan.term,
+      interestSavings,
+      newTotalAmount,
+    };
+  };
+
+  const handlePaymentSubmit = () => {
+    if (!selectedLoan) return;
+
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "{}"
+    );
+    if (!currentUser || !currentUser.id) {
+      alert("Please log in to make a payment");
+      return;
+    }
+
+    let paymentAmount: number;
+    let description: string;
+
+    if (paymentForm.paymentType === "monthly") {
+      paymentAmount = selectedLoan.monthlyPayment;
+      description = `Monthly payment for ${selectedLoan.loanType.toUpperCase()} loan #${
+        selectedLoan.id
+      }`;
+    } else {
+      const lumpSumAmount = parseFloat(paymentForm.lumpSumAmount);
+      if (lumpSumAmount < 100) {
+        alert("Minimum lump sum payment is $100");
+        return;
+      }
+      paymentAmount = lumpSumAmount;
+      description = `Lump sum payment of ${formatCurrency(
+        lumpSumAmount
+      )} for ${selectedLoan.loanType.toUpperCase()} loan #${selectedLoan.id}`;
+    }
+
+    // Create payment transaction
+    const paymentTransaction = {
+      id: Date.now(),
+      type: "LOAN_PAYMENT",
+      amount: paymentAmount,
+      description,
+      loanId: selectedLoan.id,
+      loanType: selectedLoan.loanType,
+      paymentType: paymentForm.paymentType,
+      status: "completed",
+      transactionDate: new Date().toISOString(),
+      accountId: 1,
+      accountNumber: "1234567890",
+      referenceNumber: `LP-${Date.now()}`,
+      category: "Loan Payment",
+      createdAt: new Date().toISOString(),
+    };
+
+    // Save payment transaction
+    const userTransactions = JSON.parse(
+      localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+    );
+    userTransactions.unshift(paymentTransaction);
+    localStorage.setItem(
+      `banking_transactions_${currentUser.id}`,
+      JSON.stringify(userTransactions)
+    );
+
+    // Show success message
+    const impact =
+      paymentForm.paymentType === "lump"
+        ? calculateLumpSumImpact(selectedLoan, paymentAmount)
+        : null;
+
+    let message = `Payment of ${formatCurrency(
+      paymentAmount
+    )} processed successfully!`;
+    if (impact) {
+      message += `\n\nLump Sum Impact:\n- New Monthly Payment: ${formatCurrency(
+        impact.newMonthlyPayment
+      )}\n- Interest Savings: ${formatCurrency(impact.interestSavings)}`;
+    }
+
+    alert(message);
+    setShowPaymentModal(false);
+    setSelectedLoan(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -526,7 +705,9 @@ const LoanManagement: React.FC = () => {
                     <td>{formatDate(application.applicationDate)}</td>
                     <td>
                       <div className="action-buttons">
-                        <button className="btn btn-sm btn-info">View</button>
+                        <button className="btn btn-sm btn-secondary">
+                          View
+                        </button>
                         {application.status === "pending" && (
                           <button className="btn btn-sm btn-warning">
                             Edit
@@ -734,8 +915,18 @@ const LoanManagement: React.FC = () => {
                   </div>
 
                   <div className="loan-actions">
-                    <button className="btn btn-primary">Make Payment</button>
-                    <button className="btn btn-secondary">View Details</button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleMakePayment(loan)}
+                    >
+                      Make Payment
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleViewDetails(loan)}
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
               ))}
@@ -996,6 +1187,128 @@ const LoanManagement: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedLoan && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>
+                Make Payment - {selectedLoan.loanType.toUpperCase()} Loan #
+                {selectedLoan.id}
+              </h2>
+              <button
+                className="modal-close"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="payment-form">
+              <div className="form-section">
+                <h3>Payment Options</h3>
+
+                <div className="form-group">
+                  <label>Payment Type</label>
+                  <select
+                    className="form-control"
+                    value={paymentForm.paymentType}
+                    onChange={(e) =>
+                      setPaymentForm((prev) => ({
+                        ...prev,
+                        paymentType: e.target.value as "monthly" | "lump",
+                      }))
+                    }
+                  >
+                    <option value="monthly">
+                      Monthly Payment (
+                      {formatCurrency(selectedLoan.monthlyPayment)})
+                    </option>
+                    <option value="lump">Lump Sum Payment</option>
+                  </select>
+                </div>
+
+                {paymentForm.paymentType === "lump" && (
+                  <div className="form-group">
+                    <label>Lump Sum Amount (Minimum: $100)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={paymentForm.lumpSumAmount}
+                      onChange={(e) =>
+                        setPaymentForm((prev) => ({
+                          ...prev,
+                          lumpSumAmount: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter amount"
+                      min="100"
+                      step="0.01"
+                    />
+                  </div>
+                )}
+
+                {paymentForm.paymentType === "lump" &&
+                  paymentForm.lumpSumAmount &&
+                  parseFloat(paymentForm.lumpSumAmount) >= 100 && (
+                    <div className="payment-impact">
+                      <h4>Payment Impact</h4>
+                      {(() => {
+                        const impact = calculateLumpSumImpact(
+                          selectedLoan,
+                          parseFloat(paymentForm.lumpSumAmount)
+                        );
+                        return impact ? (
+                          <div className="impact-details">
+                            <p>
+                              <strong>New Monthly Payment:</strong>{" "}
+                              {formatCurrency(impact.newMonthlyPayment)}
+                            </p>
+                            <p>
+                              <strong>Interest Savings:</strong>{" "}
+                              {formatCurrency(impact.interestSavings)}
+                            </p>
+                            <p>
+                              <strong>Remaining Term:</strong> {impact.newTerm}{" "}
+                              months
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="error">
+                            Minimum lump sum payment is $100
+                          </p>
+                        );
+                      })()}
+                    </div>
+                  )}
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowPaymentModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handlePaymentSubmit}
+                    disabled={
+                      paymentForm.paymentType === "lump" &&
+                      (!paymentForm.lumpSumAmount ||
+                        parseFloat(paymentForm.lumpSumAmount) < 100)
+                    }
+                  >
+                    Process Payment
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -88,7 +88,7 @@ export interface TransferRequest {
 
 class ApiService {
   // In-memory storage for mock data - NO DEFAULT VALUES
-  private mockUsers: User[] = [];
+  // Removed mockUsers - now using localStorage directly
   private mockAccounts: Account[] = [];
   private mockTransactions: Transaction[] = [];
 
@@ -117,7 +117,8 @@ class ApiService {
       const key = this.getUserDataKey(userId, dataType);
       const data = localStorage.getItem(key);
       const result = data ? JSON.parse(data) : defaultValue;
-      console.log(`Loaded ${dataType} for user ${userId}:`, result); // Debug log
+      console.log(`📥 Loaded ${dataType} for user ${userId}:`, result);
+      console.log(`📥 Key used: ${key}`);
       return result;
     } catch (error) {
       console.error(`Error loading ${dataType} for user ${userId}:`, error); // Debug log
@@ -130,7 +131,8 @@ class ApiService {
     try {
       const key = this.getUserDataKey(userId, dataType);
       localStorage.setItem(key, JSON.stringify(data));
-      console.log(`Saved ${dataType} for user ${userId}:`, data); // Debug log
+      console.log(`💾 Saved ${dataType} for user ${userId}:`, data);
+      console.log(`💾 Key used: ${key}`);
     } catch (error) {
       console.error(`Error saving ${dataType} data:`, error);
     }
@@ -175,47 +177,66 @@ class ApiService {
       if (method === "POST") {
         const newUser = JSON.parse(options.body as string) as CreateUserRequest;
         const user: User = {
-          id: Math.max(...this.mockUsers.map((u) => u.id), 0) + 1,
+          id: Date.now(), // Use same ID generation as AuthContext
           ...newUser,
           fullName: `${newUser.firstName} ${newUser.lastName}`,
           createdAt: new Date().toISOString(),
         };
-        this.mockUsers.push(user);
+
+        // Save to localStorage using same system as AuthContext
+        const existingUsers = JSON.parse(
+          localStorage.getItem("banking_users") || "[]"
+        );
+        existingUsers.push(user);
+        localStorage.setItem("banking_users", JSON.stringify(existingUsers));
+
+        console.log("✅ Created user and saved to localStorage:", user);
         return user as T;
       }
-      return this.mockUsers as T;
+
+      // Load users from localStorage (same as AuthContext)
+      const users = JSON.parse(localStorage.getItem("banking_users") || "[]");
+      console.log("📥 Loaded users from localStorage:", users);
+      return users as T;
     }
 
     if (endpoint.startsWith("/users/") && !endpoint.includes("/email/")) {
       const id = parseInt(endpoint.split("/")[2]);
+      const users = JSON.parse(localStorage.getItem("banking_users") || "[]");
+
       if (method === "PUT") {
         const updateData = JSON.parse(
           options.body as string
         ) as Partial<CreateUserRequest>;
-        const userIndex = this.mockUsers.findIndex((u) => u.id === id);
+        const userIndex = users.findIndex((u: User) => u.id === id);
         if (userIndex !== -1) {
-          this.mockUsers[userIndex] = {
-            ...this.mockUsers[userIndex],
+          users[userIndex] = {
+            ...users[userIndex],
             ...updateData,
-            fullName: `${
-              updateData.firstName || this.mockUsers[userIndex].firstName
-            } ${updateData.lastName || this.mockUsers[userIndex].lastName}`,
+            fullName: `${updateData.firstName || users[userIndex].firstName} ${
+              updateData.lastName || users[userIndex].lastName
+            }`,
             updatedAt: new Date().toISOString(),
           };
-          return this.mockUsers[userIndex] as T;
+          localStorage.setItem("banking_users", JSON.stringify(users));
+          console.log("✅ Updated user in localStorage:", users[userIndex]);
+          return users[userIndex] as T;
         }
       } else if (method === "DELETE") {
-        this.mockUsers = this.mockUsers.filter((u) => u.id !== id);
+        const filteredUsers = users.filter((u: User) => u.id !== id);
+        localStorage.setItem("banking_users", JSON.stringify(filteredUsers));
+        console.log("✅ Deleted user from localStorage");
         return undefined as T;
       } else {
-        const user = this.mockUsers.find((u) => u.id === id);
+        const user = users.find((u: User) => u.id === id);
         return user as T;
       }
     }
 
     if (endpoint.includes("/users/email/")) {
       const email = endpoint.split("/email/")[1];
-      const user = this.mockUsers.find((u) => u.email === email);
+      const users = JSON.parse(localStorage.getItem("banking_users") || "[]");
+      const user = users.find((u: User) => u.email === email);
       return user as T;
     }
 
@@ -294,7 +315,16 @@ class ApiService {
 
     // Handle transaction endpoints
     if (endpoint.includes("/transactions/date-range")) {
-      console.log("Returning transactions for date range:", userTransactions); // Debug log
+      console.log(
+        "📥 Loading transactions for date range from localStorage..."
+      );
+      console.log("📥 User ID:", currentUser.id);
+      console.log("📥 Key used:", `banking_transactions_${currentUser.id}`);
+      console.log(
+        "📥 Raw localStorage data:",
+        localStorage.getItem(`banking_transactions_${currentUser.id}`)
+      );
+      console.log("📥 Parsed transactions:", userTransactions);
       return userTransactions as T;
     }
     if (endpoint.includes("/transactions/account/")) {
@@ -320,11 +350,20 @@ class ApiService {
       endpoint === "/transactions/withdrawal" ||
       endpoint === "/transactions/transfer"
     ) {
+      console.log("🚨 TRANSACTION CREATION ENDPOINT HIT:", endpoint);
       const transactionData = JSON.parse(options.body as string);
+      console.log("🔍 Creating transaction with data:", transactionData);
+      console.log(
+        "🔍 Current user transactions before creation:",
+        userTransactions
+      );
+      console.log("🔍 Current user accounts before creation:", userAccounts);
+      console.log("🔍 Current user ID:", currentUser.id);
+
       const transaction: Transaction = {
         id:
           userTransactions.length > 0
-            ? Math.max(...userTransactions.map((t) => t.id), 0) + 1
+            ? Math.max(...userTransactions.map((t) => t.id)) + 1
             : 1,
         transactionType: endpoint.includes("deposit")
           ? "DEPOSIT"
@@ -380,9 +419,25 @@ class ApiService {
       // Save updated accounts and transactions
       this.saveUserData(currentUser.id, "accounts", userAccounts);
       this.saveUserData(currentUser.id, "transactions", userTransactions);
-      console.log("Created transaction:", transaction); // Debug log
-      console.log("Updated account balances:", userAccounts); // Debug log
-      console.log("All user transactions:", userTransactions); // Debug log
+
+      // Verify data was saved to localStorage
+      const savedTransactions = JSON.parse(
+        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+      );
+      console.log(
+        "🔍 VERIFICATION - Transactions in localStorage after save:",
+        savedTransactions
+      );
+
+      console.log("✅ Created transaction:", transaction);
+      console.log("✅ Updated account balances:", userAccounts);
+      console.log("✅ All user transactions after save:", userTransactions);
+      console.log(
+        "✅ Transaction saved to localStorage for user:",
+        currentUser.id
+      );
+      console.log("🚨 RETURNING TRANSACTION:", transaction);
+
       return transaction as T;
     }
 

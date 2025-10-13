@@ -43,20 +43,33 @@ const TransactionManagement: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [transactionsData, accountsData] = await Promise.all([
-        apiService.getTransactionsByDateRange(
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          new Date().toISOString()
-        ),
-        apiService.getAccounts(),
-      ]);
+
+      // Get current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        setError("Please login first!");
+        return;
+      }
+
+      // Load data directly from localStorage
+      const transactionsData = JSON.parse(
+        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+      );
+      const accountsData = JSON.parse(
+        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
+      );
+
       setTransactions(transactionsData);
       setAccounts(accountsData);
       setError(null);
-      console.log("Fetched transactions:", transactionsData); // Debug log
+
+      console.log("✅ SIMPLE FETCH - Transactions:", transactionsData);
+      console.log("✅ SIMPLE FETCH - Accounts:", accountsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
-      console.error("Error fetching data:", err); // Debug log
+      console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
@@ -65,7 +78,61 @@ const TransactionManagement: React.FC = () => {
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiService.processDeposit(depositForm);
+      // Get current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        alert("Please login first!");
+        return;
+      }
+
+      // Create transaction directly
+      const transaction = {
+        id: Date.now(),
+        transactionType: "DEPOSIT",
+        amount: depositForm.amount,
+        accountId: depositForm.accountId,
+        description: depositForm.description,
+        status: "Completed",
+        transactionDate: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
+        accountNumber:
+          accounts.find((a) => a.id === depositForm.accountId)?.accountNumber ||
+          "",
+        category: "Deposit",
+      };
+
+      // Save transaction to localStorage
+      const userTransactions = JSON.parse(
+        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+      );
+      userTransactions.push(transaction);
+      localStorage.setItem(
+        `banking_transactions_${currentUser.id}`,
+        JSON.stringify(userTransactions)
+      );
+
+      // Update account balance
+      const userAccounts = JSON.parse(
+        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
+      );
+      const accountIndex = userAccounts.findIndex(
+        (a: any) => a.id === depositForm.accountId
+      );
+      if (accountIndex !== -1) {
+        userAccounts[accountIndex].balance += depositForm.amount;
+        userAccounts[accountIndex].availableBalance += depositForm.amount;
+        localStorage.setItem(
+          `banking_accounts_${currentUser.id}`,
+          JSON.stringify(userAccounts)
+        );
+      }
+
+      console.log("✅ SIMPLE DEPOSIT SUCCESS:", transaction);
+      console.log("✅ UPDATED ACCOUNTS:", userAccounts);
+
       setDepositForm({ accountId: 0, amount: 0, description: "" });
       await fetchData(); // Refresh data after deposit
       alert("Deposit processed successfully!");
@@ -157,7 +224,11 @@ const TransactionManagement: React.FC = () => {
           >
             <h3>Transaction History</h3>
             <button
-              onClick={fetchData}
+              onClick={async () => {
+                console.log("🔄 REFRESH BUTTON CLICKED");
+                await fetchData();
+                console.log("🔄 REFRESH COMPLETED");
+              }}
               style={{
                 padding: "0.5rem 1rem",
                 backgroundColor: "var(--accent-primary)",
@@ -176,21 +247,26 @@ const TransactionManagement: React.FC = () => {
               {
                 key: "transactionDate",
                 label: "Date",
-                render: (value) => new Date(value).toLocaleDateString(),
+                render: (value) =>
+                  value ? new Date(value).toLocaleDateString() : "N/A",
               },
               {
                 key: "transactionType",
                 label: "Type",
                 render: (value) => (
-                  <span className={`transaction-type ${value.toLowerCase()}`}>
-                    {value}
+                  <span
+                    className={`transaction-type ${
+                      value?.toLowerCase() || "unknown"
+                    }`}
+                  >
+                    {value || "Unknown"}
                   </span>
                 ),
               },
               {
                 key: "amount",
                 label: "Amount",
-                render: (value) => `$${value.toFixed(2)}`,
+                render: (value) => `$${(value || 0).toFixed(2)}`,
               },
               { key: "accountNumber", label: "From Account" },
               {
@@ -203,8 +279,10 @@ const TransactionManagement: React.FC = () => {
                 key: "status",
                 label: "Status",
                 render: (value) => (
-                  <span className={`status ${value.toLowerCase()}`}>
-                    {value}
+                  <span
+                    className={`status ${value?.toLowerCase() || "unknown"}`}
+                  >
+                    {value || "Unknown"}
                   </span>
                 ),
               },

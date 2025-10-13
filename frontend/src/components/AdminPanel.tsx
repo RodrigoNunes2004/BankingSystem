@@ -43,7 +43,7 @@ const AdminPanel: React.FC = () => {
     activeUsers: 0,
     lockedAccounts: 0,
     pendingTransactions: 0,
-    systemUptime: "99.9%"
+    systemUptime: "99.9%",
   });
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
@@ -65,14 +65,19 @@ const AdminPanel: React.FC = () => {
         apiService.getTransactionsByDateRange(
           new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
           new Date().toISOString()
-        )
+        ),
       ]);
 
       // Calculate system stats
-      const totalBalance = accountsData.reduce((sum, acc) => sum + acc.balance, 0);
+      const totalBalance = accountsData.reduce(
+        (sum, acc) => sum + acc.balance,
+        0
+      );
       const activeUsers = usersData.length; // All users are considered active for now
-      const lockedAccounts = accountsData.filter(a => a.isLocked).length;
-      const pendingTransactions = transactionsData.filter((t: any) => t.status === "Pending").length;
+      const lockedAccounts = accountsData.filter((a) => a.isLocked).length;
+      const pendingTransactions = transactionsData.filter(
+        (t: any) => t.status === "Pending"
+      ).length;
 
       setSystemStats({
         totalUsers: usersData.length,
@@ -82,47 +87,57 @@ const AdminPanel: React.FC = () => {
         activeUsers,
         lockedAccounts,
         pendingTransactions,
-        systemUptime: "99.9%"
+        systemUptime: "99.9%",
       });
 
       // Enhance data with admin-specific information
-      const adminUsers: AdminUser[] = usersData.map(user => ({
+      const adminUsers: AdminUser[] = usersData.map((user) => ({
         ...user,
-        lastLogin: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+        lastLogin: new Date(
+          Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         isActive: Math.random() > 0.1,
         loginAttempts: Math.floor(Math.random() * 5),
-        accountCount: accountsData.filter(acc => acc.userId === user.id).length
+        accountCount: accountsData.filter((acc) => acc.userId === user.id)
+          .length,
       }));
 
-      const adminAccounts: AdminAccount[] = accountsData.map(account => {
-        const user = usersData.find(u => u.id === account.userId);
-        const userTransactions = transactionsData.filter((t: any) => t.accountId === account.id);
+      const adminAccounts: AdminAccount[] = accountsData.map((account) => {
+        const user = usersData.find((u) => u.id === account.userId);
+        const userTransactions = transactionsData.filter(
+          (t: any) => t.accountId === account.id
+        );
         return {
           ...account,
           userEmail: user?.email || "",
           userName: user?.firstName + " " + user?.lastName || "",
           transactionCount: userTransactions.length,
-          lastActivity: userTransactions.length > 0 
-            ? userTransactions[0].transactionDate 
-            : account.createdAt
+          lastActivity:
+            userTransactions.length > 0
+              ? userTransactions[0].transactionDate
+              : account.createdAt,
         };
       });
 
-      const adminTransactions: AdminTransaction[] = transactionsData.map((transaction: any) => {
-        const account = accountsData.find(a => a.id === transaction.accountId);
-        const user = usersData.find(u => u.id === account?.userId);
-        const toAccount = transaction.toAccountId 
-          ? accountsData.find(a => a.id === transaction.toAccountId)
-          : null;
-        
-        return {
-          ...transaction,
-          userEmail: user?.email || "",
-          userName: user?.firstName + " " + user?.lastName || "",
-          accountNumber: account?.accountNumber || "",
-          toAccountNumber: toAccount?.accountNumber
-        };
-      });
+      const adminTransactions: AdminTransaction[] = transactionsData.map(
+        (transaction: any) => {
+          const account = accountsData.find(
+            (a) => a.id === transaction.accountId
+          );
+          const user = usersData.find((u) => u.id === account?.userId);
+          const toAccount = transaction.toAccountId
+            ? accountsData.find((a) => a.id === transaction.toAccountId)
+            : null;
+
+          return {
+            ...transaction,
+            userEmail: user?.email || "",
+            userName: user?.firstName + " " + user?.lastName || "",
+            accountNumber: account?.accountNumber || "",
+            toAccountNumber: toAccount?.accountNumber,
+          };
+        }
+      );
 
       setUsers(adminUsers);
       setAccounts(adminAccounts);
@@ -171,19 +186,19 @@ const AdminPanel: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -192,7 +207,7 @@ const AdminPanel: React.FC = () => {
   return (
     <div className="main-content">
       <div className="admin-header">
-        <h1>🔧 Admin Panel</h1>
+        <h1>Admin Panel</h1>
         <p>System Administration & Management</p>
       </div>
 
@@ -217,7 +232,9 @@ const AdminPanel: React.FC = () => {
           🏦 Accounts
         </button>
         <button
-          className={`admin-tab ${activeTab === "transactions" ? "active" : ""}`}
+          className={`admin-tab ${
+            activeTab === "transactions" ? "active" : ""
+          }`}
           onClick={() => setActiveTab("transactions")}
         >
           💳 Transactions
@@ -239,7 +256,9 @@ const AdminPanel: React.FC = () => {
               <div className="stat-content">
                 <h3>{systemStats.totalUsers}</h3>
                 <p>Total Users</p>
-                <span className="stat-subtitle">{systemStats.activeUsers} active</span>
+                <span className="stat-subtitle">
+                  {systemStats.activeUsers} active
+                </span>
               </div>
             </div>
             <div className="stat-card">
@@ -247,7 +266,9 @@ const AdminPanel: React.FC = () => {
               <div className="stat-content">
                 <h3>{systemStats.totalAccounts}</h3>
                 <p>Total Accounts</p>
-                <span className="stat-subtitle">{systemStats.lockedAccounts} locked</span>
+                <span className="stat-subtitle">
+                  {systemStats.lockedAccounts} locked
+                </span>
               </div>
             </div>
             <div className="stat-card">
@@ -255,7 +276,9 @@ const AdminPanel: React.FC = () => {
               <div className="stat-content">
                 <h3>{systemStats.totalTransactions}</h3>
                 <p>Total Transactions</p>
-                <span className="stat-subtitle">{systemStats.pendingTransactions} pending</span>
+                <span className="stat-subtitle">
+                  {systemStats.pendingTransactions} pending
+                </span>
               </div>
             </div>
             <div className="stat-card">
@@ -274,19 +297,27 @@ const AdminPanel: React.FC = () => {
               <div className="health-metrics">
                 <div className="health-item">
                   <span className="health-label">Uptime</span>
-                  <span className="health-value success">{systemStats.systemUptime}</span>
+                  <span className="health-value success">
+                    {systemStats.systemUptime}
+                  </span>
                 </div>
                 <div className="health-item">
                   <span className="health-label">Active Users</span>
-                  <span className="health-value info">{systemStats.activeUsers}</span>
+                  <span className="health-value info">
+                    {systemStats.activeUsers}
+                  </span>
                 </div>
                 <div className="health-item">
                   <span className="health-label">Locked Accounts</span>
-                  <span className="health-value warning">{systemStats.lockedAccounts}</span>
+                  <span className="health-value warning">
+                    {systemStats.lockedAccounts}
+                  </span>
                 </div>
                 <div className="health-item">
                   <span className="health-label">Pending Transactions</span>
-                  <span className="health-value warning">{systemStats.pendingTransactions}</span>
+                  <span className="health-value warning">
+                    {systemStats.pendingTransactions}
+                  </span>
                 </div>
               </div>
             </div>
@@ -297,14 +328,24 @@ const AdminPanel: React.FC = () => {
                 {transactions.slice(0, 5).map((transaction) => (
                   <div key={transaction.id} className="activity-item">
                     <div className="activity-icon">
-                      {transaction.transactionType === "Deposit" ? "📈" : 
-                       transaction.transactionType === "Withdrawal" ? "📉" : "🔄"}
+                      {transaction.transactionType === "Deposit"
+                        ? "📈"
+                        : transaction.transactionType === "Withdrawal"
+                        ? "📉"
+                        : "🔄"}
                     </div>
                     <div className="activity-content">
-                      <p>{transaction.userName} - {transaction.transactionType}</p>
-                      <span>{formatCurrency(transaction.amount)} • {formatDate(transaction.transactionDate)}</span>
+                      <p>
+                        {transaction.userName} - {transaction.transactionType}
+                      </p>
+                      <span>
+                        {formatCurrency(transaction.amount)} •{" "}
+                        {formatDate(transaction.transactionDate)}
+                      </span>
                     </div>
-                    <div className={`activity-status ${transaction.status.toLowerCase()}`}>
+                    <div
+                      className={`activity-status ${transaction.status.toLowerCase()}`}
+                    >
                       {transaction.status}
                     </div>
                   </div>
@@ -322,7 +363,7 @@ const AdminPanel: React.FC = () => {
             <h2>User Management</h2>
             <button className="btn btn-primary">Add User</button>
           </div>
-          
+
           <div className="admin-table-container">
             <table className="admin-table">
               <thead>
@@ -341,10 +382,13 @@ const AdminPanel: React.FC = () => {
                     <td>
                       <div className="user-info">
                         <div className="user-avatar">
-                          {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                          {user.firstName.charAt(0)}
+                          {user.lastName.charAt(0)}
                         </div>
                         <div>
-                          <strong>{user.firstName} {user.lastName}</strong>
+                          <strong>
+                            {user.firstName} {user.lastName}
+                          </strong>
                           <br />
                           <small>ID: {user.id}</small>
                         </div>
@@ -352,9 +396,15 @@ const AdminPanel: React.FC = () => {
                     </td>
                     <td>{user.email}</td>
                     <td>{user.accountCount}</td>
-                    <td>{user.lastLogin ? formatDate(user.lastLogin) : "Never"}</td>
                     <td>
-                      <span className={`status-badge ${user.isActive ? "active" : "inactive"}`}>
+                      {user.lastLogin ? formatDate(user.lastLogin) : "Never"}
+                    </td>
+                    <td>
+                      <span
+                        className={`status-badge ${
+                          user.isActive ? "active" : "inactive"
+                        }`}
+                      >
                         {user.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
@@ -362,12 +412,17 @@ const AdminPanel: React.FC = () => {
                       <div className="action-buttons">
                         <button
                           className="btn btn-sm btn-warning"
-                          onClick={() => handleUserAction(user.id, user.isActive ? "lock" : "unlock")}
+                          onClick={() =>
+                            handleUserAction(
+                              user.id,
+                              user.isActive ? "lock" : "unlock"
+                            )
+                          }
                         >
                           {user.isActive ? "🔒 Lock" : "🔓 Unlock"}
                         </button>
                         <button
-                          className="btn btn-sm btn-info"
+                          className="btn btn-sm btn-secondary"
                           onClick={() => handleUserAction(user.id, "reset")}
                         >
                           🔑 Reset
@@ -389,7 +444,7 @@ const AdminPanel: React.FC = () => {
             <h2>Account Management</h2>
             <button className="btn btn-primary">Create Account</button>
           </div>
-          
+
           <div className="admin-table-container">
             <table className="admin-table">
               <thead>
@@ -423,12 +478,18 @@ const AdminPanel: React.FC = () => {
                     <td>
                       <strong>{formatCurrency(account.balance)}</strong>
                       <br />
-                      <small>Available: {formatCurrency(account.availableBalance)}</small>
+                      <small>
+                        Available: {formatCurrency(account.availableBalance)}
+                      </small>
                     </td>
                     <td>{account.accountType}</td>
                     <td>{account.transactionCount}</td>
                     <td>
-                      <span className={`status-badge ${account.isLocked ? "inactive" : "active"}`}>
+                      <span
+                        className={`status-badge ${
+                          account.isLocked ? "inactive" : "active"
+                        }`}
+                      >
                         {account.isLocked ? "Locked" : "Active"}
                       </span>
                     </td>
@@ -436,13 +497,20 @@ const AdminPanel: React.FC = () => {
                       <div className="action-buttons">
                         <button
                           className="btn btn-sm btn-warning"
-                          onClick={() => handleAccountAction(account.id, account.isLocked ? "unlock" : "lock")}
+                          onClick={() =>
+                            handleAccountAction(
+                              account.id,
+                              account.isLocked ? "unlock" : "lock"
+                            )
+                          }
                         >
                           {account.isLocked ? "🔓 Unlock" : "🔒 Lock"}
                         </button>
                         <button
                           className="btn btn-sm btn-danger"
-                          onClick={() => handleAccountAction(account.id, "freeze")}
+                          onClick={() =>
+                            handleAccountAction(account.id, "freeze")
+                          }
                         >
                           ❄️ Freeze
                         </button>
@@ -476,7 +544,7 @@ const AdminPanel: React.FC = () => {
               </select>
             </div>
           </div>
-          
+
           <div className="admin-table-container">
             <table className="admin-table">
               <thead>
@@ -518,16 +586,24 @@ const AdminPanel: React.FC = () => {
                     </td>
                     <td>{transaction.transactionType}</td>
                     <td>
-                      <span className={`status-badge ${transaction.status.toLowerCase()}`}>
+                      <span
+                        className={`status-badge ${transaction.status.toLowerCase()}`}
+                      >
                         {transaction.status}
                       </span>
                     </td>
                     <td>{formatDate(transaction.transactionDate)}</td>
                     <td>
                       <div className="action-buttons">
-                        <button className="btn btn-sm btn-info">👁️ View</button>
-                        <button className="btn btn-sm btn-warning">⏸️ Hold</button>
-                        <button className="btn btn-sm btn-danger">❌ Cancel</button>
+                        <button className="btn btn-sm btn-secondary">
+                          👁️ View
+                        </button>
+                        <button className="btn btn-sm btn-warning">
+                          ⏸️ Hold
+                        </button>
+                        <button className="btn btn-sm btn-danger">
+                          Cancel
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -544,17 +620,25 @@ const AdminPanel: React.FC = () => {
           <div className="admin-section-header">
             <h2>System Settings</h2>
           </div>
-          
+
           <div className="settings-grid">
             <div className="settings-card">
               <h3>Security Settings</h3>
               <div className="setting-item">
                 <label>Session Timeout (minutes)</label>
-                <input type="number" className="form-control" defaultValue="30" />
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue="30"
+                />
               </div>
               <div className="setting-item">
                 <label>Max Login Attempts</label>
-                <input type="number" className="form-control" defaultValue="5" />
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue="5"
+                />
               </div>
               <div className="setting-item">
                 <label>Password Policy</label>
@@ -570,15 +654,27 @@ const AdminPanel: React.FC = () => {
               <h3>Transaction Limits</h3>
               <div className="setting-item">
                 <label>Daily Transfer Limit</label>
-                <input type="number" className="form-control" defaultValue="10000" />
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue="10000"
+                />
               </div>
               <div className="setting-item">
                 <label>Max Transaction Amount</label>
-                <input type="number" className="form-control" defaultValue="50000" />
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue="50000"
+                />
               </div>
               <div className="setting-item">
                 <label>Auto-approve Limit</label>
-                <input type="number" className="form-control" defaultValue="1000" />
+                <input
+                  type="number"
+                  className="form-control"
+                  defaultValue="1000"
+                />
               </div>
             </div>
 

@@ -46,14 +46,101 @@ const CardManagement: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Settings modal states
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showMobilePayModal, setShowMobilePayModal] = useState(false);
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  const [showSpendingLimitsModal, setShowSpendingLimitsModal] = useState(false);
+
+  // Settings form states
+  const [securitySettings, setSecuritySettings] = useState({
+    threeDSecure: true,
+    transactionNotifications: true,
+    internationalTransactions: "enabled",
+    onlineTransactions: "enabled",
+  });
+
+  const [mobilePaySettings, setMobilePaySettings] = useState({
+    applePay: false,
+    googlePay: false,
+    samsungPay: false,
+    contactlessPayments: true,
+  });
+
+  const [notificationSettings, setNotificationSettings] = useState({
+    transactionAlerts: true,
+    largeTransactionAlerts: true,
+    internationalTransactionAlerts: true,
+    cardUsageAlerts: false,
+    emailNotifications: true,
+    smsNotifications: false,
+  });
+
+  const [spendingLimits, setSpendingLimits] = useState({
+    dailyLimit: "",
+    monthlyLimit: "",
+    internationalLimit: "",
+    atmLimit: "",
+  });
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const accountsData = await apiService.getAccounts();
-      setAccounts(accountsData);
 
-      // For now, use mock data
-      setCards(mockCards);
+      // Get current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        setError("Please login first!");
+        return;
+      }
+
+      // Load user's actual accounts from localStorage
+      const userAccounts = JSON.parse(
+        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
+      );
+      setAccounts(userAccounts);
+
+      // Load user's cards from localStorage
+      const userCards = JSON.parse(
+        localStorage.getItem(`banking_cards_${currentUser.id}`) || "[]"
+      );
+      setCards(userCards);
+
+      // Load user's card settings from localStorage
+      const userSecuritySettings = JSON.parse(
+        localStorage.getItem(`banking_card_security_${currentUser.id}`) ||
+          JSON.stringify(securitySettings)
+      );
+      setSecuritySettings(userSecuritySettings);
+
+      const userMobilePaySettings = JSON.parse(
+        localStorage.getItem(`banking_mobile_pay_${currentUser.id}`) ||
+          JSON.stringify(mobilePaySettings)
+      );
+      setMobilePaySettings(userMobilePaySettings);
+
+      const userNotificationSettings = JSON.parse(
+        localStorage.getItem(`banking_notifications_${currentUser.id}`) ||
+          JSON.stringify(notificationSettings)
+      );
+      setNotificationSettings(userNotificationSettings);
+
+      const userSpendingLimits = JSON.parse(
+        localStorage.getItem(`banking_spending_limits_${currentUser.id}`) ||
+          JSON.stringify(spendingLimits)
+      );
+      setSpendingLimits(userSpendingLimits);
+
+      console.log("✅ CARD MANAGEMENT - Loaded user accounts:", userAccounts);
+      console.log("✅ CARD MANAGEMENT - Loaded user cards:", userCards);
+      console.log("✅ CARD MANAGEMENT - Loaded settings:", {
+        userSecuritySettings,
+        userMobilePaySettings,
+        userNotificationSettings,
+        userSpendingLimits,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -112,7 +199,7 @@ const CardManagement: React.FC = () => {
       const cvv = Math.floor(100 + Math.random() * 900).toString();
 
       const newCardData: Card = {
-        id: cards.length + 1,
+        id: Date.now(),
         cardNumber,
         cardType: newCard.cardType,
         cardBrand: newCard.cardBrand,
@@ -129,7 +216,30 @@ const CardManagement: React.FC = () => {
         lastUsed: undefined,
       };
 
+      // Get current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        setError("Please login first!");
+        return;
+      }
+
+      // Save card to localStorage
+      const userCards = JSON.parse(
+        localStorage.getItem(`banking_cards_${currentUser.id}`) || "[]"
+      );
+      userCards.push(newCardData);
+      localStorage.setItem(
+        `banking_cards_${currentUser.id}`,
+        JSON.stringify(userCards)
+      );
+
+      // Update local state
       setCards([...cards, newCardData]);
+
+      console.log("✅ CARD CREATED AND SAVED:", newCardData);
+      console.log("✅ ALL USER CARDS:", userCards);
 
       // Reset form
       setNewCard({
@@ -227,6 +337,67 @@ const CardManagement: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to block card");
     }
+  };
+
+  // Settings save functions
+  const saveSecuritySettings = () => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "null"
+    );
+    if (!currentUser) return;
+
+    localStorage.setItem(
+      `banking_card_security_${currentUser.id}`,
+      JSON.stringify(securitySettings)
+    );
+    console.log("✅ Security settings saved:", securitySettings);
+    alert("Security settings updated successfully!");
+    setShowSecurityModal(false);
+  };
+
+  const saveMobilePaySettings = () => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "null"
+    );
+    if (!currentUser) return;
+
+    localStorage.setItem(
+      `banking_mobile_pay_${currentUser.id}`,
+      JSON.stringify(mobilePaySettings)
+    );
+    console.log("✅ Mobile pay settings saved:", mobilePaySettings);
+    alert("Mobile payment settings updated successfully!");
+    setShowMobilePayModal(false);
+  };
+
+  const saveNotificationSettings = () => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "null"
+    );
+    if (!currentUser) return;
+
+    localStorage.setItem(
+      `banking_notifications_${currentUser.id}`,
+      JSON.stringify(notificationSettings)
+    );
+    console.log("✅ Notification settings saved:", notificationSettings);
+    alert("Notification settings updated successfully!");
+    setShowNotificationsModal(false);
+  };
+
+  const saveSpendingLimits = () => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("banking_user") || "null"
+    );
+    if (!currentUser) return;
+
+    localStorage.setItem(
+      `banking_spending_limits_${currentUser.id}`,
+      JSON.stringify(spendingLimits)
+    );
+    console.log("✅ Spending limits saved:", spendingLimits);
+    alert("Spending limits updated successfully!");
+    setShowSpendingLimitsModal(false);
   };
 
   const getCardBrandIcon = (brand: string) => {
@@ -380,7 +551,7 @@ const CardManagement: React.FC = () => {
                       className="btn btn-danger"
                       onClick={() => handleCardBlock(card.id)}
                     >
-                      🚫 Block
+                      Block
                     </button>
                     <button
                       className="btn btn-secondary"
@@ -390,7 +561,7 @@ const CardManagement: React.FC = () => {
                     </button>
                     {card.cardType === "credit" && (
                       <button
-                        className="btn btn-info"
+                        className="btn btn-secondary"
                         onClick={() => {
                           const newLimit = prompt(
                             "Enter new spending limit:",
@@ -510,22 +681,416 @@ const CardManagement: React.FC = () => {
             <div className="setting-item">
               <h4>🔒 Security Settings</h4>
               <p>Manage your card security preferences</p>
-              <button className="btn btn-secondary">Configure</button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowSecurityModal(true)}
+              >
+                Configure
+              </button>
             </div>
             <div className="setting-item">
               <h4>📱 Mobile Payments</h4>
               <p>Set up Apple Pay, Google Pay, etc.</p>
-              <button className="btn btn-secondary">Setup</button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowMobilePayModal(true)}
+              >
+                Setup
+              </button>
             </div>
             <div className="setting-item">
               <h4>🔔 Notifications</h4>
               <p>Configure transaction alerts</p>
-              <button className="btn btn-secondary">Configure</button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowNotificationsModal(true)}
+              >
+                Configure
+              </button>
             </div>
             <div className="setting-item">
               <h4>📊 Spending Limits</h4>
               <p>Set daily/monthly spending limits</p>
-              <button className="btn btn-secondary">Set Limits</button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowSpendingLimitsModal(true)}
+              >
+                Set Limits
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Security Settings Modal */}
+      {showSecurityModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>🔒 Security Settings</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowSecurityModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Enable 3D Secure</label>
+                <input
+                  type="checkbox"
+                  checked={securitySettings.threeDSecure}
+                  onChange={(e) =>
+                    setSecuritySettings({
+                      ...securitySettings,
+                      threeDSecure: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Transaction Notifications</label>
+                <input
+                  type="checkbox"
+                  checked={securitySettings.transactionNotifications}
+                  onChange={(e) =>
+                    setSecuritySettings({
+                      ...securitySettings,
+                      transactionNotifications: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>International Transactions</label>
+                <select
+                  value={securitySettings.internationalTransactions}
+                  onChange={(e) =>
+                    setSecuritySettings({
+                      ...securitySettings,
+                      internationalTransactions: e.target.value,
+                    })
+                  }
+                >
+                  <option value="enabled">Enabled</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Online Transactions</label>
+                <select
+                  value={securitySettings.onlineTransactions}
+                  onChange={(e) =>
+                    setSecuritySettings({
+                      ...securitySettings,
+                      onlineTransactions: e.target.value,
+                    })
+                  }
+                >
+                  <option value="enabled">Enabled</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowSecurityModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveSecuritySettings}
+              >
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Payments Modal */}
+      {showMobilePayModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>📱 Mobile Payments Setup</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowMobilePayModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Apple Pay</label>
+                <input
+                  type="checkbox"
+                  checked={mobilePaySettings.applePay}
+                  onChange={(e) =>
+                    setMobilePaySettings({
+                      ...mobilePaySettings,
+                      applePay: e.target.checked,
+                    })
+                  }
+                />
+                <span style={{ marginLeft: "10px" }}>Enable Apple Pay</span>
+              </div>
+              <div className="form-group">
+                <label>Google Pay</label>
+                <input
+                  type="checkbox"
+                  checked={mobilePaySettings.googlePay}
+                  onChange={(e) =>
+                    setMobilePaySettings({
+                      ...mobilePaySettings,
+                      googlePay: e.target.checked,
+                    })
+                  }
+                />
+                <span style={{ marginLeft: "10px" }}>Enable Google Pay</span>
+              </div>
+              <div className="form-group">
+                <label>Samsung Pay</label>
+                <input
+                  type="checkbox"
+                  checked={mobilePaySettings.samsungPay}
+                  onChange={(e) =>
+                    setMobilePaySettings({
+                      ...mobilePaySettings,
+                      samsungPay: e.target.checked,
+                    })
+                  }
+                />
+                <span style={{ marginLeft: "10px" }}>Enable Samsung Pay</span>
+              </div>
+              <div className="form-group">
+                <label>Contactless Payments</label>
+                <input
+                  type="checkbox"
+                  checked={mobilePaySettings.contactlessPayments}
+                  onChange={(e) =>
+                    setMobilePaySettings({
+                      ...mobilePaySettings,
+                      contactlessPayments: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowMobilePayModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveMobilePaySettings}
+              >
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notifications Modal */}
+      {showNotificationsModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>🔔 Notification Settings</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowNotificationsModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Transaction Alerts</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.transactionAlerts}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      transactionAlerts: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Large Transaction Alerts (&gt;$100)</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.largeTransactionAlerts}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      largeTransactionAlerts: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>International Transaction Alerts</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.internationalTransactionAlerts}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      internationalTransactionAlerts: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Card Usage Alerts</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.cardUsageAlerts}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      cardUsageAlerts: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Email Notifications</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.emailNotifications}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      emailNotifications: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>SMS Notifications</label>
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.smsNotifications}
+                  onChange={(e) =>
+                    setNotificationSettings({
+                      ...notificationSettings,
+                      smsNotifications: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowNotificationsModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveNotificationSettings}
+              >
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spending Limits Modal */}
+      {showSpendingLimitsModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>📊 Spending Limits</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowSpendingLimitsModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Daily Spending Limit</label>
+                <input
+                  type="number"
+                  placeholder="Enter daily limit"
+                  value={spendingLimits.dailyLimit}
+                  onChange={(e) =>
+                    setSpendingLimits({
+                      ...spendingLimits,
+                      dailyLimit: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Monthly Spending Limit</label>
+                <input
+                  type="number"
+                  placeholder="Enter monthly limit"
+                  value={spendingLimits.monthlyLimit}
+                  onChange={(e) =>
+                    setSpendingLimits({
+                      ...spendingLimits,
+                      monthlyLimit: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>International Spending Limit</label>
+                <input
+                  type="number"
+                  placeholder="Enter international limit"
+                  value={spendingLimits.internationalLimit}
+                  onChange={(e) =>
+                    setSpendingLimits({
+                      ...spendingLimits,
+                      internationalLimit: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>ATM Withdrawal Limit</label>
+                <input
+                  type="number"
+                  placeholder="Enter ATM limit"
+                  value={spendingLimits.atmLimit}
+                  onChange={(e) =>
+                    setSpendingLimits({
+                      ...spendingLimits,
+                      atmLimit: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowSpendingLimitsModal(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={saveSpendingLimits}>
+                Save Limits
+              </button>
             </div>
           </div>
         </div>
