@@ -43,13 +43,13 @@ const AccountManagement: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate that a user is selected
     if (formData.userId === 0) {
       setError("Please select a user");
       return;
     }
-    
+
     try {
       if (editingAccount) {
         await apiService.updateAccount(editingAccount.id, formData);
@@ -198,29 +198,29 @@ const AccountManagement: React.FC = () => {
       <ResponsiveTable
         data={accounts}
         columns={[
-          { key: 'accountNumber', label: 'Account Number' },
-          { key: 'accountType', label: 'Account Type' },
-          { key: 'userName', label: 'User' },
-          { 
-            key: 'balance', 
-            label: 'Balance',
-            render: (value) => `$${value.toFixed(2)}`
+          { key: "accountNumber", label: "Account Number" },
+          { key: "accountType", label: "Account Type" },
+          { key: "userName", label: "User" },
+          {
+            key: "balance",
+            label: "Balance",
+            render: (value) => `$${value.toFixed(2)}`,
           },
-          { 
-            key: 'availableBalance', 
-            label: 'Available Balance',
-            render: (value) => `$${value.toFixed(2)}`
+          {
+            key: "availableBalance",
+            label: "Available Balance",
+            render: (value) => `$${value.toFixed(2)}`,
           },
-          { key: 'currency', label: 'Currency' },
-          { 
-            key: 'isLocked', 
-            label: 'Status',
+          { key: "currency", label: "Currency" },
+          {
+            key: "isLocked",
+            label: "Status",
             render: (value) => (
               <span className={`status ${value ? "locked" : "active"}`}>
                 {value ? "Locked" : "Active"}
               </span>
-            )
-          }
+            ),
+          },
         ]}
         actions={(account) => (
           <>
