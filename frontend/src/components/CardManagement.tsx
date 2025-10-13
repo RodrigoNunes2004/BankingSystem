@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { apiService, Account } from "../services/api";
 
 interface Card {
@@ -73,7 +73,7 @@ const CardManagement: React.FC = () => {
     },
   ];
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const accountsData = await apiService.getAccounts();
@@ -86,11 +86,11 @@ const CardManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const generateCardNumber = (brand: string): string => {
     const prefixes = {

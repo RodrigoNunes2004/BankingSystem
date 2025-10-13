@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { apiService, Account } from "../services/api";
 
 interface InsuranceProduct {
@@ -202,7 +202,7 @@ const InsuranceManagement: React.FC = () => {
     },
   ];
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const accountsData = await apiService.getAccounts();
@@ -216,11 +216,11 @@ const InsuranceManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const calculateQuote = async () => {
     setIsCalculating(true);

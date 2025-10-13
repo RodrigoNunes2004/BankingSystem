@@ -1,21 +1,4 @@
-// API configuration
-const getApiBaseUrl = () => {
-  return (
-    process.env.REACT_APP_API_URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api"
-      : "http://localhost:5023/api")
-  );
-};
-
-// Fallback to mock data when API is unavailable
-const shouldUseMockData = () => {
-  return process.env.REACT_APP_USE_MOCK_DATA === "true" || false;
-};
-
-const shouldForceMockData = () => {
-  return process.env.REACT_APP_FORCE_MOCK_DATA === "true" || false;
-};
+// API configuration - using mock data for now
 
 export interface User {
   id: number;

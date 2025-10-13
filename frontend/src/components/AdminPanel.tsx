@@ -49,8 +49,7 @@ const AdminPanel: React.FC = () => {
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [, setSelectedUser] = useState<AdminUser | null>(null);
-  const [, setSelectedAccount] = useState<AdminAccount | null>(null);
+  // Removed unused state variables to fix ESLint warnings
 
   useEffect(() => {
     loadAdminData();
