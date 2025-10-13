@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import MobileDatePicker from './MobileDatePicker';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import MobileDatePicker from "./MobileDatePicker";
 
 interface RegisterProps {
   onSwitchToLogin: () => void;
@@ -8,34 +8,34 @@ interface RegisterProps {
 
 const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    dateOfBirth: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return;
     }
 
@@ -44,19 +44,19 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     try {
       const { password, confirmPassword, ...userData } = formData;
       const success = await register(userData);
-      
+
       if (!success) {
-        setError('Email already exists. Please use a different email.');
+        setError("Email already exists. Please use a different email.");
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError("Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -69,7 +69,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="error-message">{error}</div>}
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="firstName">First Name</label>
@@ -77,7 +77,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 type="text"
                 id="firstName"
                 value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                onChange={(e) => handleInputChange("firstName", e.target.value)}
                 required
                 placeholder="Enter first name"
                 className="form-control"
@@ -90,7 +90,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 type="text"
                 id="lastName"
                 value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                onChange={(e) => handleInputChange("lastName", e.target.value)}
                 required
                 placeholder="Enter last name"
                 className="form-control"
@@ -104,7 +104,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="email"
               id="email"
               value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               required
               placeholder="Enter your email"
               className="form-control"
@@ -117,7 +117,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="tel"
               id="phoneNumber"
               value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
               required
               placeholder="Enter phone number"
               className="form-control"
@@ -127,7 +127,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           <div className="form-group">
             <MobileDatePicker
               value={formData.dateOfBirth}
-              onChange={(date) => handleInputChange('dateOfBirth', date)}
+              onChange={(date) => handleInputChange("dateOfBirth", date)}
               label="Date of Birth"
             />
           </div>
@@ -138,7 +138,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="text"
               id="address"
               value={formData.address}
-              onChange={(e) => handleInputChange('address', e.target.value)}
+              onChange={(e) => handleInputChange("address", e.target.value)}
               required
               placeholder="Enter your address"
               className="form-control"
@@ -152,7 +152,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 type="text"
                 id="city"
                 value={formData.city}
-                onChange={(e) => handleInputChange('city', e.target.value)}
+                onChange={(e) => handleInputChange("city", e.target.value)}
                 required
                 placeholder="Enter city"
                 className="form-control"
@@ -165,7 +165,9 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 type="text"
                 id="postalCode"
                 value={formData.postalCode}
-                onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("postalCode", e.target.value)
+                }
                 required
                 placeholder="Enter postal code"
                 className="form-control"
@@ -179,7 +181,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="text"
               id="country"
               value={formData.country}
-              onChange={(e) => handleInputChange('country', e.target.value)}
+              onChange={(e) => handleInputChange("country", e.target.value)}
               required
               placeholder="Enter country"
               className="form-control"
@@ -192,7 +194,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="password"
               id="password"
               value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
+              onChange={(e) => handleInputChange("password", e.target.value)}
               required
               placeholder="Create a password"
               className="form-control"
@@ -205,7 +207,9 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               type="password"
               id="confirmPassword"
               value={formData.confirmPassword}
-              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("confirmPassword", e.target.value)
+              }
               required
               placeholder="Confirm your password"
               className="form-control"
@@ -217,13 +221,13 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             disabled={isLoading}
             className="btn btn-primary auth-btn"
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+            {isLoading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Already have an account?{' '}
+            Already have an account?{" "}
             <button
               type="button"
               onClick={onSwitchToLogin}

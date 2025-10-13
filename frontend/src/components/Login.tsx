@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 interface LoginProps {
   onSwitchToRegister: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       const success = await login(email, password);
       if (!success) {
-        setError('Invalid email or password');
+        setError("Invalid email or password");
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="error-message">{error}</div>}
-          
+
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -71,13 +71,13 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
             disabled={isLoading}
             className="btn btn-primary auth-btn"
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <button
               type="button"
               onClick={onSwitchToRegister}

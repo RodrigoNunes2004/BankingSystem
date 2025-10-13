@@ -20,7 +20,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 // Banking App Component - handles authentication and main app logic
 const BankingApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout } = useAuth();
 
   const renderContent = () => {
     switch (activeTab) {
@@ -55,8 +55,13 @@ const BankingApp: React.FC = () => {
             <h1>🏦 Banking System</h1>
             <div className="header-actions">
               <div className="user-info">
-                <span className="user-name">Welcome, {user?.firstName} {user?.lastName}</span>
-                <button onClick={logout} className="btn btn-secondary logout-btn">
+                <span className="user-name">
+                  Welcome, {user?.firstName} {user?.lastName}
+                </span>
+                <button
+                  onClick={logout}
+                  className="btn btn-secondary logout-btn"
+                >
                   Logout
                 </button>
               </div>
