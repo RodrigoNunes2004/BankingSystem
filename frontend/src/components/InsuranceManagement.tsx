@@ -216,7 +216,7 @@ const InsuranceManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [mockProducts, mockPolicies]);
 
   useEffect(() => {
     fetchData();

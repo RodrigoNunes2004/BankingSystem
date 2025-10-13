@@ -86,7 +86,7 @@ const CardManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [mockCards]);
 
   useEffect(() => {
     fetchData();
