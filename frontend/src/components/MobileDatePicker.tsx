@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface MobileDatePickerProps {
   value: string;
@@ -17,11 +17,21 @@ const MobileDatePicker: React.FC<MobileDatePickerProps> = ({
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   
-  // Parse the current date
+  // Parse the current date and update state when value changes
   const currentDate = value ? new Date(value) : new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDay, setSelectedDay] = useState(currentDate.getDate());
+
+  // Update internal state when value prop changes
+  useEffect(() => {
+    if (value) {
+      const date = new Date(value);
+      setSelectedYear(date.getFullYear());
+      setSelectedMonth(date.getMonth() + 1);
+      setSelectedDay(date.getDate());
+    }
+  }, [value]);
 
   // Generate year options (from 1900 to current year)
   const currentYear = new Date().getFullYear();
