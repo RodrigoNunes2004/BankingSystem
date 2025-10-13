@@ -73,10 +73,6 @@ const CardManagement: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -91,6 +87,10 @@ const CardManagement: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const generateCardNumber = (brand: string): string => {
     const prefixes = {

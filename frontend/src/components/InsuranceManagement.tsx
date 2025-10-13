@@ -202,10 +202,6 @@ const InsuranceManagement: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -221,6 +217,10 @@ const InsuranceManagement: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const calculateQuote = async () => {
     setIsCalculating(true);
