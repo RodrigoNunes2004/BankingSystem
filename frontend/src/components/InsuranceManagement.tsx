@@ -44,6 +44,7 @@ interface QuoteRequest {
 }
 
 // Mock data moved outside component to prevent recreation on every render
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockProducts: InsuranceProduct[] = [
   {
     id: 1,

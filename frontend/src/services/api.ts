@@ -319,7 +319,10 @@ class ApiService {
     ) {
       const transactionData = JSON.parse(options.body as string);
       const transaction: Transaction = {
-        id: userTransactions.length > 0 ? Math.max(...userTransactions.map((t) => t.id), 0) + 1 : 1,
+        id:
+          userTransactions.length > 0
+            ? Math.max(...userTransactions.map((t) => t.id), 0) + 1
+            : 1,
         transactionType: endpoint.includes("deposit")
           ? "DEPOSIT"
           : endpoint.includes("withdrawal")
