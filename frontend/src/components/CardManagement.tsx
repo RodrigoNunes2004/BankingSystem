@@ -144,7 +144,12 @@ const CardManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [securitySettings, mobilePaySettings, notificationSettings, spendingLimits]);
+  }, [
+    securitySettings,
+    mobilePaySettings,
+    notificationSettings,
+    spendingLimits,
+  ]);
 
   useEffect(() => {
     fetchData();

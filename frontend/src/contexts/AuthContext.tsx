@@ -51,10 +51,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Initialize demo users for production
+  const initializeDemoUsers = () => {
+    const existingUsers = JSON.parse(localStorage.getItem('banking_users') || '[]');
+    if (existingUsers.length === 0) {
+      const demoUsers = [
+        {
+          id: 1,
+          firstName: "Rodrigo",
+          lastName: "Nunes",
+          email: "rodrigo79rfn@gmail.com",
+          phoneNumber: "+1-555-0123",
+          dateOfBirth: "1979-01-15",
+          address: "123 Main Street",
+          city: "Auckland",
+          postalCode: "1010",
+          country: "New Zealand",
+          fullName: "Rodrigo Nunes",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: 2,
+          firstName: "Demo",
+          lastName: "User",
+          email: "demo@banking.com",
+          phoneNumber: "+1-555-0456",
+          dateOfBirth: "1990-05-20",
+          address: "456 Demo Avenue",
+          city: "Wellington",
+          postalCode: "6011",
+          country: "New Zealand",
+          fullName: "Demo User",
+          createdAt: new Date().toISOString(),
+        }
+      ];
+      localStorage.setItem('banking_users', JSON.stringify(demoUsers));
+    }
+  };
+
   // Check for existing session on app load
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Initialize demo users for production
+        initializeDemoUsers();
         const savedUser = localStorage.getItem("banking_user");
         if (savedUser) {
           const userData = JSON.parse(savedUser);
