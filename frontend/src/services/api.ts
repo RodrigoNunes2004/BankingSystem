@@ -226,7 +226,7 @@ class ApiService {
           options.body as string
         ) as CreateAccountRequest;
         const account: Account = {
-          id: Math.max(...userAccounts.map((a) => a.id), 0) + 1,
+          id: userAccounts.length > 0 ? Math.max(...userAccounts.map((a) => a.id), 0) + 1 : 1,
           accountNumber: Math.floor(
             1000000000 + Math.random() * 9000000000
           ).toString(),
@@ -341,8 +341,36 @@ class ApiService {
         ...transactionData,
       };
       userTransactions.push(transaction);
+      
+      // Update account balances based on transaction type
+      if (endpoint === "/transactions/deposit") {
+        const account = userAccounts.find(a => a.id === transactionData.accountId);
+        if (account) {
+          account.balance += transactionData.amount;
+          account.availableBalance += transactionData.amount;
+        }
+      } else if (endpoint === "/transactions/withdrawal") {
+        const account = userAccounts.find(a => a.id === transactionData.accountId);
+        if (account) {
+          account.balance -= transactionData.amount;
+          account.availableBalance -= transactionData.amount;
+        }
+      } else if (endpoint === "/transactions/transfer") {
+        const fromAccount = userAccounts.find(a => a.id === transactionData.fromAccountId);
+        const toAccount = userAccounts.find(a => a.id === transactionData.toAccountId);
+        if (fromAccount && toAccount) {
+          fromAccount.balance -= transactionData.amount;
+          fromAccount.availableBalance -= transactionData.amount;
+          toAccount.balance += transactionData.amount;
+          toAccount.availableBalance += transactionData.amount;
+        }
+      }
+      
+      // Save updated accounts and transactions
+      this.saveUserData(currentUser.id, "accounts", userAccounts);
       this.saveUserData(currentUser.id, "transactions", userTransactions);
       console.log("Created transaction:", transaction); // Debug log
+      console.log("Updated account balances:", userAccounts); // Debug log
       console.log("All user transactions:", userTransactions); // Debug log
       return transaction as T;
     }
