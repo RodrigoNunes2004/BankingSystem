@@ -67,8 +67,9 @@ const TransactionManagement: React.FC = () => {
     try {
       await apiService.processDeposit(depositForm);
       setDepositForm({ accountId: 0, amount: 0, description: "" });
-      fetchData();
+      await fetchData(); // Refresh data after deposit
       alert("Deposit processed successfully!");
+      setActiveTab("list"); // Navigate to transaction list
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -79,8 +80,9 @@ const TransactionManagement: React.FC = () => {
     try {
       await apiService.processWithdrawal(withdrawalForm);
       setWithdrawalForm({ accountId: 0, amount: 0, description: "" });
-      fetchData();
+      await fetchData(); // Refresh data after withdrawal
       alert("Withdrawal processed successfully!");
+      setActiveTab("list"); // Navigate to transaction list
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -97,8 +99,9 @@ const TransactionManagement: React.FC = () => {
         description: "",
         category: "",
       });
-      fetchData();
+      await fetchData(); // Refresh data after transfer
       alert("Transfer processed successfully!");
+      setActiveTab("list"); // Navigate to transaction list
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -117,7 +120,7 @@ const TransactionManagement: React.FC = () => {
             className={activeTab === "list" ? "active" : ""}
             onClick={() => setActiveTab("list")}
           >
-            Transaction List
+            List
           </button>
           <button
             className={activeTab === "deposit" ? "active" : ""}
@@ -265,6 +268,7 @@ const TransactionManagement: React.FC = () => {
                     description: e.target.value,
                   })
                 }
+                placeholder="Enter deposit description"
                 required
               />
             </div>
@@ -296,7 +300,7 @@ const TransactionManagement: React.FC = () => {
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.accountNumber} - {account.accountType} ($
-                    {account.availableBalance.toFixed(2)})
+                    {account.balance.toFixed(2)})
                   </option>
                 ))}
               </select>
@@ -330,6 +334,7 @@ const TransactionManagement: React.FC = () => {
                     description: e.target.value,
                   })
                 }
+                placeholder="Enter withdrawal description"
                 required
               />
             </div>
@@ -361,7 +366,7 @@ const TransactionManagement: React.FC = () => {
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.accountNumber} - {account.accountType} ($
-                    {account.availableBalance.toFixed(2)})
+                    {account.balance.toFixed(2)})
                   </option>
                 ))}
               </select>
@@ -417,6 +422,7 @@ const TransactionManagement: React.FC = () => {
                     description: e.target.value,
                   })
                 }
+                placeholder="Enter transfer description"
                 required
               />
             </div>
@@ -426,15 +432,18 @@ const TransactionManagement: React.FC = () => {
               <select
                 value={transferForm.category}
                 onChange={(e) =>
-                  setTransferForm({ ...transferForm, category: e.target.value })
+                  setTransferForm({
+                    ...transferForm,
+                    category: e.target.value,
+                  })
                 }
                 required
               >
                 <option value="">Select category</option>
-                <option value="Personal">Personal</option>
-                <option value="Business">Business</option>
-                <option value="Investment">Investment</option>
-                <option value="Emergency">Emergency</option>
+                <option value="personal">Personal</option>
+                <option value="business">Business</option>
+                <option value="family">Family</option>
+                <option value="other">Other</option>
               </select>
             </div>
 
