@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiService } from "../services/api";
 
 interface Account {
   id: number;
@@ -62,91 +63,11 @@ const AccountTransfer: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // Use mock data for now since API is having issues
-      const mockAccounts: Account[] = [
-        {
-          id: 1,
-          accountNumber: "7559546839",
-          accountType: "Checking",
-          balance: 8200.0,
-          availableBalance: 8200.0,
-          userId: 1,
-          currency: "USD",
-          isLocked: false,
-          userName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-        {
-          id: 2,
-          accountNumber: "6275708843",
-          accountType: "Savings",
-          balance: 1600.0,
-          availableBalance: 1600.0,
-          userId: 1,
-          currency: "USD",
-          isLocked: false,
-          userName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-        {
-          id: 3,
-          accountNumber: "1234567890",
-          accountType: "Checking",
-          balance: 5000.0,
-          availableBalance: 5000.0,
-          userId: 2,
-          currency: "USD",
-          isLocked: false,
-          userName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-        {
-          id: 4,
-          accountNumber: "0987654321",
-          accountType: "Savings",
-          balance: 12000.0,
-          availableBalance: 12000.0,
-          userId: 2,
-          currency: "USD",
-          isLocked: false,
-          userName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-      ];
-
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          firstName: "John",
-          lastName: "Doe",
-          email: "john.doe@example.com",
-          phoneNumber: "+1234567890",
-          dateOfBirth: "1990-01-15",
-          address: "123 Main St",
-          city: "New York",
-          postalCode: "10001",
-          country: "USA",
-          fullName: "John Doe",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-        {
-          id: 2,
-          firstName: "Jane",
-          lastName: "Smith",
-          email: "jane.smith@example.com",
-          phoneNumber: "+1234567891",
-          dateOfBirth: "1985-05-20",
-          address: "456 Oak Ave",
-          city: "Los Angeles",
-          postalCode: "90210",
-          country: "USA",
-          fullName: "Jane Smith",
-          createdAt: "2024-01-01T00:00:00Z",
-        },
-      ];
-
-      setAccounts(mockAccounts);
-      setUsers(mockUsers);
+      // Fetch user-specific accounts from API
+      const userAccounts = await apiService.getAccounts();
+      setAccounts(userAccounts);
+      setUsers([]);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

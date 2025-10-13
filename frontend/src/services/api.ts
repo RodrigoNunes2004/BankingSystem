@@ -155,7 +155,11 @@ class ApiService {
     }
 
     // Load user-specific data
-    const userAccounts = this.loadUserData<Account>(currentUser.id, "accounts", []);
+    const userAccounts = this.loadUserData<Account>(
+      currentUser.id,
+      "accounts",
+      []
+    );
     const userTransactions = this.loadUserData<Transaction>(
       currentUser.id,
       "transactions",

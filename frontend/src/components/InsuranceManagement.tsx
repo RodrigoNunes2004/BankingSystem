@@ -172,6 +172,15 @@ const InsuranceManagement: React.FC = () => {
   });
   const [quoteResult, setQuoteResult] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showClaimForm, setShowClaimForm] = useState(false);
+  const [claimForm, setClaimForm] = useState({
+    policyId: "",
+    claimType: "",
+    incidentDate: "",
+    description: "",
+    amount: "",
+    contactPhone: "",
+  });
 
   const fetchData = useCallback(async () => {
     try {
@@ -179,9 +188,19 @@ const InsuranceManagement: React.FC = () => {
       const accountsData = await apiService.getAccounts();
       setAccounts(accountsData);
 
-      // For now, use mock data
+      // Load user-specific policies from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('banking_user') || '{}');
+      let userPolicies: InsurancePolicy[] = [];
+      
+      if (currentUser.id) {
+        const savedPolicies = localStorage.getItem(`banking_policies_${currentUser.id}`);
+        if (savedPolicies) {
+          userPolicies = JSON.parse(savedPolicies);
+        }
+      }
+
       setProducts(mockProducts);
-      setPolicies(mockPolicies);
+      setPolicies(userPolicies);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -309,7 +328,15 @@ const InsuranceManagement: React.FC = () => {
           .split("T")[0],
       };
 
-      setPolicies([...policies, newPolicy]);
+      const updatedPolicies = [...policies, newPolicy];
+      setPolicies(updatedPolicies);
+      
+      // Persist to localStorage for user-specific data
+      const currentUser = JSON.parse(localStorage.getItem('banking_user') || '{}');
+      if (currentUser.id) {
+        localStorage.setItem(`banking_policies_${currentUser.id}`, JSON.stringify(updatedPolicies));
+      }
+      
       alert(
         `Policy application submitted! Policy Number: ${newPolicy.policyNumber}`
       );
@@ -845,7 +872,18 @@ const InsuranceManagement: React.FC = () => {
                     )}
                   </ul>
                 </div>
-                <button className="btn btn-success">Apply Now</button>
+                <button 
+                  className="btn btn-success"
+                  onClick={() => {
+                    // Find the product that matches the quote
+                    const product = products.find(p => p.type.toLowerCase() === quoteRequest.productType.toLowerCase());
+                    if (product) {
+                      purchasePolicy(product.id);
+                    }
+                  }}
+                >
+                  Apply Now
+                </button>
               </div>
             )}
           </div>
@@ -856,7 +894,12 @@ const InsuranceManagement: React.FC = () => {
         <div className="claims-container">
           <h3>Insurance Claims</h3>
           <div className="claims-actions">
-            <button className="btn btn-primary">File New Claim</button>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowClaimForm(true)}
+            >
+              File New Claim
+            </button>
             <button className="btn btn-secondary">View Claim Status</button>
           </div>
           <div className="claims-info">
@@ -869,6 +912,117 @@ const InsuranceManagement: React.FC = () => {
               <li>Track your claim status</li>
             </ol>
           </div>
+
+          {showClaimForm && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h3>File New Claim</h3>
+                  <button 
+                    className="modal-close"
+                    onClick={() => setShowClaimForm(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  alert(`Claim submitted successfully! Claim ID: CLM-${Date.now()}`);
+                  setShowClaimForm(false);
+                  setClaimForm({
+                    policyId: "",
+                    claimType: "",
+                    incidentDate: "",
+                    description: "",
+                    amount: "",
+                    contactPhone: "",
+                  });
+                }}>
+                  <div className="form-group">
+                    <label>Policy</label>
+                    <select
+                      value={claimForm.policyId}
+                      onChange={(e) => setClaimForm({...claimForm, policyId: e.target.value})}
+                      required
+                    >
+                      <option value="">Select Policy</option>
+                      {policies.map(policy => (
+                        <option key={policy.id} value={policy.id}>
+                          {policy.policyNumber} - {policy.productName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Claim Type</label>
+                    <select
+                      value={claimForm.claimType}
+                      onChange={(e) => setClaimForm({...claimForm, claimType: e.target.value})}
+                      required
+                    >
+                      <option value="">Select Claim Type</option>
+                      <option value="medical">Medical</option>
+                      <option value="property">Property Damage</option>
+                      <option value="auto">Auto Accident</option>
+                      <option value="life">Life Insurance</option>
+                    </select>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Incident Date</label>
+                    <input
+                      type="date"
+                      value={claimForm.incidentDate}
+                      onChange={(e) => setClaimForm({...claimForm, incidentDate: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      value={claimForm.description}
+                      onChange={(e) => setClaimForm({...claimForm, description: e.target.value})}
+                      placeholder="Describe the incident..."
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Claim Amount</label>
+                    <input
+                      type="number"
+                      value={claimForm.amount}
+                      onChange={(e) => setClaimForm({...claimForm, amount: e.target.value})}
+                      placeholder="Enter claim amount"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Contact Phone</label>
+                    <input
+                      type="tel"
+                      value={claimForm.contactPhone}
+                      onChange={(e) => setClaimForm({...claimForm, contactPhone: e.target.value})}
+                      placeholder="Enter contact phone"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-actions">
+                    <button type="button" onClick={() => setShowClaimForm(false)}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Submit Claim
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
