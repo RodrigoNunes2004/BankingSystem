@@ -146,37 +146,8 @@ const mockProducts: InsuranceProduct[] = [
   },
 ];
 
-const mockPolicies: InsurancePolicy[] = [
-  {
-    id: 1,
-    productId: 1,
-    productName: "Life Insurance Plus",
-    policyNumber: "POL-LIFE-001",
-    accountId: 1,
-    accountNumber: "ACC-001",
-    startDate: "2023-01-15",
-    endDate: "2043-01-15",
-    premium: 45,
-    coverageAmount: 500000,
-    status: "active",
-    nextPaymentDate: "2024-02-15",
-    beneficiaries: ["Jane Smith", "John Smith Jr."],
-  },
-  {
-    id: 2,
-    productId: 3,
-    productName: "AutoGuard Complete",
-    policyNumber: "POL-AUTO-002",
-    accountId: 1,
-    accountNumber: "ACC-001",
-    startDate: "2023-06-01",
-    endDate: "2024-06-01",
-    premium: 120,
-    coverageAmount: 100000,
-    status: "active",
-    nextPaymentDate: "2024-02-01",
-  },
-];
+// NO DEFAULT POLICIES - each user starts with empty policy list
+const mockPolicies: InsurancePolicy[] = [];
 
 const InsuranceManagement: React.FC = () => {
   const [products, setProducts] = useState<InsuranceProduct[]>([]);

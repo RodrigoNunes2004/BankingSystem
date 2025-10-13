@@ -87,80 +87,46 @@ export interface TransferRequest {
 }
 
 class ApiService {
-  // In-memory storage for mock data
-  private mockUsers: User[] = [
-    {
-      id: 1,
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phoneNumber: "+1234567890",
-      dateOfBirth: "1990-01-15",
-      address: "123 Main St",
-      city: "New York",
-      postalCode: "10001",
-      country: "USA",
-      fullName: "John Doe",
-      createdAt: "2024-01-01T00:00:00Z",
-    },
-  ];
+  // In-memory storage for mock data - NO DEFAULT VALUES
+  private mockUsers: User[] = [];
+  private mockAccounts: Account[] = [];
+  private mockTransactions: Transaction[] = [];
 
-  private mockAccounts: Account[] = [
-    {
-      id: 1,
-      accountNumber: "7559546839",
-      accountType: "Checking",
-      balance: 8200.0,
-      availableBalance: 8200.0,
-      userId: 1,
-      currency: "USD",
-      isLocked: false,
-      userName: "John Doe",
-      createdAt: "2024-01-01T00:00:00Z",
-    },
-    {
-      id: 2,
-      accountNumber: "6275708843",
-      accountType: "Savings",
-      balance: 1600.0,
-      availableBalance: 1600.0,
-      userId: 1,
-      currency: "USD",
-      isLocked: false,
-      userName: "John Doe",
-      createdAt: "2024-01-01T00:00:00Z",
-    },
-  ];
+  // Get current user from localStorage
+  private getCurrentUser(): User | null {
+    try {
+      const userData = localStorage.getItem('banking_user');
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      return null;
+    }
+  }
 
-  private mockTransactions: Transaction[] = [
-    {
-      id: 1,
-      transactionType: "WITHDRAWAL",
-      amount: 200.0,
-      accountId: 1,
-      description: "ATM Withdrawal",
-      status: "Completed",
-      referenceNumber: "TXN001",
-      transactionDate: "2024-12-10T10:00:00Z",
-      category: "Withdrawal",
-      createdAt: "2024-12-10T10:00:00Z",
-      accountNumber: "7559546839",
-    },
-    {
-      id: 2,
-      transactionType: "TRANSFER",
-      amount: 800.0,
-      accountId: 1,
-      toAccountId: 2,
-      description: "Transfer to Savings",
-      status: "Completed",
-      referenceNumber: "TXN002",
-      transactionDate: "2024-12-10T09:00:00Z",
-      category: "Transfer",
-      createdAt: "2024-12-10T09:00:00Z",
-      accountNumber: "7559546839",
-    },
-  ];
+  // Get user-specific data key
+  private getUserDataKey(userId: number, dataType: string): string {
+    return `banking_${dataType}_${userId}`;
+  }
+
+  // Load user-specific data
+  private loadUserData<T>(userId: number, dataType: string, defaultValue: T[]): T[] {
+    try {
+      const key = this.getUserDataKey(userId, dataType);
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  }
+
+  // Save user-specific data
+  private saveUserData<T>(userId: number, dataType: string, data: T[]): void {
+    try {
+      const key = this.getUserDataKey(userId, dataType);
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error(`Error saving ${dataType} data:`, error);
+    }
+  }
 
   private async request<T>(
     endpoint: string,
@@ -178,13 +144,22 @@ class ApiService {
 
   private getMockData<T>(endpoint: string, options: RequestInit): T {
     const method = options.method || 'GET';
+    const currentUser = this.getCurrentUser();
+    
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }
+
+    // Load user-specific data
+    const userAccounts = this.loadUserData(currentUser.id, 'accounts', []);
+    const userTransactions = this.loadUserData(currentUser.id, 'transactions', []);
     
     // Handle CRUD operations for users
     if (endpoint === "/users") {
       if (method === 'POST') {
         const newUser = JSON.parse(options.body as string) as CreateUserRequest;
         const user: User = {
-          id: Math.max(...this.mockUsers.map(u => u.id)) + 1,
+          id: Math.max(...this.mockUsers.map(u => u.id), 0) + 1,
           ...newUser,
           fullName: `${newUser.firstName} ${newUser.lastName}`,
           createdAt: new Date().toISOString(),
@@ -228,71 +203,73 @@ class ApiService {
     if (endpoint === "/accounts") {
       if (method === 'POST') {
         const newAccount = JSON.parse(options.body as string) as CreateAccountRequest;
-        const user = this.mockUsers.find(u => u.id === newAccount.userId);
         const account: Account = {
-          id: Math.max(...this.mockAccounts.map(a => a.id)) + 1,
+          id: Math.max(...userAccounts.map(a => a.id), 0) + 1,
           accountNumber: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
           balance: 0,
           availableBalance: 0,
           currency: newAccount.currency || "USD",
           isLocked: false,
-          userName: user?.fullName || "Unknown User",
+          userName: currentUser.fullName,
           createdAt: new Date().toISOString(),
           ...newAccount,
         };
-        this.mockAccounts.push(account);
+        userAccounts.push(account);
+        this.saveUserData(currentUser.id, 'accounts', userAccounts);
         return account as T;
       }
-      return this.mockAccounts as T;
+      return userAccounts as T;
     }
 
     if (endpoint.startsWith("/accounts/") && !endpoint.includes("/number/") && !endpoint.includes("/user/")) {
       const id = parseInt(endpoint.split("/")[2]);
       if (method === 'PUT') {
         const updateData = JSON.parse(options.body as string) as Partial<CreateAccountRequest>;
-        const accountIndex = this.mockAccounts.findIndex(a => a.id === id);
+        const accountIndex = userAccounts.findIndex(a => a.id === id);
         if (accountIndex !== -1) {
-          this.mockAccounts[accountIndex] = {
-            ...this.mockAccounts[accountIndex],
+          userAccounts[accountIndex] = {
+            ...userAccounts[accountIndex],
             ...updateData,
             updatedAt: new Date().toISOString(),
           };
-          return this.mockAccounts[accountIndex] as T;
+          this.saveUserData(currentUser.id, 'accounts', userAccounts);
+          return userAccounts[accountIndex] as T;
         }
       } else if (method === 'DELETE') {
-        this.mockAccounts = this.mockAccounts.filter(a => a.id !== id);
+        const filteredAccounts = userAccounts.filter(a => a.id !== id);
+        this.saveUserData(currentUser.id, 'accounts', filteredAccounts);
         return undefined as T;
       } else {
-        const account = this.mockAccounts.find(a => a.id === id);
+        const account = userAccounts.find(a => a.id === id);
         return account as T;
       }
     }
 
     if (endpoint.includes("/accounts/number/")) {
       const accountNumber = endpoint.split("/number/")[1];
-      const account = this.mockAccounts.find(a => a.accountNumber === accountNumber);
+      const account = userAccounts.find(a => a.accountNumber === accountNumber);
       return account as T;
     }
 
     if (endpoint.includes("/accounts/user/")) {
       const userId = parseInt(endpoint.split("/user/")[1]);
-      const accounts = this.mockAccounts.filter(a => a.userId === userId);
+      const accounts = userAccounts.filter(a => a.userId === userId);
       return accounts as T;
     }
 
     // Handle transaction endpoints
     if (endpoint.includes("/transactions/date-range")) {
-      return this.mockTransactions as T;
+      return userTransactions as T;
     }
     if (endpoint.includes("/transactions/account/")) {
-      return this.mockTransactions as T;
+      return userTransactions as T;
     }
     if (endpoint.includes("/transactions/user/")) {
-      return this.mockTransactions as T;
+      return userTransactions as T;
     }
     if (endpoint.startsWith("/transactions/") && !endpoint.includes("/date-range") && !endpoint.includes("/account/") && !endpoint.includes("/user/")) {
       const id = parseInt(endpoint.split("/")[2]);
-      const transaction = this.mockTransactions.find(t => t.id === id);
+      const transaction = userTransactions.find(t => t.id === id);
       return transaction as T;
     }
 
@@ -300,16 +277,17 @@ class ApiService {
     if (endpoint === "/transactions/deposit" || endpoint === "/transactions/withdrawal" || endpoint === "/transactions/transfer") {
       const transactionData = JSON.parse(options.body as string);
       const transaction: Transaction = {
-        id: Math.max(...this.mockTransactions.map(t => t.id)) + 1,
+        id: Math.max(...userTransactions.map(t => t.id), 0) + 1,
         transactionType: endpoint.includes("deposit") ? "DEPOSIT" : endpoint.includes("withdrawal") ? "WITHDRAWAL" : "TRANSFER",
         referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
         status: "Completed",
         transactionDate: new Date().toISOString(),
         createdAt: new Date().toISOString(),
-        accountNumber: this.mockAccounts.find(a => a.id === transactionData.accountId || a.id === transactionData.fromAccountId)?.accountNumber || "",
+        accountNumber: userAccounts.find(a => a.id === transactionData.accountId || a.id === transactionData.fromAccountId)?.accountNumber || "",
         ...transactionData,
       };
-      this.mockTransactions.push(transaction);
+      userTransactions.push(transaction);
+      this.saveUserData(currentUser.id, 'transactions', userTransactions);
       return transaction as T;
     }
 

@@ -25,35 +25,8 @@ interface CreateCardRequest {
 }
 
 // Mock data moved outside component to prevent recreation on every render
-const mockCards: Card[] = [
-  {
-    id: 1,
-    cardNumber: "4532-****-****-1234",
-    cardType: "debit",
-    cardBrand: "visa",
-    expiryDate: "12/26",
-    cvv: "***",
-    accountId: 1,
-    accountNumber: "ACC-001",
-    isActive: true,
-    lastUsed: "2024-01-15",
-  },
-  {
-    id: 2,
-    cardNumber: "5555-****-****-5678",
-    cardType: "credit",
-    cardBrand: "mastercard",
-    expiryDate: "08/27",
-    cvv: "***",
-    accountId: 2,
-    accountNumber: "ACC-002",
-    isActive: true,
-    creditLimit: 5000,
-    availableCredit: 3500,
-    currentBalance: 1500,
-    lastUsed: "2024-01-14",
-  },
-];
+// NO DEFAULT VALUES - each user starts with empty card list
+const mockCards: Card[] = [];
 
 const CardManagement: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
