@@ -52,8 +52,11 @@ const TransactionManagement: React.FC = () => {
       ]);
       setTransactions(transactionsData);
       setAccounts(accountsData);
+      setError(null);
+      console.log("Fetched transactions:", transactionsData); // Debug log
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Error fetching data:", err); // Debug log
     } finally {
       setLoading(false);
     }
@@ -140,7 +143,24 @@ const TransactionManagement: React.FC = () => {
       {error && <div className="error">Error: {error}</div>}
 
       {activeTab === "list" && (
-        <ResponsiveTable
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Transaction History</h3>
+            <button 
+              onClick={fetchData}
+              style={{ 
+                padding: '0.5rem 1rem', 
+                backgroundColor: 'var(--accent-primary)', 
+                color: '#000000', 
+                border: 'none', 
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 Refresh
+            </button>
+          </div>
+          <ResponsiveTable
           data={transactions}
           columns={[
             { 
@@ -181,6 +201,7 @@ const TransactionManagement: React.FC = () => {
             { key: 'referenceNumber', label: 'Reference' }
           ]}
         />
+        </div>
       )}
 
       {activeTab === "deposit" && (
