@@ -144,63 +144,70 @@ const TransactionManagement: React.FC = () => {
 
       {activeTab === "list" && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
             <h3>Transaction History</h3>
-            <button 
+            <button
               onClick={fetchData}
-              style={{ 
-                padding: '0.5rem 1rem', 
-                backgroundColor: 'var(--accent-primary)', 
-                color: '#000000', 
-                border: 'none', 
-                borderRadius: '4px',
-                cursor: 'pointer'
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "var(--accent-primary)",
+                color: "#000000",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               🔄 Refresh
             </button>
           </div>
           <ResponsiveTable
-          data={transactions}
-          columns={[
-            { 
-              key: 'transactionDate', 
-              label: 'Date',
-              render: (value) => new Date(value).toLocaleDateString()
-            },
-            { 
-              key: 'transactionType', 
-              label: 'Type',
-              render: (value) => (
-                <span className={`transaction-type ${value.toLowerCase()}`}>
-                  {value}
-                </span>
-              )
-            },
-            { 
-              key: 'amount', 
-              label: 'Amount',
-              render: (value) => `$${value.toFixed(2)}`
-            },
-            { key: 'accountNumber', label: 'From Account' },
-            { 
-              key: 'toAccountNumber', 
-              label: 'To Account',
-              render: (value) => value || "-"
-            },
-            { key: 'description', label: 'Description' },
-            { 
-              key: 'status', 
-              label: 'Status',
-              render: (value) => (
-                <span className={`status ${value.toLowerCase()}`}>
-                  {value}
-                </span>
-              )
-            },
-            { key: 'referenceNumber', label: 'Reference' }
-          ]}
-        />
+            data={transactions}
+            columns={[
+              {
+                key: "transactionDate",
+                label: "Date",
+                render: (value) => new Date(value).toLocaleDateString(),
+              },
+              {
+                key: "transactionType",
+                label: "Type",
+                render: (value) => (
+                  <span className={`transaction-type ${value.toLowerCase()}`}>
+                    {value}
+                  </span>
+                ),
+              },
+              {
+                key: "amount",
+                label: "Amount",
+                render: (value) => `$${value.toFixed(2)}`,
+              },
+              { key: "accountNumber", label: "From Account" },
+              {
+                key: "toAccountNumber",
+                label: "To Account",
+                render: (value) => value || "-",
+              },
+              { key: "description", label: "Description" },
+              {
+                key: "status",
+                label: "Status",
+                render: (value) => (
+                  <span className={`status ${value.toLowerCase()}`}>
+                    {value}
+                  </span>
+                ),
+              },
+              { key: "referenceNumber", label: "Reference" },
+            ]}
+          />
         </div>
       )}
 
@@ -442,5 +449,3 @@ const TransactionManagement: React.FC = () => {
 };
 
 export default TransactionManagement;
-
-

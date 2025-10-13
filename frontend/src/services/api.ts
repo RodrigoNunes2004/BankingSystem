@@ -116,8 +116,11 @@ class ApiService {
     try {
       const key = this.getUserDataKey(userId, dataType);
       const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : defaultValue;
-    } catch {
+      const result = data ? JSON.parse(data) : defaultValue;
+      console.log(`Loaded ${dataType} for user ${userId}:`, result); // Debug log
+      return result;
+    } catch (error) {
+      console.error(`Error loading ${dataType} for user ${userId}:`, error); // Debug log
       return defaultValue;
     }
   }
@@ -127,6 +130,7 @@ class ApiService {
     try {
       const key = this.getUserDataKey(userId, dataType);
       localStorage.setItem(key, JSON.stringify(data));
+      console.log(`Saved ${dataType} for user ${userId}:`, data); // Debug log
     } catch (error) {
       console.error(`Error saving ${dataType} data:`, error);
     }
@@ -287,6 +291,7 @@ class ApiService {
 
     // Handle transaction endpoints
     if (endpoint.includes("/transactions/date-range")) {
+      console.log("Returning transactions for date range:", userTransactions); // Debug log
       return userTransactions as T;
     }
     if (endpoint.includes("/transactions/account/")) {
@@ -314,7 +319,7 @@ class ApiService {
     ) {
       const transactionData = JSON.parse(options.body as string);
       const transaction: Transaction = {
-        id: Math.max(...userTransactions.map((t) => t.id), 0) + 1,
+        id: userTransactions.length > 0 ? Math.max(...userTransactions.map((t) => t.id), 0) + 1 : 1,
         transactionType: endpoint.includes("deposit")
           ? "DEPOSIT"
           : endpoint.includes("withdrawal")
@@ -334,6 +339,8 @@ class ApiService {
       };
       userTransactions.push(transaction);
       this.saveUserData(currentUser.id, "transactions", userTransactions);
+      console.log("Created transaction:", transaction); // Debug log
+      console.log("All user transactions:", userTransactions); // Debug log
       return transaction as T;
     }
 
