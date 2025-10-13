@@ -85,9 +85,10 @@ const MobileDatePicker: React.FC<MobileDatePickerProps> = ({
         onClick={() => setShowPicker(true)}
         style={{
           padding: '12px',
-          border: '1px solid #ddd',
+          border: '1px solid var(--border-color)',
           borderRadius: '4px',
-          backgroundColor: '#fff',
+          backgroundColor: 'var(--bg-input)',
+          color: 'var(--text-primary)',
           cursor: 'pointer',
           minHeight: '20px',
           display: 'flex',
@@ -197,9 +198,10 @@ const MobileDatePicker: React.FC<MobileDatePickerProps> = ({
                 onClick={() => setShowPicker(false)}
                 style={{
                   padding: '10px 20px',
-                  border: '1px solid #ddd',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '4px',
-                  backgroundColor: '#f5f5f5',
+                  backgroundColor: 'var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer'
                 }}
               >
@@ -211,8 +213,8 @@ const MobileDatePicker: React.FC<MobileDatePickerProps> = ({
                   padding: '10px 20px',
                   border: 'none',
                   borderRadius: '4px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
+                  backgroundColor: 'var(--accent-primary)',
+                  color: '#000000',
                   cursor: 'pointer'
                 }}
               >

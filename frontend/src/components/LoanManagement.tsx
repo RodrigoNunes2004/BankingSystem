@@ -57,18 +57,18 @@ const LoanManagement: React.FC = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [applicationForm, setApplicationForm] = useState({
     loanType: "personal" as "personal" | "car" | "business",
-    amount: 0,
+    amount: "",
     term: 12,
     purpose: "",
-    annualIncome: 0,
+    annualIncome: "",
     employmentStatus: "employed",
-    creditScore: 0,
+    creditScore: "",
     collateral: "",
     businessType: "",
     vehicleMake: "",
     vehicleModel: "",
     vehicleYear: new Date().getFullYear(),
-    vehicleValue: 0,
+    vehicleValue: "",
   });
 
   const loanProducts: LoanProduct[] = [
@@ -277,35 +277,35 @@ const LoanManagement: React.FC = () => {
     if (!product) return;
 
     const { monthlyPayment, totalAmount } = calculateLoan(
-      applicationForm.amount,
+      parseFloat(applicationForm.amount) || 0,
       applicationForm.term,
       product.interestRate
     );
 
-    const newApplication: LoanApplication = {
-      id: applications.length + 1,
-      loanType: applicationForm.loanType,
-      amount: applicationForm.amount,
-      term: applicationForm.term,
-      interestRate: product.interestRate,
-      monthlyPayment,
-      totalAmount,
-      status: "pending",
-      applicationDate: new Date().toISOString(),
-      purpose: applicationForm.purpose,
-      applicantName: "Current User", // In real app, get from user context
-      applicantEmail: "user@email.com",
-      applicantPhone: "+1-555-0000",
-      annualIncome: applicationForm.annualIncome,
-      employmentStatus: applicationForm.employmentStatus,
-      creditScore: applicationForm.creditScore,
-      collateral: applicationForm.collateral,
-      businessType: applicationForm.businessType,
-      vehicleMake: applicationForm.vehicleMake,
-      vehicleModel: applicationForm.vehicleModel,
-      vehicleYear: applicationForm.vehicleYear,
-      vehicleValue: applicationForm.vehicleValue,
-    };
+        const newApplication: LoanApplication = {
+          id: applications.length + 1,
+          loanType: applicationForm.loanType,
+          amount: parseFloat(applicationForm.amount) || 0,
+          term: applicationForm.term,
+          interestRate: product.interestRate,
+          monthlyPayment,
+          totalAmount,
+          status: "pending",
+          applicationDate: new Date().toISOString(),
+          purpose: applicationForm.purpose,
+          applicantName: "Current User", // In real app, get from user context
+          applicantEmail: "user@email.com",
+          applicantPhone: "+1-555-0000",
+          annualIncome: parseFloat(applicationForm.annualIncome) || 0,
+          employmentStatus: applicationForm.employmentStatus,
+          creditScore: parseFloat(applicationForm.creditScore) || 0,
+          collateral: applicationForm.collateral,
+          businessType: applicationForm.businessType,
+          vehicleMake: applicationForm.vehicleMake,
+          vehicleModel: applicationForm.vehicleModel,
+          vehicleYear: applicationForm.vehicleYear,
+          vehicleValue: parseFloat(applicationForm.vehicleValue) || 0,
+        };
 
     setApplications((prev) => [newApplication, ...prev]);
     setShowApplicationForm(false);
@@ -314,18 +314,18 @@ const LoanManagement: React.FC = () => {
     // Reset form
     setApplicationForm({
       loanType: "personal",
-      amount: 0,
+      amount: "",
       term: 12,
       purpose: "",
-      annualIncome: 0,
+      annualIncome: "",
       employmentStatus: "employed",
-      creditScore: 0,
+      creditScore: "",
       collateral: "",
       businessType: "",
       vehicleMake: "",
       vehicleModel: "",
       vehicleYear: new Date().getFullYear(),
-      vehicleValue: 0,
+      vehicleValue: "",
     });
   };
 
@@ -584,7 +584,7 @@ const LoanManagement: React.FC = () => {
                   onChange={(e) =>
                     setApplicationForm((prev) => ({
                       ...prev,
-                      amount: parseFloat(e.target.value) || 0,
+                      amount: e.target.value,
                     }))
                   }
                   placeholder="Enter loan amount"
@@ -627,54 +627,54 @@ const LoanManagement: React.FC = () => {
 
             <div className="calculator-results">
               <h3>Payment Summary</h3>
-              {applicationForm.amount > 0 && applicationForm.term > 0 && (
+              {parseFloat(applicationForm.amount) > 0 && applicationForm.term > 0 && (
                 <div className="results-card">
                   <div className="result-item">
                     <span className="result-label">Monthly Payment:</span>
                     <span className="result-value">
-                      {formatCurrency(
-                        calculateLoan(
-                          applicationForm.amount,
-                          applicationForm.term,
-                          applicationForm.loanType === "personal"
-                            ? 8.5
-                            : applicationForm.loanType === "car"
-                            ? 6.9
-                            : 7.5
-                        ).monthlyPayment
-                      )}
+                        {formatCurrency(
+                          calculateLoan(
+                            parseFloat(applicationForm.amount) || 0,
+                            applicationForm.term,
+                            applicationForm.loanType === "personal"
+                              ? 8.5
+                              : applicationForm.loanType === "car"
+                              ? 6.9
+                              : 7.5
+                          ).monthlyPayment
+                        )}
                     </span>
                   </div>
                   <div className="result-item">
                     <span className="result-label">Total Amount:</span>
                     <span className="result-value">
-                      {formatCurrency(
-                        calculateLoan(
-                          applicationForm.amount,
-                          applicationForm.term,
-                          applicationForm.loanType === "personal"
-                            ? 8.5
-                            : applicationForm.loanType === "car"
-                            ? 6.9
-                            : 7.5
-                        ).totalAmount
-                      )}
+                        {formatCurrency(
+                          calculateLoan(
+                            parseFloat(applicationForm.amount) || 0,
+                            applicationForm.term,
+                            applicationForm.loanType === "personal"
+                              ? 8.5
+                              : applicationForm.loanType === "car"
+                              ? 6.9
+                              : 7.5
+                          ).totalAmount
+                        )}
                     </span>
                   </div>
                   <div className="result-item">
                     <span className="result-label">Total Interest:</span>
                     <span className="result-value">
-                      {formatCurrency(
-                        calculateLoan(
-                          applicationForm.amount,
-                          applicationForm.term,
-                          applicationForm.loanType === "personal"
-                            ? 8.5
-                            : applicationForm.loanType === "car"
-                            ? 6.9
-                            : 7.5
-                        ).totalAmount - applicationForm.amount
-                      )}
+                        {formatCurrency(
+                          calculateLoan(
+                            parseFloat(applicationForm.amount) || 0,
+                            applicationForm.term,
+                            applicationForm.loanType === "personal"
+                              ? 8.5
+                              : applicationForm.loanType === "car"
+                              ? 6.9
+                              : 7.5
+                          ).totalAmount - (parseFloat(applicationForm.amount) || 0)
+                        )}
                     </span>
                   </div>
                 </div>

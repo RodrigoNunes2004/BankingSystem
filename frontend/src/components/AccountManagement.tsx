@@ -43,6 +43,13 @@ const AccountManagement: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that a user is selected
+    if (formData.userId === 0) {
+      setError("Please select a user");
+      return;
+    }
+    
     try {
       if (editingAccount) {
         await apiService.updateAccount(editingAccount.id, formData);
@@ -56,6 +63,7 @@ const AccountManagement: React.FC = () => {
         userId: 0,
         currency: "USD",
       });
+      setError(null);
       fetchData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
