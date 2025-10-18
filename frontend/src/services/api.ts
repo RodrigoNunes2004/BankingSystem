@@ -1,4 +1,4 @@
-// API configuration - using mock data for now
+// API configuration - using real Azure API
 
 export interface User {
   id: number;
@@ -143,12 +143,32 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<T> {
     try {
-      // Always use mock data for now since Azure API is down
-      console.log(`Using mock data for endpoint: ${endpoint}`);
-      return this.getMockData<T>(endpoint, options);
+      // Use real Azure API
+      const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+      const url = `${baseUrl}${endpoint}`;
+      
+      console.log(`Making API request to: ${url}`);
+      
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(`API response for ${endpoint}:`, data);
+      return data;
     } catch (error) {
-      console.error(`Error in mock data for ${endpoint}:`, error);
-      throw new Error(`Mock data error: ${error}`);
+      console.error(`Error calling API for ${endpoint}:`, error);
+      // Fallback to mock data if API fails
+      console.log(`Falling back to mock data for endpoint: ${endpoint}`);
+      return this.getMockData<T>(endpoint, options);
     }
   }
 
