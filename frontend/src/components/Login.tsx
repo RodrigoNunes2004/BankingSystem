@@ -62,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
             />
           </div>
           
-          <button type="submit" disabled={isLoading} className="auth-button">
+          <button type="submit" disabled={isLoading} className="btn btn-primary auth-btn">
             {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
