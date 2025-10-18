@@ -78,9 +78,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
 
-      // For demo purposes, we'll use a simple email-based login
-      // In a real app, this would call your authentication API
-      const users = JSON.parse(localStorage.getItem("banking_users") || "[]");
+      // Call the real Azure API to get users
+      const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+      const response = await fetch(`${baseUrl}/users`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const users: User[] = await response.json();
       const foundUser = users.find(
         (u: User) => u.email.toLowerCase() === email.toLowerCase()
       );
@@ -107,26 +113,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
 
-      const users = JSON.parse(localStorage.getItem("banking_users") || "[]");
+      // Call the real Azure API to create a new user
+      const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+      const response = await fetch(`${baseUrl}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
 
-      // Check if user already exists
-      const existingUser = users.find(
-        (u: User) => u.email.toLowerCase() === userData.email.toLowerCase()
-      );
-      if (existingUser) {
-        return false; // User already exists
+      if (!response.ok) {
+        if (response.status === 409) {
+          return false; // User already exists
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const newUser: User = {
-        ...userData,
-        id: Date.now(), // Simple ID generation
-        fullName: `${userData.firstName} ${userData.lastName}`,
-        createdAt: new Date().toISOString(),
-      };
-
-      users.push(newUser);
-      localStorage.setItem("banking_users", JSON.stringify(users));
-
+      const newUser: User = await response.json();
       setUser(newUser);
       localStorage.setItem("banking_user", JSON.stringify(newUser));
 
