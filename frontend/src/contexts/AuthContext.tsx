@@ -57,6 +57,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Clear any old mock data that might interfere
+        localStorage.removeItem("banking_users");
+        
         // Check for saved user session
         const savedUser = localStorage.getItem("banking_user");
         if (savedUser) {
@@ -80,24 +83,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Call the real Azure API to get users
       const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+      console.log(`Attempting to login with email: ${email}`);
+      console.log(`API URL: ${baseUrl}/users`);
+      
       const response = await fetch(`${baseUrl}/users`);
       
       if (!response.ok) {
+        console.error(`API call failed with status: ${response.status}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const users: User[] = await response.json();
+      console.log(`Retrieved ${users.length} users from API:`, users);
+      
       const foundUser = users.find(
         (u: User) => u.email.toLowerCase() === email.toLowerCase()
       );
 
       if (foundUser) {
+        console.log(`User found:`, foundUser);
         // For demo, any password works. In real app, verify password hash
         setUser(foundUser);
         localStorage.setItem("banking_user", JSON.stringify(foundUser));
         return true;
       }
 
+      console.log(`User not found for email: ${email}`);
       return false;
     } catch (error) {
       console.error("Login error:", error);
