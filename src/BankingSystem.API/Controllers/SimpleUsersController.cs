@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BankingSystem.Infrastructure.Data;
 using BankingSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace BankingSystem.API.Controllers;
 
@@ -42,7 +43,7 @@ public class SimpleUsersController : ControllerBase
     /// Create a new user - simple version
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] dynamic userData)
+    public async Task<IActionResult> CreateUser([FromBody] JsonElement userData)
     {
         // Add CORS headers manually
         Response.Headers["Access-Control-Allow-Origin"] = "*";
@@ -53,15 +54,15 @@ public class SimpleUsersController : ControllerBase
         {
             var user = new User
             {
-                FirstName = userData.firstName?.ToString() ?? "",
-                LastName = userData.lastName?.ToString() ?? "",
-                Email = userData.email?.ToString() ?? "",
-                PhoneNumber = userData.phoneNumber?.ToString() ?? "",
-                DateOfBirth = DateTime.TryParse(userData.dateOfBirth?.ToString(), out DateTime dob) ? dob : DateTime.Now,
-                Address = userData.address?.ToString() ?? "",
-                City = userData.city?.ToString() ?? "",
-                PostalCode = userData.postalCode?.ToString() ?? "",
-                Country = userData.country?.ToString() ?? "",
+                FirstName = userData.TryGetProperty("firstName", out var firstName) ? firstName.GetString() ?? "" : "",
+                LastName = userData.TryGetProperty("lastName", out var lastName) ? lastName.GetString() ?? "" : "",
+                Email = userData.TryGetProperty("email", out var email) ? email.GetString() ?? "" : "",
+                PhoneNumber = userData.TryGetProperty("phoneNumber", out var phoneNumber) ? phoneNumber.GetString() ?? "" : "",
+                DateOfBirth = userData.TryGetProperty("dateOfBirth", out var dateOfBirth) && DateTime.TryParse(dateOfBirth.GetString(), out DateTime dob) ? dob : DateTime.Now,
+                Address = userData.TryGetProperty("address", out var address) ? address.GetString() ?? "" : "",
+                City = userData.TryGetProperty("city", out var city) ? city.GetString() ?? "" : "",
+                PostalCode = userData.TryGetProperty("postalCode", out var postalCode) ? postalCode.GetString() ?? "" : "",
+                Country = userData.TryGetProperty("country", out var country) ? country.GetString() ?? "" : "",
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
