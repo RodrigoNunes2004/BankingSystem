@@ -18,11 +18,28 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
+    /// Handle CORS preflight requests
+    /// </summary>
+    [HttpOptions]
+    public IActionResult Options()
+    {
+        Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        return Ok();
+    }
+
+    /// <summary>
     /// Get all users
     /// </summary>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
+        // Add CORS headers manually
+        Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        
         var users = await _userService.GetAllAsync();
         return Ok(users);
     }
@@ -61,6 +78,11 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
+        // Add CORS headers manually
+        Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        
         try
         {
             var user = await _userService.CreateAsync(createUserDto);
