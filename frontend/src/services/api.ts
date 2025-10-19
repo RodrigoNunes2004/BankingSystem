@@ -193,7 +193,7 @@ class ApiService {
     );
 
     // Handle CRUD operations for users
-    if (endpoint === "/users") {
+    if (endpoint === "/simpleusers") {
       if (method === "POST") {
         const newUser = JSON.parse(options.body as string) as CreateUserRequest;
         const user: User = {
@@ -467,7 +467,7 @@ class ApiService {
 
   // User endpoints
   async getUsers(): Promise<User[]> {
-    return this.request<User[]>("/users");
+    return this.request<User[]>("/simpleusers");
   }
 
   async getUser(id: number): Promise<User> {
@@ -479,7 +479,7 @@ class ApiService {
   }
 
   async createUser(user: CreateUserRequest): Promise<User> {
-    return this.request<User>("/users", {
+    return this.request<User>("/simpleusers", {
       method: "POST",
       body: JSON.stringify(user),
     });
