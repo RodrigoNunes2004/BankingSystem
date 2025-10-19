@@ -38,15 +38,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins(
-                "https://banking-system-v3-nte4lnzmx-rodrigos-projects-2e367d33.vercel.app",
-                "https://banking-system-v3.vercel.app",
-                "http://localhost:3000",
-                "http://localhost:3001"
-              )
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 using BankingSystem.application.DTOs;
 using BankingSystem.application.Services;
 
@@ -6,6 +7,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableCors("AllowReactApp")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
