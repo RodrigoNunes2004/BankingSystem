@@ -58,13 +58,13 @@ var app = builder.Build();
 // Add manual CORS handling FIRST - before any other middleware
 app.Use(async (context, next) =>
 {
-    // Always add CORS headers
+    // Always add CORS headers to every response
     context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
     context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
     context.Response.Headers.Add("Access-Control-Max-Age", "86400");
     
-    // Handle preflight requests
+    // Handle preflight requests immediately
     if (context.Request.Method == "OPTIONS")
     {
         context.Response.StatusCode = 200;
@@ -88,6 +88,16 @@ app.UseAuthorization();
 
 // Add a simple health check endpoint
 app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+
+// Add a global OPTIONS handler for all API routes
+app.MapMethods("/api/{*path}", new[] { "OPTIONS" }, (HttpContext context) =>
+{
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    context.Response.Headers.Add("Access-Control-Max-Age", "86400");
+    return Results.Ok();
+});
 
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
