@@ -59,10 +59,10 @@ var app = builder.Build();
 app.Use(async (context, next) =>
 {
     // Always add CORS headers to every response
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-    context.Response.Headers.Add("Access-Control-Max-Age", "86400");
+    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+    context.Response.Headers["Access-Control-Max-Age"] = "86400";
     
     // Handle preflight requests immediately
     if (context.Request.Method == "OPTIONS")
@@ -92,10 +92,10 @@ app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNo
 // Add a global OPTIONS handler for all API routes
 app.MapMethods("/api/{*path}", new[] { "OPTIONS" }, (HttpContext context) =>
 {
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-    context.Response.Headers.Add("Access-Control-Max-Age", "86400");
+    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+    context.Response.Headers["Access-Control-Max-Age"] = "86400";
     return Results.Ok();
 });
 
