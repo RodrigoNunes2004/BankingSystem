@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           country: "New Zealand",
           fullName: "Rodrigo Nunes",
           createdAt: new Date().toISOString(),
-          updatedAt: null
+          updatedAt: undefined
         }
       ];
       
@@ -186,7 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: Date.now(), // Simple ID generation
         fullName: `${userData.firstName} ${userData.lastName}`,
         createdAt: new Date().toISOString(),
-        updatedAt: null
+        updatedAt: undefined
       };
       
       setUser(newUser);
