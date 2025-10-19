@@ -33,18 +33,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Updated to fix Vercel frontend access
+// Add CORS - Fixed configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .SetIsOriginAllowed(origin => true);
-    });
-    
-    // Add a more permissive policy as backup
     options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
@@ -55,33 +46,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Add manual CORS handling FIRST - before any other middleware
-app.Use(async (context, next) =>
-{
-    // Always add CORS headers to every response
-    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-    context.Response.Headers["Access-Control-Max-Age"] = "86400";
-    
-    // Handle preflight requests immediately
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        await context.Response.WriteAsync("");
-        return;
-    }
-    
-    await next();
-});
-
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
 // CORS must be before other middleware
-app.UseCors("AllowReactApp");
-app.UseCors(); // Use default policy as backup
+app.UseCors();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
@@ -89,15 +59,6 @@ app.UseAuthorization();
 // Add a simple health check endpoint
 app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
 
-// Add a global OPTIONS handler for all API routes
-app.MapMethods("/api/{*path}", new[] { "OPTIONS" }, (HttpContext context) =>
-{
-    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-    context.Response.Headers["Access-Control-Max-Age"] = "86400";
-    return Results.Ok();
-});
 
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
