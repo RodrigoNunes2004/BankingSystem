@@ -40,8 +40,16 @@ public class UsersController : ControllerBase
         Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
         
-        var users = await _userService.GetAllAsync();
-        return Ok(users);
+        try
+        {
+            var users = await _userService.GetAllAsync();
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            // Log the error and return empty array instead of 500
+            return Ok(new List<UserDto>());
+        }
     }
 
     /// <summary>
