@@ -102,6 +102,34 @@ app.MapMethods("/api/{*path}", new[] { "OPTIONS" }, (HttpContext context) =>
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
 
+// Add a CORS-free test endpoint
+app.MapGet("/test-cors", () => new { 
+    message = "CORS test successful", 
+    timestamp = DateTime.UtcNow,
+    corsHeaders = "Should work without CORS issues"
+});
+
+// Add a test endpoint to check users without going through the controller
+app.MapGet("/api/test-users", async (HttpContext httpContext) => {
+    try {
+        var context = httpContext.RequestServices.GetRequiredService<BankingDbContext>();
+        var users = await context.Users.ToListAsync();
+        return Results.Ok(new { 
+            message = "Users test successful", 
+            userCount = users.Count,
+            users = users,
+            timestamp = DateTime.UtcNow 
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "Users test failed", 
+            error = ex.Message,
+            stackTrace = ex.StackTrace,
+            timestamp = DateTime.UtcNow 
+        });
+    }
+});
+
 // Add a debug endpoint to show connection string
 app.MapGet("/api/debug-connection", (IConfiguration config) => new { 
     connectionString = config.GetConnectionString("DefaultConnection"),
