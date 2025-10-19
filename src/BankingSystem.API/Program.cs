@@ -55,6 +55,26 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Add manual CORS handling FIRST - before any other middleware
+app.Use(async (context, next) =>
+{
+    // Always add CORS headers
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    context.Response.Headers.Add("Access-Control-Max-Age", "86400");
+    
+    // Handle preflight requests
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 200;
+        await context.Response.WriteAsync("");
+        return;
+    }
+    
+    await next();
+});
+
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -62,22 +82,6 @@ app.UseSwaggerUI();
 // CORS must be before other middleware
 app.UseCors("AllowReactApp");
 app.UseCors(); // Use default policy as backup
-
-// Add manual CORS handling as final fallback
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        return;
-    }
-    
-    await next();
-});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
