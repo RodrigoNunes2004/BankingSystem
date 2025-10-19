@@ -38,9 +38,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+                "https://banking-system-v3-nte4lnzmx-rodrigos-projects-2e367d33.vercel.app",
+                "https://banking-system-v3.vercel.app",
+                "http://localhost:3000",
+                "http://localhost:3001"
+              )
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -50,8 +56,10 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// CORS must be before other middleware
 app.UseCors("AllowReactApp");
+
+app.UseHttpsRedirection();
 app.UseAuthorization();
 
 // Add a simple health check endpoint
