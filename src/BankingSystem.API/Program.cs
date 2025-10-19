@@ -130,6 +130,27 @@ app.MapGet("/api/test-users", async (HttpContext httpContext) => {
     }
 });
 
+// Add a test endpoint to check UserService directly
+app.MapGet("/api/test-userservice", async (HttpContext httpContext) => {
+    try {
+        var userService = httpContext.RequestServices.GetRequiredService<IUserService>();
+        var users = await userService.GetAllAsync();
+        return Results.Ok(new { 
+            message = "UserService test successful", 
+            userCount = users.Count(),
+            users = users,
+            timestamp = DateTime.UtcNow 
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "UserService test failed", 
+            error = ex.Message,
+            stackTrace = ex.StackTrace,
+            timestamp = DateTime.UtcNow 
+        });
+    }
+});
+
 // Add a debug endpoint to show connection string
 app.MapGet("/api/debug-connection", (IConfiguration config) => new { 
     connectionString = config.GetConnectionString("DefaultConnection"),
