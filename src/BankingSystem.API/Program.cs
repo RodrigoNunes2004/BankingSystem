@@ -151,6 +151,40 @@ app.MapGet("/api/test-userservice", async (HttpContext httpContext) => {
     }
 });
 
+// Add a simple endpoint that returns empty users array (like the controller should)
+app.MapGet("/api/users-simple", async (HttpContext httpContext) => {
+    try {
+        var context = httpContext.RequestServices.GetRequiredService<BankingDbContext>();
+        var users = await context.Users.ToListAsync();
+        
+        // Return empty array if no users
+        var userDtos = users.Select(u => new {
+            id = u.Id,
+            firstName = u.FirstName,
+            lastName = u.LastName,
+            email = u.Email,
+            phoneNumber = u.PhoneNumber,
+            dateOfBirth = u.DateOfBirth,
+            address = u.Address,
+            city = u.City,
+            postalCode = u.PostalCode,
+            country = u.Country,
+            fullName = u.FullName,
+            createdAt = u.CreatedAt,
+            updatedAt = u.UpdatedAt
+        });
+        
+        return Results.Ok(userDtos);
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "Users simple test failed", 
+            error = ex.Message,
+            stackTrace = ex.StackTrace,
+            timestamp = DateTime.UtcNow 
+        });
+    }
+});
+
 // Add a debug endpoint to show connection string
 app.MapGet("/api/debug-connection", (IConfiguration config) => new { 
     connectionString = config.GetConnectionString("DefaultConnection"),
