@@ -132,6 +132,31 @@ app.MapPost("/api/init-db", async (HttpContext httpContext) => {
     }
 });
 
+// Add an endpoint to reset/clear all data
+app.MapPost("/api/reset-db", async (HttpContext httpContext) => {
+    try {
+        var context = httpContext.RequestServices.GetRequiredService<BankingDbContext>();
+        
+        // Clear all data
+        context.Transactions.RemoveRange(context.Transactions);
+        context.Accounts.RemoveRange(context.Accounts);
+        context.Users.RemoveRange(context.Users);
+        
+        await context.SaveChangesAsync();
+        
+        return Results.Ok(new { 
+            message = "Database reset successfully - all data cleared", 
+            timestamp = DateTime.UtcNow 
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { 
+            message = "Database reset failed", 
+            error = ex.Message,
+            timestamp = DateTime.UtcNow 
+        });
+    }
+});
+
 app.MapControllers();
 
 app.Run();
