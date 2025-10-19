@@ -20,10 +20,15 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
     try {
       const success = await login(email, password);
       if (!success) {
-        setError("Invalid email or password");
+        setError("Invalid email or password. Please check your credentials and try again.");
       }
     } catch (err) {
-      setError("An error occurred during login");
+      console.error("Login error:", err);
+      if (err instanceof TypeError && err.message.includes("Failed to fetch")) {
+        setError("Unable to connect to the server. Please check your internet connection and try again.");
+      } else {
+        setError("An error occurred during login. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
