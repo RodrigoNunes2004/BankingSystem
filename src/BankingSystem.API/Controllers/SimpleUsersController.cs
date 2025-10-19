@@ -23,16 +23,16 @@ public class SimpleUsersController : ControllerBase
     public async Task<IActionResult> GetUsers()
     {
         // Add CORS headers manually
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         try
         {
             var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Ok(new List<object>());
         }
@@ -45,9 +45,9 @@ public class SimpleUsersController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] dynamic userData)
     {
         // Add CORS headers manually
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         try
         {
@@ -57,12 +57,11 @@ public class SimpleUsersController : ControllerBase
                 LastName = userData.lastName?.ToString() ?? "",
                 Email = userData.email?.ToString() ?? "",
                 PhoneNumber = userData.phoneNumber?.ToString() ?? "",
-                DateOfBirth = DateTime.TryParse(userData.dateOfBirth?.ToString(), out var dob) ? dob : DateTime.Now,
+                DateOfBirth = DateTime.TryParse(userData.dateOfBirth?.ToString(), out DateTime dob) ? dob : DateTime.Now,
                 Address = userData.address?.ToString() ?? "",
                 City = userData.city?.ToString() ?? "",
                 PostalCode = userData.postalCode?.ToString() ?? "",
                 Country = userData.country?.ToString() ?? "",
-                FullName = $"{userData.firstName} {userData.lastName}",
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -88,9 +87,9 @@ public class SimpleUsersController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         return Ok();
     }
 }

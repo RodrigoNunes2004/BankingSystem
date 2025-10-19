@@ -23,9 +23,9 @@ public class UsersController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         return Ok();
     }
 
@@ -33,15 +33,15 @@ public class UsersController : ControllerBase
     /// Get all users
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+    public Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         // Add CORS headers manually
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         // Temporary fix: return empty array directly to bypass UserService issues
-        return Ok(new List<UserDto>());
+        return Task.FromResult<ActionResult<IEnumerable<UserDto>>>(Ok(new List<UserDto>()));
     }
 
     /// <summary>
@@ -79,9 +79,9 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
         // Add CORS headers manually
-        Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         try
         {
