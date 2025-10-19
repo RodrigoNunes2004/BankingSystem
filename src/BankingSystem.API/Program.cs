@@ -33,10 +33,19 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS
+// Add CORS - Updated to fix Vercel frontend access
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .SetIsOriginAllowed(origin => true);
+    });
+    
+    // Add a more permissive policy as backup
+    options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
@@ -52,6 +61,7 @@ app.UseSwaggerUI();
 
 // CORS must be before other middleware
 app.UseCors("AllowReactApp");
+app.UseCors(); // Use default policy as backup
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
