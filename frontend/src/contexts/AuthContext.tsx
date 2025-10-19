@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log(`API URL: ${baseUrl}/users`);
       
       try {
-        const response = await fetch(`${baseUrl}/users`);
+        const response = await fetch(`${baseUrl}/simpleusers`);
         
         if (response.ok) {
           const users: User[] = await response.json();
@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
       
       try {
-        const response = await fetch(`${baseUrl}/users`, {
+        const response = await fetch(`${baseUrl}/simpleusers`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
