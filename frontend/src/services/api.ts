@@ -143,7 +143,7 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<T> {
     try {
-      // Use Vercel proxy to bypass CORS and EasyAuth issues
+      // Try Vercel proxy first
       const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       const proxyUrl = `/api/proxy?endpoint=${cleanEndpoint}`;
       
@@ -158,17 +158,43 @@ class ApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Proxy error! status: ${response.status}`);
       }
 
       const data = await response.json();
       console.log(`API response for ${endpoint}:`, data);
       return data;
-    } catch (error) {
-      console.error(`Error calling API for ${endpoint}:`, error);
-      // Fallback to mock data if API fails
-      console.log(`Falling back to mock data for endpoint: ${endpoint}`);
-      return this.getMockData<T>(endpoint, options);
+    } catch (proxyError) {
+      console.log(`Proxy failed, trying direct API:`, proxyError);
+      
+      try {
+        // Fallback to direct API call
+        const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+        const url = `${baseUrl}${endpoint}`;
+
+        console.log(`Making direct API request to: ${url}`);
+
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(`Direct API response for ${endpoint}:`, data);
+        return data;
+      } catch (directError) {
+        console.error(`Both proxy and direct API failed for ${endpoint}:`, directError);
+        // Final fallback to mock data
+        console.log(`Falling back to mock data for endpoint: ${endpoint}`);
+        return this.getMockData<T>(endpoint, options);
+      }
     }
   }
 
