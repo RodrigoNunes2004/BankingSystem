@@ -33,20 +33,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Simplified configuration
+// Add CORS - Comprehensive configuration
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .SetPreflightMaxAge(TimeSpan.FromDays(1));
     });
 });
 
 var app = builder.Build();
 
-// Use CORS middleware
+// Use CORS middleware early in the pipeline
 app.UseCors();
 
 // Configure the HTTP request pipeline.
