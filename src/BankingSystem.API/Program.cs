@@ -33,7 +33,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Fixed configuration
+// Add CORS - Simplified configuration
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -46,25 +46,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Add CORS middleware FIRST - before anything else
-app.Use(async (context, next) =>
-{
-    // Add CORS headers to EVERY response
-    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-    context.Response.Headers["Access-Control-Max-Age"] = "86400";
-    
-    // Handle preflight OPTIONS requests
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        await context.Response.WriteAsync("");
-        return;
-    }
-    
-    await next();
-});
+// Use CORS middleware
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
