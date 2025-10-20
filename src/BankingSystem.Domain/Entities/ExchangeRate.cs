@@ -21,6 +21,6 @@ namespace BankingSystem.Domain.Entities
         [StringLength(100)]
         public string? Source { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public new bool IsActive { get; set; } = true;
     }
 }
