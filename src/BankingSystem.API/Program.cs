@@ -88,7 +88,7 @@ app.MapPost("/api/proxy/users", async (HttpContext context) => {
         // Read the request body
         using var reader = new StreamReader(context.Request.Body);
         var body = await reader.ReadToEndAsync();
-        var userData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(body);
+        var userData = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(body);
         
         // Create user
         var user = new BankingSystem.Domain.Entities.User
@@ -97,7 +97,7 @@ app.MapPost("/api/proxy/users", async (HttpContext context) => {
             LastName = userData.TryGetProperty("lastName", out var lastName) ? lastName.GetString() ?? "" : "",
             Email = userData.TryGetProperty("email", out var email) ? email.GetString() ?? "" : "",
             PhoneNumber = userData.TryGetProperty("phoneNumber", out var phoneNumber) ? phoneNumber.GetString() ?? "" : "",
-            DateOfBirth = userData.TryGetProperty("dateOfBirth", out var dateOfBirth) && DateTime.TryParse(dateOfBirth.GetString(), out DateTime dob) ? dob : DateTime.Now,
+            DateOfBirth = userData.TryGetProperty("dateOfBirth", out var dateOfBirth) && DateTime.TryParse(dateOfBirth.GetString(), out DateTime parsedDate) ? parsedDate : DateTime.Now,
             Address = userData.TryGetProperty("address", out var address) ? address.GetString() ?? "" : "",
             City = userData.TryGetProperty("city", out var city) ? city.GetString() ?? "" : "",
             PostalCode = userData.TryGetProperty("postalCode", out var postalCode) ? postalCode.GetString() ?? "" : "",
