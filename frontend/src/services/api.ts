@@ -465,9 +465,9 @@ class ApiService {
     return [] as T;
   }
 
-  // User endpoints - using simple proxy endpoints
+  // User endpoints - using working test endpoints
   async getUsers(): Promise<User[]> {
-    return this.request<User[]>("/proxy/users");
+    return this.request<User[]>("/test/users");
   }
 
   async getUser(id: number): Promise<User> {
@@ -479,7 +479,7 @@ class ApiService {
   }
 
   async createUser(user: CreateUserRequest): Promise<User> {
-    return this.request<User>("/proxy/users", {
+    return this.request<User>("/test/users", {
       method: "POST",
       body: JSON.stringify(user),
     });
