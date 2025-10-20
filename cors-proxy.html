@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Proxy Test</title>
+</head>
+<body>
+    <h1>CORS Proxy Test</h1>
+    <button onclick="testDirect()">Test Direct API</button>
+    <button onclick="testProxy()">Test via Proxy</button>
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+        
+        async function testDirect() {
+            try {
+                const response = await fetch(`${API_URL}/test/users`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>Direct API Success: ' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<pre>Direct API Error: ' + error.message + '</pre>';
+            }
+        }
+
+        async function testProxy() {
+            try {
+                // Use a CORS proxy service
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                const response = await fetch(proxyUrl + API_URL + '/test/users');
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>Proxy Success: ' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<pre>Proxy Error: ' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html>

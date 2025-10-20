@@ -96,6 +96,17 @@ public class TestController : ControllerBase
         Response.Headers["Access-Control-Max-Age"] = "86400";
         return Ok();
     }
+
+    [HttpOptions]
+    public IActionResult Options()
+    {
+        // Add CORS headers manually for /api/test OPTIONS
+        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+        Response.Headers["Access-Control-Max-Age"] = "86400";
+        return Ok();
+    }
 }
 
 public class CreateUserRequest
