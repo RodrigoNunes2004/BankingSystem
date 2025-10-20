@@ -143,13 +143,12 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<T> {
     try {
-      // Use real Azure API
-      const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
-      const url = `${baseUrl}${endpoint}`;
+      // Use Vercel proxy to bypass CORS and EasyAuth issues
+      const proxyUrl = `/api/proxy?endpoint=${endpoint.replace('/', '')}`;
       
-      console.log(`Making API request to: ${url}`);
-      
-      const response = await fetch(url, {
+      console.log(`Making API request via proxy to: ${proxyUrl}`);
+
+      const response = await fetch(proxyUrl, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
