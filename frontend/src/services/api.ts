@@ -144,7 +144,8 @@ class ApiService {
   ): Promise<T> {
     try {
       // Use Vercel proxy to bypass CORS and EasyAuth issues
-      const proxyUrl = `/api/proxy?endpoint=${endpoint.replace('/', '')}`;
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+      const proxyUrl = `/api/proxy?endpoint=${cleanEndpoint}`;
       
       console.log(`Making API request via proxy to: ${proxyUrl}`);
 

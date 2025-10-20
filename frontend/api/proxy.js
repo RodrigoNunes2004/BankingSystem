@@ -17,13 +17,16 @@ export default async function handler(req, res) {
   const { endpoint } = req.query;
   const azureApiUrl = 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
 
+  if (!endpoint) {
+    return res.status(400).json({ error: 'Missing endpoint parameter' });
+  }
+
   try {
     // Forward the request to Azure API
     const response = await fetch(`${azureApiUrl}/${endpoint}`, {
       method: req.method,
       headers: {
         'Content-Type': 'application/json',
-        ...req.headers,
       },
       body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined,
     });
