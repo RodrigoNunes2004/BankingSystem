@@ -78,7 +78,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 // Add a simple health check endpoint
-app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow, version = "2.0" });
 
 
 // Add a simple test endpoint that doesn't require database
