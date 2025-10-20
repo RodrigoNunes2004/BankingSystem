@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Direct</title>
+</head>
+<body>
+    <h1>Test API Direct Connection</h1>
+    <button onclick="testGetUsers()">Test Get Users</button>
+    <button onclick="testCreateUser()">Test Create User</button>
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+        async function testGetUsers() {
+            try {
+                const response = await fetch(`${API_URL}/test/users`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<pre>Error: ' + error.message + '</pre>';
+            }
+        }
+
+        async function testCreateUser() {
+            try {
+                const userData = {
+                    firstName: "Test",
+                    lastName: "User",
+                    email: "test@direct.com",
+                    phoneNumber: "1234567890",
+                    dateOfBirth: "1990-01-01",
+                    address: "123 Test St",
+                    city: "Test City",
+                    postalCode: "12345",
+                    country: "Test Country"
+                };
+
+                const response = await fetch(`${API_URL}/test/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<pre>Error: ' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html>
