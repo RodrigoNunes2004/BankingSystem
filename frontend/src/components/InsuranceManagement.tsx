@@ -43,109 +43,7 @@ interface QuoteRequest {
   travelDestination?: string;
 }
 
-// Mock data moved outside component to prevent recreation on every render
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const mockProducts: InsuranceProduct[] = [
-  {
-    id: 1,
-    name: "Life Insurance Plus",
-    type: "life",
-    description:
-      "Comprehensive life insurance with flexible terms and competitive rates",
-    coverage: "Death benefit, terminal illness, accidental death",
-    premium: 45,
-    coverageAmount: 500000,
-    term: "20-30 years",
-    features: [
-      "Term life coverage",
-      "Accelerated death benefit",
-      "No medical exam option",
-      "Convertible to permanent",
-    ],
-    icon: "🛡️",
-    color: "#ffd700",
-    isPopular: true,
-  },
-  {
-    id: 2,
-    name: "Health Shield Pro",
-    type: "health",
-    description:
-      "Complete health coverage with low deductibles and extensive network",
-    coverage: "Medical, dental, vision, prescription drugs",
-    premium: 180,
-    coverageAmount: 1000000,
-    term: "Annual renewable",
-    features: [
-      "Low deductible",
-      "Extensive provider network",
-      "Prescription coverage",
-      "Preventive care",
-    ],
-    icon: "🏥",
-    color: "#ffd700",
-    isPopular: true,
-  },
-  {
-    id: 3,
-    name: "AutoGuard Complete",
-    type: "auto",
-    description:
-      "Full coverage auto insurance with roadside assistance and rental car",
-    coverage: "Liability, collision, comprehensive, uninsured motorist",
-    premium: 120,
-    coverageAmount: 100000,
-    term: "6 months",
-    features: [
-      "Full coverage",
-      "Roadside assistance",
-      "Rental car coverage",
-      "Accident forgiveness",
-    ],
-    icon: "🚗",
-    color: "#ffd700",
-  },
-  {
-    id: 4,
-    name: "HomeProtect Premium",
-    type: "home",
-    description:
-      "Comprehensive home insurance covering structure, contents, and liability",
-    coverage:
-      "Dwelling, personal property, liability, additional living expenses",
-    premium: 95,
-    coverageAmount: 400000,
-    term: "Annual",
-    features: [
-      "Full replacement cost",
-      "Personal liability",
-      "Additional living expenses",
-      "Natural disaster coverage",
-    ],
-    icon: "🏠",
-    color: "#ffd700",
-  },
-  {
-    id: 5,
-    name: "TravelSafe Global",
-    type: "travel",
-    description:
-      "International travel insurance with medical coverage and trip protection",
-    coverage:
-      "Medical expenses, trip cancellation, baggage loss, emergency evacuation",
-    premium: 25,
-    coverageAmount: 50000,
-    term: "Per trip",
-    features: [
-      "Medical coverage",
-      "Trip cancellation",
-      "Baggage protection",
-      "24/7 assistance",
-    ],
-    icon: "✈️",
-    color: "#ffd700",
-  },
-];
+// No hardcoded mock data - products will be loaded from API or created dynamically
 
 // NO DEFAULT POLICIES - each user starts with empty policy list
 
@@ -209,7 +107,9 @@ const InsuranceManagement: React.FC = () => {
         }
       }
 
-      setProducts(mockProducts);
+      // Load products from API or create empty array
+      // TODO: Implement API call to fetch insurance products
+      setProducts([]);
       setPolicies(userPolicies);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

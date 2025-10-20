@@ -38,9 +38,25 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
+                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app/",
+                "http://localhost:3000",
+                "http://localhost:3001"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
+              .AllowCredentials()
+              .SetPreflightMaxAge(TimeSpan.FromDays(1));
+    });
+    
+    // Add a specific policy for Vercel
+    options.AddPolicy("VercelPolicy", policy =>
+    {
+        policy.WithOrigins("https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
               .SetPreflightMaxAge(TimeSpan.FromDays(1));
     });
 });
@@ -50,10 +66,26 @@ var app = builder.Build();
 // Add explicit CORS headers middleware - MUST be first
 app.Use(async (context, next) =>
 {
-    // Add CORS headers to every response
-    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    var origin = context.Request.Headers["Origin"].FirstOrDefault();
+    var allowedOrigins = new[]
+    {
+        "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001"
+    };
+
+    if (allowedOrigins.Contains(origin))
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+    }
+    else
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    }
+    
     context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+    context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
     context.Response.Headers["Access-Control-Max-Age"] = "86400";
     
     // Handle preflight OPTIONS requests immediately

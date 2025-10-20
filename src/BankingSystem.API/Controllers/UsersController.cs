@@ -7,7 +7,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[EnableCors("AllowReactApp")]
+[EnableCors("VercelPolicy")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -23,9 +23,11 @@ public class UsersController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        Response.Headers["Access-Control-Max-Age"] = "86400";
         return Ok();
     }
 
@@ -36,9 +38,10 @@ public class UsersController : ControllerBase
     public Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+        Response.Headers["Access-Control-Allow-Credentials"] = "true";
         
         // Temporary fix: return empty array directly to bypass UserService issues
         return Task.FromResult<ActionResult<IEnumerable<UserDto>>>(Ok(new List<UserDto>()));
@@ -79,9 +82,10 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
         // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+        Response.Headers["Access-Control-Allow-Credentials"] = "true";
         
         try
         {

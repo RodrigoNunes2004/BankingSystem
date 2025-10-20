@@ -108,36 +108,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("API call failed, falling back to mock data:", apiError);
       }
       
-      // Fallback to mock data for demo purposes
-      console.log("Using mock data for login");
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          firstName: "Rodrigo",
-          lastName: "Nunes",
-          email: "rodrigo79rfn@gmail.com",
-          phoneNumber: "0212253555",
-          dateOfBirth: "1990-01-01",
-          address: "123 Demo Street",
-          city: "Demo City",
-          postalCode: "1234",
-          country: "New Zealand",
-          fullName: "Rodrigo Nunes",
-          createdAt: new Date().toISOString(),
-          updatedAt: undefined
-        }
-      ];
-      
-      const foundUser = mockUsers.find(
-        (u: User) => u.email.toLowerCase() === email.toLowerCase()
-      );
-      
-      if (foundUser) {
-        console.log(`User found in mock data:`, foundUser);
-        setUser(foundUser);
-        localStorage.setItem("banking_user", JSON.stringify(foundUser));
-        return true;
-      }
+      // No fallback mock data - API must work for login
+      console.log("API login failed, no fallback available");
       
       console.log(`User not found for email: ${email}`);
       return false;
@@ -179,19 +151,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("API call failed, falling back to mock registration:", apiError);
       }
       
-      // Fallback to mock registration for demo purposes
-      console.log("Using mock data for registration");
-      const newUser: User = {
-        ...userData,
-        id: Date.now(), // Simple ID generation
-        fullName: `${userData.firstName} ${userData.lastName}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: undefined
-      };
-      
-      setUser(newUser);
-      localStorage.setItem("banking_user", JSON.stringify(newUser));
-      return true;
+      // No fallback mock data - API must work for registration
+      console.log("API registration failed, no fallback available");
+      return false;
     } catch (error) {
       console.error("Registration error:", error);
       return false;

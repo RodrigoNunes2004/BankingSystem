@@ -168,22 +168,81 @@ const AccountTransfer: React.FC = () => {
       setError(null);
       setSuccess(null);
 
-      // Simulate transfer processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Update account balances (mock)
-      const fromAccount = getFromAccount();
-      const toAccount = getToAccount();
-
-      if (fromAccount) {
-        fromAccount.balance -= transferRequest.amount;
-        fromAccount.availableBalance -= transferRequest.amount;
+      const currentUser = JSON.parse(
+        localStorage.getItem("banking_user") || "null"
+      );
+      if (!currentUser) {
+        setError("Please login first!");
+        return;
       }
 
-      if (toAccount) {
-        toAccount.balance += transferRequest.amount;
-        toAccount.availableBalance += transferRequest.amount;
+      // Create transfer request for API
+      const apiTransferRequest = {
+        fromAccountId: transferRequest.fromAccountId,
+        toAccountId: transferRequest.toAccountId,
+        amount: transferRequest.amount,
+        description: transferRequest.description,
+        category: transferRequest.transferType === "internal" ? "Internal Transfer" : "External Transfer",
+      };
+
+      // Try API first, fallback to localStorage
+      try {
+        await apiService.processTransfer(apiTransferRequest);
+      } catch (apiError) {
+        console.log("API transfer failed, using localStorage fallback:", apiError);
+        
+        // Local fallback transfer
+        const transaction = {
+          id: Date.now(),
+          transactionType: "TRANSFER",
+          amount: transferRequest.amount,
+          accountId: transferRequest.fromAccountId,
+          toAccountId: transferRequest.toAccountId,
+          description: transferRequest.description,
+          status: "Completed",
+          transactionDate: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
+          accountNumber: getFromAccount()?.accountNumber || "",
+          toAccountNumber: getToAccount()?.accountNumber || "",
+          category: transferRequest.transferType === "internal" ? "Internal Transfer" : "External Transfer",
+        };
+
+        const userTransactions = JSON.parse(
+          localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+        );
+        userTransactions.push(transaction);
+        localStorage.setItem(
+          `banking_transactions_${currentUser.id}`,
+          JSON.stringify(userTransactions)
+        );
       }
+
+      // Update account balances in localStorage
+      const userAccounts = JSON.parse(
+        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
+      );
+      const fromAccountIndex = userAccounts.findIndex(
+        (a: Account) => a.id === transferRequest.fromAccountId
+      );
+      const toAccountIndex = userAccounts.findIndex(
+        (a: Account) => a.id === transferRequest.toAccountId
+      );
+      
+      if (fromAccountIndex !== -1) {
+        userAccounts[fromAccountIndex].balance -= transferRequest.amount;
+        userAccounts[fromAccountIndex].availableBalance -= transferRequest.amount;
+      }
+      
+      if (toAccountIndex !== -1) {
+        userAccounts[toAccountIndex].balance += transferRequest.amount;
+        userAccounts[toAccountIndex].availableBalance += transferRequest.amount;
+      }
+      
+      localStorage.setItem(
+        `banking_accounts_${currentUser.id}`,
+        JSON.stringify(userAccounts)
+      );
 
       setSuccess(
         `Transfer of $${transferRequest.amount.toFixed(
@@ -201,6 +260,9 @@ const AccountTransfer: React.FC = () => {
         recipientEmail: "",
         recipientName: "",
       });
+
+      // Refresh data
+      await fetchData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Transfer failed");
     } finally {
@@ -417,25 +479,15 @@ const AccountTransfer: React.FC = () => {
       <div className="recent-transfers">
         <h3>Recent Transfers</h3>
         <div className="transfers-list">
-          <div className="transfer-item">
-            <div className="transfer-icon">💸</div>
-            <div className="transfer-details">
-              <div className="transfer-amount">$500.00</div>
-              <div className="transfer-description">Transfer to Savings</div>
-              <div className="transfer-date">Dec 10, 2024</div>
+          {accounts.length === 0 ? (
+            <div className="no-data">
+              <p>No accounts available. Please create an account first.</p>
             </div>
-            <div className="transfer-status completed">Completed</div>
-          </div>
-
-          <div className="transfer-item">
-            <div className="transfer-icon">💸</div>
-            <div className="transfer-details">
-              <div className="transfer-amount">$200.00</div>
-              <div className="transfer-description">Payment to Jane Smith</div>
-              <div className="transfer-date">Dec 9, 2024</div>
+          ) : (
+            <div className="no-data">
+              <p>No recent transfers found. Complete your first transfer to see it here.</p>
             </div>
-            <div className="transfer-status completed">Completed</div>
-          </div>
+          )}
         </div>
       </div>
     </div>

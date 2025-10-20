@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 using BankingSystem.application.DTOs;
 using BankingSystem.application.Services;
 
@@ -6,6 +7,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableCors("VercelPolicy")]
 public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
@@ -13,6 +15,20 @@ public class TransactionsController : ControllerBase
     public TransactionsController(ITransactionService transactionService)
     {
         _transactionService = transactionService;
+    }
+
+    /// <summary>
+    /// Handle CORS preflight requests
+    /// </summary>
+    [HttpOptions]
+    public IActionResult Options()
+    {
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        Response.Headers["Access-Control-Max-Age"] = "86400";
+        return Ok();
     }
 
     /// <summary>
@@ -57,6 +73,12 @@ public class TransactionsController : ControllerBase
         [FromQuery] DateTime startDate, 
         [FromQuery] DateTime endDate)
     {
+        // Add CORS headers manually
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
+        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
+        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        
         var transactions = await _transactionService.GetByDateRangeAsync(startDate, endDate);
         return Ok(transactions);
     }
