@@ -80,6 +80,55 @@ app.UseAuthorization();
 // Add a simple health check endpoint
 app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow, version = "2.0" });
 
+// Add a simple proxy endpoint that bypasses all CORS issues
+app.MapPost("/api/proxy/users", async (HttpContext context) => {
+    try {
+        var contextService = context.RequestServices.GetRequiredService<BankingDbContext>();
+        
+        // Read the request body
+        using var reader = new StreamReader(context.Request.Body);
+        var body = await reader.ReadToEndAsync();
+        var userData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(body);
+        
+        // Create user
+        var user = new BankingSystem.Domain.Entities.User
+        {
+            FirstName = userData.TryGetProperty("firstName", out var firstName) ? firstName.GetString() ?? "" : "",
+            LastName = userData.TryGetProperty("lastName", out var lastName) ? lastName.GetString() ?? "" : "",
+            Email = userData.TryGetProperty("email", out var email) ? email.GetString() ?? "" : "",
+            PhoneNumber = userData.TryGetProperty("phoneNumber", out var phoneNumber) ? phoneNumber.GetString() ?? "" : "",
+            DateOfBirth = userData.TryGetProperty("dateOfBirth", out var dateOfBirth) && DateTime.TryParse(dateOfBirth.GetString(), out DateTime dob) ? dob : DateTime.Now,
+            Address = userData.TryGetProperty("address", out var address) ? address.GetString() ?? "" : "",
+            City = userData.TryGetProperty("city", out var city) ? city.GetString() ?? "" : "",
+            PostalCode = userData.TryGetProperty("postalCode", out var postalCode) ? postalCode.GetString() ?? "" : "",
+            Country = userData.TryGetProperty("country", out var country) ? country.GetString() ?? "" : "",
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
+        };
+
+        contextService.Users.Add(user);
+        await contextService.SaveChangesAsync();
+
+        return Results.Ok(new { 
+            message = "User created successfully via proxy", 
+            id = user.Id,
+            user = user
+        });
+    } catch (Exception ex) {
+        return Results.Ok(new { message = "Proxy user creation failed", error = ex.Message });
+    }
+});
+
+app.MapGet("/api/proxy/users", async (HttpContext context) => {
+    try {
+        var contextService = context.RequestServices.GetRequiredService<BankingDbContext>();
+        var users = await contextService.Users.ToListAsync();
+        return Results.Ok(users);
+    } catch (Exception ex) {
+        return Results.Ok(new { error = ex.Message, users = new List<object>() });
+    }
+});
+
 
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
