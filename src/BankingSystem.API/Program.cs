@@ -46,6 +46,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Use CORS middleware first
+app.UseCors();
+
 // Add CORS middleware that handles OPTIONS requests
 app.Use(async (context, next) =>
 {
@@ -65,9 +68,6 @@ app.Use(async (context, next) =>
     
     await next();
 });
-
-// Use CORS middleware
-app.UseCors();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
