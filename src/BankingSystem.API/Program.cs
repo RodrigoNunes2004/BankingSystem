@@ -47,10 +47,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Use CORS middleware early in the pipeline
-app.UseCors();
-
-// Add explicit CORS headers middleware
+// Add explicit CORS headers middleware - MUST be first
 app.Use(async (context, next) =>
 {
     // Add CORS headers to every response
@@ -59,7 +56,7 @@ app.Use(async (context, next) =>
     context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
     context.Response.Headers["Access-Control-Max-Age"] = "86400";
     
-    // Handle preflight OPTIONS requests
+    // Handle preflight OPTIONS requests immediately
     if (context.Request.Method == "OPTIONS")
     {
         context.Response.StatusCode = 200;
@@ -70,15 +67,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Add global OPTIONS handler for all API routes
-app.MapMethods("/api/{*path}", new[] { "OPTIONS" }, (HttpContext context) =>
-{
-    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-    context.Response.Headers["Access-Control-Max-Age"] = "86400";
-    return Results.Ok();
-});
+// Use CORS middleware
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
