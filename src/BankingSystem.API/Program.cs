@@ -129,6 +129,16 @@ app.MapGet("/api/proxy/users", async (HttpContext context) => {
     }
 });
 
+// Add OPTIONS handlers for proxy endpoints
+app.MapMethods("/api/proxy/users", new[] { "OPTIONS" }, (HttpContext context) =>
+{
+    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+    context.Response.Headers["Access-Control-Max-Age"] = "86400";
+    return Results.Ok();
+});
+
 
 // Add a simple test endpoint that doesn't require database
 app.MapGet("/api/test-simple", () => new { message = "API is working", timestamp = DateTime.UtcNow });
