@@ -81,35 +81,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
 
-      // Try the real Azure API first
+      // Simple API call - no fallbacks
       const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
       console.log(`Attempting to login with email: ${email}`);
-      console.log(`API URL: ${baseUrl}/users`);
       
-      try {
-        const response = await fetch(`${baseUrl}/test/users`);
-        
-        if (response.ok) {
-          const users: User[] = await response.json();
-          console.log(`Retrieved ${users.length} users from API:`, users);
-          
-          const foundUser = users.find(
-            (u: User) => u.email.toLowerCase() === email.toLowerCase()
-          );
-          
-          if (foundUser) {
-            console.log(`User found:`, foundUser);
-            setUser(foundUser);
-            localStorage.setItem("banking_user", JSON.stringify(foundUser));
-            return true;
-          }
-        }
-      } catch (apiError) {
-        console.log("API call failed, falling back to mock data:", apiError);
+      const response = await fetch(`${baseUrl}/test/users`);
+      
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
       
-      // No fallback mock data - API must work for login
-      console.log("API login failed, no fallback available");
+      const users: User[] = await response.json();
+      console.log(`Retrieved ${users.length} users from API:`, users);
+      
+      const foundUser = users.find(
+        (u: User) => u.email.toLowerCase() === email.toLowerCase()
+      );
+      
+      if (foundUser) {
+        console.log(`User found:`, foundUser);
+        setUser(foundUser);
+        localStorage.setItem("banking_user", JSON.stringify(foundUser));
+        return true;
+      }
       
       console.log(`User not found for email: ${email}`);
       return false;

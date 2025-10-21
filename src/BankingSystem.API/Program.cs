@@ -33,61 +33,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Simple approach that should work
+// Add CORS - Simple, clean configuration
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app")
               .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-    
-    // Add a specific policy for Vercel
-    options.AddPolicy("VercelPolicy", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
-// Add explicit CORS headers middleware - MUST be first
-app.Use(async (context, next) =>
-{
-    // Get the origin from the request
-    var origin = context.Request.Headers["Origin"].FirstOrDefault();
-    
-    // Set CORS headers for all requests - SINGLE ORIGIN ONLY
-    if (origin == "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app" || 
-        origin == "http://localhost:3000")
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-    }
-    else
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-    }
-    
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-    context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
-    context.Response.Headers["Access-Control-Max-Age"] = "86400";
-    
-    // Handle preflight OPTIONS requests immediately
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        await context.Response.WriteAsync("");
-        return;
-    }
-    
-    await next();
-});
-
-// Use CORS middleware
+// Use CORS middleware - simple and clean
 app.UseCors();
 
 // Configure the HTTP request pipeline.

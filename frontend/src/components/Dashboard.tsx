@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiService, User, Account, Transaction } from "../services/api";
+import { apiService, User, Account, Transaction } from "../services/api-simple";
 
 const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
