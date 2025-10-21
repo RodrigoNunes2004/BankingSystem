@@ -1,0 +1,16 @@
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\bin\Release\net8.0\BankingSystem.application.deps.json
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\bin\Release\net8.0\BankingSystem.application.dll
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\bin\Release\net8.0\BankingSystem.application.pdb
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\bin\Release\net8.0\BankingSystem.Domain.dll
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\bin\Release\net8.0\BankingSystem.Domain.pdb
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.csproj.AssemblyReference.cache
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.AssemblyInfoInputs.cache
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.AssemblyInfo.cs
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.csproj.CoreCompileInputs.cache
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.sourcelink.json
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingS.6FFCD5D5.Up2Date
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.dll
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\refint\BankingSystem.application.dll
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\BankingSystem.application.pdb
+C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\src\BankingSystem.Application\obj\Release\net8.0\ref\BankingSystem.application.dll
