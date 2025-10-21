@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BankingSystem.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+013f1c7219d78aec58fa0728fb692bc018cd9a4a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+728f03f2610d0b07b6669f02e66c2c91f129ec86")]
 [assembly: System.Reflection.AssemblyProductAttribute("BankingSystem.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BankingSystem.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
