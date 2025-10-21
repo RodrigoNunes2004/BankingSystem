@@ -33,37 +33,32 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Comprehensive configuration
+// Add CORS - Allow ALL origins to fix Vercel issues
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(
-                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
-                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app/",
-                "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-qm74ck3er-rodrigos-projects-2e367d33.vercel.app",
-                "http://localhost:3000",
-                "http://localhost:3001"
-              )
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .SetPreflightMaxAge(TimeSpan.FromDays(1));
+        policy.SetIsOriginAllowed(origin => 
+        {
+            // Allow all Vercel domains
+            if (origin != null && origin.Contains("vercel.app"))
+                return true;
+            // Allow localhost for development
+            if (origin != null && origin.Contains("localhost"))
+                return true;
+            // Allow all other origins for now
+            return true;
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .SetPreflightMaxAge(TimeSpan.FromDays(1));
     });
     
     // Add a specific policy for Vercel
     options.AddPolicy("VercelPolicy", policy =>
     {
-        policy.WithOrigins(
-                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
-                "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app",
-                "https://frontend-qm74ck3er-rodrigos-projects-2e367d33.vercel.app"
-              )
+        policy.SetIsOriginAllowed(origin => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
@@ -77,18 +72,9 @@ var app = builder.Build();
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers["Origin"].FirstOrDefault();
-    var allowedOrigins = new[]
-    {
-        "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
-        "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
-        "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
-        "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app",
-        "https://frontend-qm74ck3er-rodrigos-projects-2e367d33.vercel.app",
-        "http://localhost:3000",
-        "http://localhost:3001"
-    };
-
-    if (allowedOrigins.Contains(origin))
+    
+    // Allow all origins for now to fix CORS issues
+    if (!string.IsNullOrEmpty(origin))
     {
         context.Response.Headers["Access-Control-Allow-Origin"] = origin;
     }
