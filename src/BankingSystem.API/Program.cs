@@ -41,6 +41,9 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
                 "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app/",
+                "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
+                "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
+                "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app",
                 "http://localhost:3000",
                 "http://localhost:3001"
               )
@@ -53,7 +56,12 @@ builder.Services.AddCors(options =>
     // Add a specific policy for Vercel
     options.AddPolicy("VercelPolicy", policy =>
     {
-        policy.WithOrigins("https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app")
+        policy.WithOrigins(
+                "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
+                "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
+                "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
+                "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
@@ -70,6 +78,9 @@ app.Use(async (context, next) =>
     var allowedOrigins = new[]
     {
         "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app",
+        "https://banking-system-v2-r94eleb91-rodrigos-projects-2e367d33.vercel.app",
+        "https://frontend-8ois2d16v-rodrigos-projects-2e367d33.vercel.app",
+        "https://frontend-msi1mgjgq-rodrigos-projects-2e367d33.vercel.app",
         "http://localhost:3000",
         "http://localhost:3001"
     };
