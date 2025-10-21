@@ -33,12 +33,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-// Add CORS - Allow the new Vercel URL
+// Add CORS - Allow the correct Vercel URL
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://frontend-7yp9z4r4e-rodrigos-projects-2e367d33.vercel.app")
+        policy.WithOrigins("https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
