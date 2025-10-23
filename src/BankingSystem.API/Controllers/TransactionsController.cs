@@ -23,7 +23,7 @@ public class TransactionsController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
         Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
         Response.Headers["Access-Control-Allow-Credentials"] = "true";
@@ -74,7 +74,7 @@ public class TransactionsController : ControllerBase
         [FromQuery] DateTime endDate)
     {
         // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-e47p-46gcnid2t-rodrigos-projects-2e367d33.vercel.app";
+        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
         Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
         Response.Headers["Access-Control-Allow-Credentials"] = "true";
