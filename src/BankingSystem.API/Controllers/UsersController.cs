@@ -23,11 +23,11 @@ public class UsersController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-        Response.Headers["Access-Control-Allow-Credentials"] = "true";
-        Response.Headers["Access-Control-Max-Age"] = "86400";
+
+
+
+
+
         return Ok();
     }
 
@@ -37,11 +37,11 @@ public class UsersController : ControllerBase
     [HttpGet]
     public Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+
+
+
+
+
         
         // Temporary fix: return empty array directly to bypass UserService issues
         return Task.FromResult<ActionResult<IEnumerable<UserDto>>>(Ok(new List<UserDto>()));
@@ -81,11 +81,11 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+
+
+
+
+
         
         try
         {
@@ -152,5 +152,6 @@ public class UsersController : ControllerBase
         return Ok(exists);
     }
 }
+
 
 

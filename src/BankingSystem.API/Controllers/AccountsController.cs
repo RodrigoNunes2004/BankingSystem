@@ -23,11 +23,11 @@ public class AccountsController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-        Response.Headers["Access-Control-Allow-Credentials"] = "true";
-        Response.Headers["Access-Control-Max-Age"] = "86400";
+
+
+
+
+
         return Ok();
     }
 
@@ -37,11 +37,11 @@ public class AccountsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AccountDto>>> GetAccounts()
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin";
-        Response.Headers["Access-Control-Allow-Credentials"] = "true";
+
+
+
+
+
         
         var accounts = await _accountService.GetAllAsync();
         return Ok(accounts);
@@ -156,5 +156,6 @@ public class AccountsController : ControllerBase
         return Ok(exists);
     }
 }
+
 
 

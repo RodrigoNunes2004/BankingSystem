@@ -19,10 +19,6 @@ public class TestController : ControllerBase
     [HttpGet("users")]
     public async Task<IActionResult> GetUsers()
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
         
         try
         {
@@ -38,10 +34,6 @@ public class TestController : ControllerBase
     [HttpPost("users")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
         
         try
         {
@@ -78,11 +70,6 @@ public class TestController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-        Response.Headers["Access-Control-Max-Age"] = "86400";
         return Ok();
     }
 
@@ -93,7 +80,6 @@ public class TestController : ControllerBase
         Response.Headers["Access-Control-Allow-Origin"] = "*";
         Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
         Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
-        Response.Headers["Access-Control-Max-Age"] = "86400";
         return Ok();
     }
 

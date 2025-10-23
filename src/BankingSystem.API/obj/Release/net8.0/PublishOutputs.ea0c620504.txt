@@ -1,6 +1,4 @@
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\BankingSystem.API.exe
-C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\publish\web.config
-C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\web.config
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\appsettings.Development.json
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\appsettings.json
 C:\Users\Rodrigo\source\repos\ASP.Net_projects\BankingSystem\publish\appsettings.Production.json

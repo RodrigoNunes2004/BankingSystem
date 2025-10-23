@@ -36,19 +36,23 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 // Add CORS - Allow the correct Vercel URL
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("VercelPolicy", policy =>
     {
-        policy.WithOrigins("https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+            "https://banking-system-2r3e656qa-rodrigos-projects-2e367d33.vercel.app",
+            "http://localhost:3000"
+        )
+        .SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
 // Use CORS middleware - simple and clean
-app.UseCors();
+app.UseCors("VercelPolicy");
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

@@ -23,10 +23,6 @@ public class SimpleUsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         try
         {
@@ -45,10 +41,6 @@ public class SimpleUsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] JsonElement userData)
     {
-        // Add CORS headers manually
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         
         try
         {
@@ -88,9 +80,6 @@ public class SimpleUsersController : ControllerBase
     [HttpOptions]
     public IActionResult Options()
     {
-        Response.Headers["Access-Control-Allow-Origin"] = "*";
-        Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
         return Ok();
     }
 }
