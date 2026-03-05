@@ -68,7 +68,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add CORS - must allow Vercel (and other) origins for cross-origin requests
+// Add CORS - allow Vercel and all origins
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

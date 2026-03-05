@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\BankingSystem.application.csproj": {}
+    "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.application\\BankingSystem.application.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\BankingSystem.application.csproj": {
+    "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.application\\BankingSystem.application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\BankingSystem.application.csproj",
+        "projectUniqueName": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.application\\BankingSystem.application.csproj",
         "projectName": "BankingSystem.application",
-        "projectPath": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\BankingSystem.application.csproj",
+        "projectPath": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.application\\BankingSystem.application.csproj",
         "packagesPath": "C:\\Users\\Rodrigo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\obj\\",
+        "outputPath": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
