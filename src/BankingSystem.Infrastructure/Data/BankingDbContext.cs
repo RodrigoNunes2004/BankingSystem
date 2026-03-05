@@ -35,6 +35,7 @@ public class BankingDbContext : DbContext
             entity.Property(e => e.City).IsRequired().HasMaxLength(50);
             entity.Property(e => e.PostalCode).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Country).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(255);
         });
 
         // Account configuration

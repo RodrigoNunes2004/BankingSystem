@@ -60,17 +60,24 @@ class SimpleApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
+    this.baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5023/api';
   }
 
-  // Simple API call - no fallbacks, no complexity
+  private getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem("banking_token");
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+    return {};
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
+        "Content-Type": "application/json",
+        ...this.getAuthHeaders(),
+        ...(options.headers as Record<string, string>),
       },
       ...options,
     });
@@ -82,14 +89,14 @@ class SimpleApiService {
     return response.json();
   }
 
-  // User endpoints
+  // User endpoints (require auth)
   async getUsers(): Promise<User[]> {
-    return this.request<User[]>('/test/users');
+    return this.request<User[]>("/users");
   }
 
-  async createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    return this.request<User>('/test/users', {
-      method: 'POST',
+  async createUser(userData: Omit<User, "id" | "createdAt" | "updatedAt"> & { password: string }): Promise<User> {
+    return this.request<User>("/users", {
+      method: "POST",
       body: JSON.stringify(userData),
     });
   }

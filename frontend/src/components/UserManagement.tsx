@@ -20,6 +20,7 @@ const UserManagement: React.FC = () => {
     city: "",
     postalCode: "",
     country: "",
+    password: "",
   });
 
   useEffect(() => {
@@ -40,9 +41,14 @@ const UserManagement: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingUser && (!formData.password || formData.password.length < 6)) {
+      setError("Password must be at least 6 characters when creating a user.");
+      return;
+    }
     try {
       if (editingUser) {
-        await apiService.updateUser(editingUser.id, formData);
+        const { password: _, ...updateData } = formData;
+        await apiService.updateUser(editingUser.id, updateData);
       } else {
         await apiService.createUser(formData);
       }
@@ -58,6 +64,7 @@ const UserManagement: React.FC = () => {
         city: "",
         postalCode: "",
         country: "",
+        password: "",
       });
       fetchUsers();
     } catch (err) {
@@ -77,6 +84,7 @@ const UserManagement: React.FC = () => {
       city: user.city,
       postalCode: user.postalCode,
       country: user.country,
+      password: "", // Leave empty when editing; only required for create
     });
     setShowCreateForm(true);
   };
@@ -225,6 +233,22 @@ const UserManagement: React.FC = () => {
                 </div>
               </div>
 
+              {!editingUser && (
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    required={!editingUser}
+                    placeholder="Min 6 characters"
+                    minLength={6}
+                  />
+                </div>
+              )}
+
               <div className="form-actions">
                 <button type="submit" className="btn btn-primary">
                   {editingUser ? "Update User" : "Create User"}
@@ -239,6 +263,7 @@ const UserManagement: React.FC = () => {
                       firstName: "",
                       lastName: "",
                       email: "",
+                      password: "",
                       phoneNumber: "",
                       dateOfBirth: "",
                       address: "",

@@ -26,9 +26,11 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByEmailAsync(string email)
     {
+        var normalized = (email ?? "").Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(normalized)) return null;
         return await _context.Users
             .Include(u => u.Accounts)
-            .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == normalized && u.IsActive);
     }
 
     public async Task<IEnumerable<User>> GetAllAsync()
@@ -72,7 +74,9 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> EmailExistsAsync(string email)
     {
-        return await _context.Users.AnyAsync(u => u.Email == email && u.IsActive);
+        var normalized = (email ?? "").Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(normalized)) return false;
+        return await _context.Users.AnyAsync(u => u.Email.ToLower() == normalized && u.IsActive);
     }
 }
 

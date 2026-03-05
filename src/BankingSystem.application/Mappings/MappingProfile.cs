@@ -14,7 +14,8 @@ public class MappingProfile : Profile
         // User mappings
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName));
-        CreateMap<CreateUserDto, User>();
+        CreateMap<CreateUserDto, User>()
+            .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
         CreateMap<UpdateUserDto, User>();
 
         // Account mappings

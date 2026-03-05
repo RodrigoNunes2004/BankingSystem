@@ -43,6 +43,13 @@ public class User : BaseEntity
     [StringLength(50)]
     public string Country { get; set; } = string.Empty;
 
+    /// <summary>
+    /// BCrypt hash of user password. Never expose to API responses.
+    /// </summary>
+    [Required]
+    [StringLength(255)]
+    public string PasswordHash { get; set; } = string.Empty;
+
     public string FullName => $"{FirstName} {LastName}";
 
     // Navigation properties

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using BankingSystem.application.DTOs;
 using BankingSystem.application.Services;
 
@@ -7,7 +6,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[EnableCors("VercelPolicy")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -18,33 +17,13 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Handle CORS preflight requests
-    /// </summary>
-    [HttpOptions]
-    public IActionResult Options()
-    {
-
-
-
-
-
-        return Ok();
-    }
-
-    /// <summary>
     /// Get all users
     /// </summary>
     [HttpGet]
-    public Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
-
-
-
-
-
-        
-        // Temporary fix: return empty array directly to bypass UserService issues
-        return Task.FromResult<ActionResult<IEnumerable<UserDto>>>(Ok(new List<UserDto>()));
+        var users = await _userService.GetAllAsync();
+        return Ok(users);
     }
 
     /// <summary>
@@ -81,12 +60,6 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
-
-
-
-
-
-        
         try
         {
             var user = await _userService.CreateAsync(createUserDto);
@@ -94,7 +67,9 @@ public class UsersController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message);
+            return ex.Message.Contains("email already exists")
+                ? Conflict(ex.Message)
+                : BadRequest(ex.Message);
         }
     }
 

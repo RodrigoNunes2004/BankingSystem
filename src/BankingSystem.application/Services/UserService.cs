@@ -10,6 +10,8 @@ namespace BankingSystem.application.Services;
 /// </summary>
 public class UserService : IUserService
 {
+    private const int MinPasswordLength = 6;
+
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
@@ -39,13 +41,21 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateAsync(CreateUserDto createUserDto)
     {
-        // Check if email already exists
+        if (string.IsNullOrWhiteSpace(createUserDto.Password) || createUserDto.Password.Length < MinPasswordLength)
+        {
+            throw new InvalidOperationException($"Password must be at least {MinPasswordLength} characters.");
+        }
+
         if (await _userRepository.EmailExistsAsync(createUserDto.Email))
         {
             throw new InvalidOperationException("A user with this email already exists.");
         }
 
         var user = _mapper.Map<User>(createUserDto);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password);
+        // Npgsql requires UTC for timestamp with time zone; JSON dates come as Kind=Unspecified
+        user.DateOfBirth = DateTime.SpecifyKind(user.DateOfBirth, DateTimeKind.Utc);
+        user.CreatedAt = DateTime.UtcNow;
         var createdUser = await _userRepository.CreateAsync(user);
         return _mapper.Map<UserDto>(createdUser);
     }

@@ -34,6 +34,25 @@ public class CreateUserDto
     public string City { get; set; } = string.Empty;
     public string PostalCode { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Login request
+/// </summary>
+public class LoginRequest
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Auth response with user and token
+/// </summary>
+public class AuthResponse
+{
+    public UserDto User { get; set; } = null!;
+    public string Token { get; set; } = string.Empty;
 }
 
 /// <summary>

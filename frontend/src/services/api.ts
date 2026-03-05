@@ -1,4 +1,4 @@
-// API configuration - using real Azure API
+// API configuration
 
 export interface User {
   id: number;
@@ -58,6 +58,7 @@ export interface CreateUserRequest {
   city: string;
   postalCode: string;
   country: string;
+  password: string;
 }
 
 export interface CreateAccountRequest {
@@ -138,63 +139,38 @@ class ApiService {
     }
   }
 
+  private getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem("banking_token");
+    if (token) return { Authorization: `Bearer ${token}` };
+    return {};
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    try {
-      // Try Vercel proxy first
-      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
-      const proxyUrl = `/api/proxy?endpoint=${cleanEndpoint}`;
-      
-      console.log(`Making API request via proxy to: ${proxyUrl}`);
+    const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5023/api";
+    const url = `${baseUrl}${endpoint}`;
 
-      const response = await fetch(proxyUrl, {
+    try {
+      const response = await fetch(url, {
         ...options,
         headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+          ...(options.headers as Record<string, string>),
         },
       });
 
       if (!response.ok) {
-        throw new Error(`Proxy error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log(`API response for ${endpoint}:`, data);
       return data;
-    } catch (proxyError) {
-      console.log(`Proxy failed, trying direct API:`, proxyError);
-      
-      try {
-        // Fallback to direct API call
-        const baseUrl = process.env.REACT_APP_API_URL || 'https://banking-system-api-evfxbwhgaband4d7.australiaeast-01.azurewebsites.net/api';
-        const url = `${baseUrl}${endpoint}`;
-
-        console.log(`Making direct API request to: ${url}`);
-
-        const response = await fetch(url, {
-          ...options,
-          headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log(`Direct API response for ${endpoint}:`, data);
-        return data;
-      } catch (directError) {
-        console.error(`Both proxy and direct API failed for ${endpoint}:`, directError);
-        // Final fallback to mock data
-        console.log(`Falling back to mock data for endpoint: ${endpoint}`);
-        return this.getMockData<T>(endpoint, options);
-      }
+    } catch (error) {
+      console.error(`API request failed for ${endpoint}:`, error);
+      throw error;
     }
   }
 
@@ -219,7 +195,7 @@ class ApiService {
     );
 
     // Handle CRUD operations for users
-    if (endpoint === "/test/users") {
+    if (endpoint === "/users") {
       if (method === "POST") {
         const newUser = JSON.parse(options.body as string) as CreateUserRequest;
         const user: User = {
@@ -493,7 +469,7 @@ class ApiService {
 
   // User endpoints - using working test endpoints
   async getUsers(): Promise<User[]> {
-    return this.request<User[]>("/test/users");
+    return this.request<User[]>("/users");
   }
 
   async getUser(id: number): Promise<User> {
@@ -505,7 +481,7 @@ class ApiService {
   }
 
   async createUser(user: CreateUserRequest): Promise<User> {
-    return this.request<User>("/test/users", {
+    return this.request<User>("/users", {
       method: "POST",
       body: JSON.stringify(user),
     });

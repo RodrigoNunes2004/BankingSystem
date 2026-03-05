@@ -29,11 +29,14 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     setError("");
 
     // Validation
+    if (!formData.dateOfBirth) {
+      setError("Please select your date of birth");
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
@@ -42,11 +45,11 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     setIsLoading(true);
 
     try {
-      const { password, confirmPassword, ...userData } = formData;
-      const success = await register(userData);
+      const { password, confirmPassword, ...rest } = formData;
+      const result = await register({ ...rest, password });
 
-      if (!success) {
-        setError("Email already exists. Please use a different email.");
+      if (!result.success) {
+        setError(result.error || "Registration failed.");
       }
     } catch (err) {
       setError("Registration failed. Please try again.");

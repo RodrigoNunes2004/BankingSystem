@@ -20,10 +20,9 @@ namespace BankingSystem.API.Controllers
         {
             try
             {
-                // Create database if it doesn't exist
-                await _context.Database.EnsureCreatedAsync();
-                
-                return Ok(new { message = "Database initialized successfully" });
+                // Apply pending migrations to Neon PostgreSQL
+                await _context.Database.MigrateAsync();
+                return Ok(new { message = "Database migrated successfully (Neon PostgreSQL)" });
             }
             catch (Exception ex)
             {

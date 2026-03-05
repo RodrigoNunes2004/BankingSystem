@@ -1,1 +1,0 @@
-Force Vercel deployment - commit 60d1812 with all ESLint fixes

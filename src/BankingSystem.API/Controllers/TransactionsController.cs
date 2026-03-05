@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using BankingSystem.application.DTOs;
 using BankingSystem.application.Services;
 
@@ -7,7 +6,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[EnableCors("VercelPolicy")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
@@ -15,20 +14,6 @@ public class TransactionsController : ControllerBase
     public TransactionsController(ITransactionService transactionService)
     {
         _transactionService = transactionService;
-    }
-
-    /// <summary>
-    /// Handle CORS preflight requests
-    /// </summary>
-    [HttpOptions]
-    public IActionResult Options()
-    {
-
-
-
-
-
-        return Ok();
     }
 
     /// <summary>

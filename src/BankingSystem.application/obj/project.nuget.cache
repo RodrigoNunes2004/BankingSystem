@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "w4czfgsKDHI=",
+  "dgSpecHash": "tgTc9W2/Jjw=",
   "success": true,
   "projectFilePath": "C:\\Users\\Rodrigo\\source\\repos\\ASP.Net_projects\\BankingSystem\\src\\BankingSystem.Application\\BankingSystem.application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rodrigo\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\Rodrigo\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Rodrigo\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512"
   ],
   "logs": []

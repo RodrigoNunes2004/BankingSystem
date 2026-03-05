@@ -1,0 +1,10 @@
+**/.git
+**/.vs
+**/bin
+**/obj
+**/node_modules
+**/publish
+**/.env
+**/appsettings.Development.json
+README.md
+.gitignore

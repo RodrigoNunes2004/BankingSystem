@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using BankingSystem.application.DTOs;
 using BankingSystem.application.Services;
 
@@ -7,7 +6,7 @@ namespace BankingSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[EnableCors("VercelPolicy")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class AccountsController : ControllerBase
 {
     private readonly IAccountService _accountService;
@@ -18,31 +17,11 @@ public class AccountsController : ControllerBase
     }
 
     /// <summary>
-    /// Handle CORS preflight requests
-    /// </summary>
-    [HttpOptions]
-    public IActionResult Options()
-    {
-
-
-
-
-
-        return Ok();
-    }
-
-    /// <summary>
     /// Get all accounts
     /// </summary>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AccountDto>>> GetAccounts()
     {
-
-
-
-
-
-        
         var accounts = await _accountService.GetAllAsync();
         return Ok(accounts);
     }
