@@ -28,8 +28,16 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework - Neon DB (PostgreSQL)
 // Prefer DATABASE_URL (Render, Railway, Heroku standard); fallback to ConnectionStrings:DefaultConnection
+// Npgsql needs key=value format; convert postgresql:// URLs if present
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connectionString) && (connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase)))
+{
+    var uri = new Uri(connectionString);
+    var userInfo = uri.UserInfo.Split(':', 2);
+    var dbPort = uri.Port > 0 ? uri.Port : 5432;
+    connectionString = $"Host={uri.Host};Port={dbPort};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={(userInfo.Length > 1 ? userInfo[1] : "")};SSL Mode=Require";
+}
 builder.Services.AddDbContext<BankingDbContext>(options =>
     options.UseNpgsql(
         connectionString,
