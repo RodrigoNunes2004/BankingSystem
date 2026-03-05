@@ -60,9 +60,9 @@ const Dashboard: React.FC = () => {
           <h3>Total Accounts</h3>
           <p className="stat-number">{accounts.length}</p>
         </div>
-        <div className="stat-card">
+        <div className="stat-card stat-card--balance">
           <h3>Total Balance</h3>
-          <p className="stat-number">${totalBalance.toFixed(2)}</p>
+          <p className="stat-number stat-number--balance">${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
         </div>
         <div className="stat-card">
           <h3>Recent Transactions</h3>

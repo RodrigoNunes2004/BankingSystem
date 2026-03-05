@@ -67,10 +67,19 @@ const TransactionManagement: React.FC = () => {
       }
       setAccounts(accountsData);
 
-      // Transactions from localStorage
-      const transactionsData: Transaction[] = JSON.parse(
-        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
-      );
+      // Transactions: API first, fallback to localStorage
+      let transactionsData: Transaction[] = [];
+      try {
+        transactionsData = await apiService.getTransactionsByUser(currentUser.id);
+        localStorage.setItem(
+          `banking_transactions_${currentUser.id}`,
+          JSON.stringify(transactionsData)
+        );
+      } catch {
+        transactionsData = JSON.parse(
+          localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
+        );
+      }
       setTransactions(transactionsData);
 
       setError(null);
@@ -96,46 +105,7 @@ const TransactionManagement: React.FC = () => {
         return;
       }
 
-      // Local fallback deposit (kept to ensure UX even if API fails)
-      const transaction: Transaction = {
-        id: Date.now(),
-        transactionType: "DEPOSIT",
-        amount: depositForm.amount,
-        accountId: depositForm.accountId,
-        description: depositForm.description,
-        status: "Completed",
-        transactionDate: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
-        accountNumber:
-          accounts.find((a) => a.id === depositForm.accountId)?.accountNumber || "",
-        category: "Deposit",
-      };
-
-      const userTransactions = JSON.parse(
-        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
-      );
-      userTransactions.push(transaction);
-      localStorage.setItem(
-        `banking_transactions_${currentUser.id}`,
-        JSON.stringify(userTransactions)
-      );
-
-      const userAccounts = JSON.parse(
-        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
-      );
-      const accountIndex = userAccounts.findIndex(
-        (a: Account) => a.id === depositForm.accountId
-      );
-      if (accountIndex !== -1) {
-        userAccounts[accountIndex].balance += depositForm.amount;
-        userAccounts[accountIndex].availableBalance += depositForm.amount;
-        localStorage.setItem(
-          `banking_accounts_${currentUser.id}`,
-          JSON.stringify(userAccounts)
-        );
-      }
-
+      await apiService.processDeposit(depositForm);
       setDepositForm({ accountId: 0, amount: 0, description: "" });
       await fetchData();
       alert("Deposit processed successfully!");
@@ -160,46 +130,7 @@ const TransactionManagement: React.FC = () => {
         return;
       }
 
-      // Local fallback withdrawal (kept to ensure UX even if API fails)
-      const transaction: Transaction = {
-        id: Date.now(),
-        transactionType: "WITHDRAWAL",
-        amount: withdrawalForm.amount,
-        accountId: withdrawalForm.accountId,
-        description: withdrawalForm.description,
-        status: "Completed",
-        transactionDate: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
-        accountNumber:
-          accounts.find((a) => a.id === withdrawalForm.accountId)?.accountNumber || "",
-        category: "Withdrawal",
-      };
-
-      const userTransactions = JSON.parse(
-        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
-      );
-      userTransactions.push(transaction);
-      localStorage.setItem(
-        `banking_transactions_${currentUser.id}`,
-        JSON.stringify(userTransactions)
-      );
-
-      const userAccounts = JSON.parse(
-        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
-      );
-      const accountIndex = userAccounts.findIndex(
-        (a: Account) => a.id === withdrawalForm.accountId
-      );
-      if (accountIndex !== -1) {
-        userAccounts[accountIndex].balance -= withdrawalForm.amount;
-        userAccounts[accountIndex].availableBalance -= withdrawalForm.amount;
-        localStorage.setItem(
-          `banking_accounts_${currentUser.id}`,
-          JSON.stringify(userAccounts)
-        );
-      }
-
+      await apiService.processWithdrawal(withdrawalForm);
       setWithdrawalForm({ accountId: 0, amount: 0, description: "" });
       await fetchData();
       alert("Withdrawal processed successfully!");
@@ -228,55 +159,7 @@ const TransactionManagement: React.FC = () => {
         return;
       }
 
-      // Local fallback transfer (kept to ensure UX even if API fails)
-      const transaction: Transaction = {
-        id: Date.now(),
-        transactionType: "TRANSFER",
-        amount: transferForm.amount,
-        accountId: transferForm.fromAccountId,
-        toAccountId: transferForm.toAccountId,
-        description: transferForm.description,
-        status: "Completed",
-        transactionDate: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        referenceNumber: `TXN${Math.floor(1000 + Math.random() * 9000)}`,
-        accountNumber:
-          accounts.find((a) => a.id === transferForm.fromAccountId)?.accountNumber || "",
-        toAccountNumber:
-          accounts.find((a) => a.id === transferForm.toAccountId)?.accountNumber || "",
-        category: transferForm.category,
-      };
-
-      const userTransactions = JSON.parse(
-        localStorage.getItem(`banking_transactions_${currentUser.id}`) || "[]"
-      );
-      userTransactions.push(transaction);
-      localStorage.setItem(
-        `banking_transactions_${currentUser.id}`,
-        JSON.stringify(userTransactions)
-      );
-
-      const userAccounts = JSON.parse(
-        localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
-      );
-      const fromAccountIndex = userAccounts.findIndex(
-        (a: Account) => a.id === transferForm.fromAccountId
-      );
-      const toAccountIndex = userAccounts.findIndex(
-        (a: Account) => a.id === transferForm.toAccountId
-      );
-      
-      if (fromAccountIndex !== -1 && toAccountIndex !== -1) {
-        userAccounts[fromAccountIndex].balance -= transferForm.amount;
-        userAccounts[fromAccountIndex].availableBalance -= transferForm.amount;
-        userAccounts[toAccountIndex].balance += transferForm.amount;
-        userAccounts[toAccountIndex].availableBalance += transferForm.amount;
-        localStorage.setItem(
-          `banking_accounts_${currentUser.id}`,
-          JSON.stringify(userAccounts)
-        );
-      }
-
+      await apiService.processTransfer(transferForm);
       setTransferForm({
         fromAccountId: 0,
         toAccountId: 0,
@@ -438,13 +321,14 @@ const TransactionManagement: React.FC = () => {
                 type="number"
                 step="0.01"
                 min="0.01"
-                value={depositForm.amount}
-                onChange={(e) =>
+                value={depositForm.amount || ""}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
                   setDepositForm({
                     ...depositForm,
-                    amount: parseFloat(e.target.value),
-                  })
-                }
+                    amount: Number.isNaN(val) ? 0 : val,
+                  });
+                }}
                 required
               />
             </div>
@@ -504,13 +388,14 @@ const TransactionManagement: React.FC = () => {
                 type="number"
                 step="0.01"
                 min="0.01"
-                value={withdrawalForm.amount}
-                onChange={(e) =>
+                value={withdrawalForm.amount || ""}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
                   setWithdrawalForm({
                     ...withdrawalForm,
-                    amount: parseFloat(e.target.value),
-                  })
-                }
+                    amount: Number.isNaN(val) ? 0 : val,
+                  });
+                }}
                 required
               />
             </div>
@@ -592,13 +477,14 @@ const TransactionManagement: React.FC = () => {
                 type="number"
                 step="0.01"
                 min="0.01"
-                value={transferForm.amount}
-                onChange={(e) =>
+                value={transferForm.amount || ""}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
                   setTransferForm({
                     ...transferForm,
-                    amount: parseFloat(e.target.value),
-                  })
-                }
+                    amount: Number.isNaN(val) ? 0 : val,
+                  });
+                }}
                 required
               />
             </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiService, Account } from "../services/api";
 
+type InsuranceProductType = "life" | "health" | "auto" | "home" | "travel" | "business";
+
 interface InsuranceProduct {
   id: number;
   name: string;
-  type: "life" | "health" | "auto" | "home" | "travel";
+  type: InsuranceProductType;
   description: string;
   coverage: string;
   premium: number;
@@ -33,7 +35,7 @@ interface InsurancePolicy {
 }
 
 interface QuoteRequest {
-  productType: "life" | "health" | "auto" | "home" | "travel";
+  productType: InsuranceProductType;
   age: number;
   coverageAmount: number;
   term?: number;
@@ -41,9 +43,92 @@ interface QuoteRequest {
   drivingRecord?: "clean" | "minor" | "major";
   propertyValue?: number;
   travelDestination?: string;
+  businessRevenue?: number;
 }
 
-// No hardcoded mock data - products will be loaded from API or created dynamically
+const DEFAULT_INSURANCE_PRODUCTS: InsuranceProduct[] = [
+  {
+    id: 1,
+    name: "Car Insurance",
+    type: "auto",
+    description: "Comprehensive motor insurance for cars, motorcycles, and commercial vehicles. Protect yourself against accidents, theft, and third-party liabilities.",
+    coverage: "Third-party liability, collision, comprehensive, theft, personal injury, legal expenses",
+    premium: 85,
+    coverageAmount: 500000,
+    term: "12 months",
+    features: ["Third-party liability", "Collision coverage", "Comprehensive cover", "Roadside assistance"],
+    icon: "🚗",
+    color: "#4a90d9",
+    isPopular: true,
+  },
+  {
+    id: 2,
+    name: "Life Insurance",
+    type: "life",
+    description: "Secure your family's future with term life coverage. Pays out a lump sum to beneficiaries in the event of your death during the policy term.",
+    coverage: "Death benefit, terminal illness advance, accidental death benefit, waiver of premium",
+    premium: 45,
+    coverageAmount: 500000,
+    term: "10-30 years",
+    features: ["Death benefit payout", "Terminal illness coverage", "No medical exam option", "Family protection"],
+    icon: "🛡️",
+    color: "#2ecc71",
+    isPopular: true,
+  },
+  {
+    id: 3,
+    name: "House & Contents Insurance",
+    type: "home",
+    description: "Protect your home and belongings against fire, theft, flooding, and natural disasters. Covers building structure and personal possessions.",
+    coverage: "Building structure, personal belongings, accidental damage, alternative accommodation",
+    premium: 55,
+    coverageAmount: 350000,
+    term: "12 months",
+    features: ["Building coverage", "Contents protection", "Natural disaster cover", "Liability protection"],
+    icon: "🏠",
+    color: "#e74c3c",
+  },
+  {
+    id: 4,
+    name: "Business Liability Insurance",
+    type: "business",
+    description: "Essential cover for businesses against third-party claims, professional negligence, and legal costs. Protects your business assets and reputation.",
+    coverage: "Public liability, employers' liability, professional indemnity, product liability",
+    premium: 120,
+    coverageAmount: 1000000,
+    term: "12 months",
+    features: ["Public liability", "Professional indemnity", "Employers' liability", "Legal defense costs"],
+    icon: "🏢",
+    color: "#9b59b6",
+    isPopular: true,
+  },
+  {
+    id: 5,
+    name: "Health Insurance",
+    type: "health",
+    description: "Comprehensive medical cover for you and your family. Access private healthcare, specialist care, and preventive services.",
+    coverage: "In-patient treatment, out-patient care, specialist consultations, prescription drugs",
+    premium: 95,
+    coverageAmount: 500000,
+    term: "12 months",
+    features: ["Medical coverage", "Prescription drugs", "Preventive care", "Mental health support"],
+    icon: "🏥",
+    color: "#3498db",
+  },
+  {
+    id: 6,
+    name: "Travel Insurance",
+    type: "travel",
+    description: "Peace of mind when you travel. Covers medical emergencies abroad, trip cancellation, lost luggage, and more.",
+    coverage: "Medical emergencies, trip cancellation, baggage loss, repatriation",
+    premium: 25,
+    coverageAmount: 100000,
+    term: "Per trip / Annual",
+    features: ["Medical expenses abroad", "Trip cancellation", "Baggage protection", "24/7 emergency assistance"],
+    icon: "✈️",
+    color: "#f39c12",
+  },
+];
 
 // NO DEFAULT POLICIES - each user starts with empty policy list
 
@@ -67,6 +152,7 @@ const InsuranceManagement: React.FC = () => {
     drivingRecord: "clean",
     propertyValue: 300000,
     travelDestination: "",
+    businessRevenue: 250000,
   });
   const [quoteResult, setQuoteResult] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -107,9 +193,9 @@ const InsuranceManagement: React.FC = () => {
         }
       }
 
-      // Load products from API or create empty array
-      // TODO: Implement API call to fetch insurance products
-      setProducts([]);
+      // Load products from API or use defaults
+      // TODO: Implement API call to fetch insurance products when backend is ready
+      setProducts(DEFAULT_INSURANCE_PRODUCTS);
       setPolicies(userPolicies);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -158,6 +244,11 @@ const InsuranceManagement: React.FC = () => {
           basePremium = 20;
           coverageMultiplier = (quoteRequest.coverageAmount || 0) / 50000;
           break;
+        case "business":
+          basePremium = 100;
+          coverageMultiplier = (quoteRequest.coverageAmount || 0) / 1000000;
+          if ((quoteRequest.businessRevenue || 0) > 500000) coverageMultiplier *= 1.2;
+          break;
       }
 
       const calculatedPremium = Math.round(basePremium * coverageMultiplier);
@@ -179,7 +270,7 @@ const InsuranceManagement: React.FC = () => {
   };
 
   const getProductFeatures = (type: string) => {
-    const features = {
+    const features: Record<string, string[]> = {
       life: [
         "Death benefit",
         "Terminal illness coverage",
@@ -210,8 +301,14 @@ const InsuranceManagement: React.FC = () => {
         "Baggage protection",
         "Emergency evacuation",
       ],
+      business: [
+        "Public liability",
+        "Professional indemnity",
+        "Employers' liability",
+        "Legal defense costs",
+      ],
     };
-    return features[type as keyof typeof features] || [];
+    return features[type] || [];
   };
 
   const purchasePolicy = async (productId: number) => {
@@ -508,6 +605,8 @@ const InsuranceManagement: React.FC = () => {
         return "🏠";
       case "travel":
         return "✈️";
+      case "business":
+        return "🏢";
       default:
         return "📋";
     }
@@ -772,15 +871,16 @@ const InsuranceManagement: React.FC = () => {
                   onChange={(e) =>
                     setQuoteRequest({
                       ...quoteRequest,
-                      productType: e.target.value as any,
+                      productType: e.target.value as InsuranceProductType,
                     })
                   }
                   required
                 >
                   <option value="life">Life Insurance</option>
                   <option value="health">Health Insurance</option>
-                  <option value="auto">Auto Insurance</option>
-                  <option value="home">Home Insurance</option>
+                  <option value="auto">Car Insurance</option>
+                  <option value="home">House & Contents Insurance</option>
+                  <option value="business">Business Liability Insurance</option>
                   <option value="travel">Travel Insurance</option>
                 </select>
               </div>
@@ -891,6 +991,24 @@ const InsuranceManagement: React.FC = () => {
                     })
                   }
                   min="100000"
+                  step="10000"
+                />
+              </div>
+            )}
+
+            {quoteRequest.productType === "business" && (
+              <div className="form-group">
+                <label>Annual Business Revenue</label>
+                <input
+                  type="number"
+                  value={quoteRequest.businessRevenue || 250000}
+                  onChange={(e) =>
+                    setQuoteRequest({
+                      ...quoteRequest,
+                      businessRevenue: parseInt(e.target.value),
+                    })
+                  }
+                  min="50000"
                   step="10000"
                 />
               </div>

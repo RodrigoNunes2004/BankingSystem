@@ -26,6 +26,11 @@ interface CreateCardRequest {
 
 // NO DEFAULT VALUES - each user starts with empty card list
 
+const DEFAULT_SECURITY = { threeDSecure: true, transactionNotifications: true, internationalTransactions: "enabled", onlineTransactions: "enabled" };
+const DEFAULT_MOBILE_PAY = { applePay: false, googlePay: false, samsungPay: false, contactlessPayments: true };
+const DEFAULT_NOTIFICATIONS = { transactionAlerts: true, largeTransactionAlerts: true, internationalTransactionAlerts: true, cardUsageAlerts: false, emailNotifications: true, smsNotifications: false };
+const DEFAULT_SPENDING_LIMITS = { dailyLimit: "", monthlyLimit: "", internationalLimit: "", atmLimit: "" };
+
 const CardManagement: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -51,41 +56,15 @@ const CardManagement: React.FC = () => {
   const [showSpendingLimitsModal, setShowSpendingLimitsModal] = useState(false);
 
   // Settings form states
-  const [securitySettings, setSecuritySettings] = useState({
-    threeDSecure: true,
-    transactionNotifications: true,
-    internationalTransactions: "enabled",
-    onlineTransactions: "enabled",
-  });
-
-  const [mobilePaySettings, setMobilePaySettings] = useState({
-    applePay: false,
-    googlePay: false,
-    samsungPay: false,
-    contactlessPayments: true,
-  });
-
-  const [notificationSettings, setNotificationSettings] = useState({
-    transactionAlerts: true,
-    largeTransactionAlerts: true,
-    internationalTransactionAlerts: true,
-    cardUsageAlerts: false,
-    emailNotifications: true,
-    smsNotifications: false,
-  });
-
-  const [spendingLimits, setSpendingLimits] = useState({
-    dailyLimit: "",
-    monthlyLimit: "",
-    internationalLimit: "",
-    atmLimit: "",
-  });
+  const [securitySettings, setSecuritySettings] = useState(DEFAULT_SECURITY);
+  const [mobilePaySettings, setMobilePaySettings] = useState(DEFAULT_MOBILE_PAY);
+  const [notificationSettings, setNotificationSettings] = useState(DEFAULT_NOTIFICATIONS);
+  const [spendingLimits, setSpendingLimits] = useState(DEFAULT_SPENDING_LIMITS);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
-      // Get current user
       const currentUser = JSON.parse(
         localStorage.getItem("banking_user") || "null"
       );
@@ -94,62 +73,45 @@ const CardManagement: React.FC = () => {
         return;
       }
 
-      // Load user's actual accounts from localStorage
       const userAccounts = JSON.parse(
         localStorage.getItem(`banking_accounts_${currentUser.id}`) || "[]"
       );
       setAccounts(userAccounts);
 
-      // Load user's cards from localStorage
       const userCards = JSON.parse(
         localStorage.getItem(`banking_cards_${currentUser.id}`) || "[]"
       );
       setCards(userCards);
 
-      // Load user's card settings from localStorage
       const userSecuritySettings = JSON.parse(
         localStorage.getItem(`banking_card_security_${currentUser.id}`) ||
-          JSON.stringify(securitySettings)
+          JSON.stringify(DEFAULT_SECURITY)
       );
       setSecuritySettings(userSecuritySettings);
 
       const userMobilePaySettings = JSON.parse(
         localStorage.getItem(`banking_mobile_pay_${currentUser.id}`) ||
-          JSON.stringify(mobilePaySettings)
+          JSON.stringify(DEFAULT_MOBILE_PAY)
       );
       setMobilePaySettings(userMobilePaySettings);
 
       const userNotificationSettings = JSON.parse(
         localStorage.getItem(`banking_notifications_${currentUser.id}`) ||
-          JSON.stringify(notificationSettings)
+          JSON.stringify(DEFAULT_NOTIFICATIONS)
       );
       setNotificationSettings(userNotificationSettings);
 
       const userSpendingLimits = JSON.parse(
         localStorage.getItem(`banking_spending_limits_${currentUser.id}`) ||
-          JSON.stringify(spendingLimits)
+          JSON.stringify(DEFAULT_SPENDING_LIMITS)
       );
       setSpendingLimits(userSpendingLimits);
-
-      console.log("✅ CARD MANAGEMENT - Loaded user accounts:", userAccounts);
-      console.log("✅ CARD MANAGEMENT - Loaded user cards:", userCards);
-      console.log("✅ CARD MANAGEMENT - Loaded settings:", {
-        userSecuritySettings,
-        userMobilePaySettings,
-        userNotificationSettings,
-        userSpendingLimits,
-      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
-  }, [
-    securitySettings,
-    mobilePaySettings,
-    notificationSettings,
-    spendingLimits,
-  ]);
+  }, []);
 
   useEffect(() => {
     fetchData();
